@@ -1,7 +1,6 @@
 package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -10,6 +9,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
@@ -46,7 +46,11 @@ import org.md2k.phonesensor.phone.CallBack;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Location extends PhoneSensorDataSource implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class Location extends PhoneSensorDataSource implements
+        LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener{
+
     private static final String TAG = Location.class.getSimpleName();
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
@@ -77,21 +81,6 @@ public class Location extends PhoneSensorDataSource implements LocationListener,
         DataTypeDoubleArray dataTypeDoubleArray=new DataTypeDoubleArray(DateTime.getDateTime(),samples);
         mDataKitApi.insert(dataSourceClient, dataTypeDoubleArray);
         callBack.onReceivedData(dataTypeDoubleArray);
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     @Override
@@ -134,12 +123,12 @@ public class Location extends PhoneSensorDataSource implements LocationListener,
     }
     protected void startLocationUpdates() {
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+                mGoogleApiClient, mLocationRequest, this);
         Log.d(TAG, "Location update started ..............: ");
     }
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, (com.google.android.gms.location.LocationListener) this);
+                mGoogleApiClient, this);
         Log.d(TAG, "Location update stopped .......................");
     }
 
