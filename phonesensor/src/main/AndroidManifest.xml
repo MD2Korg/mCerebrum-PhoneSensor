@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.md2k.phonesensor">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:theme="@style/AppThemeDark" >
+        <activity
+            android:name=".ActivityPhoneSensor"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".ServicePhoneSensor"
+            android:enabled="true"
+            android:exported="true"></service>
+        <activity
+            android:name=".ActivityPhoneSensorSettings"
+            android:label="Settings: Phone Sensor"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.md2k.phonesensor.ActivityPhoneSensorSettings" />
+            </intent-filter>
+            >
+        </activity>
+    </application>
+
+</manifest>
