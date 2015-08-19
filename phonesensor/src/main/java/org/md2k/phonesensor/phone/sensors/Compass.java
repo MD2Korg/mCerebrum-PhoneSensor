@@ -48,6 +48,9 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
     public static final String UI="UI: ~16 Hz";
     public static final String GAME="Game: ~50 Hz";
     public static final String FASTEST="Fastest: ~100Hz";
+    long lastSaved=DateTime.getDateTime();
+    double FILTER_DATA_MIN_TIME;
+
     public static String[] frequencyOptions={NORMAL,UI,GAME,FASTEST};
 
     public DataSourceBuilder createDataSourceBuilder() {
@@ -67,13 +70,17 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float[] samples=new float[3];
-        samples[0]=event.values[0];
-        samples[1]=event.values[1];
-        samples[2]=event.values[2];
-        DataTypeFloatArray dataTypeFloatArray=new DataTypeFloatArray(DateTime.getDateTime(),samples);
-        mDataKitApi.insert(dataSourceClient, dataTypeFloatArray);
-        callBack.onReceivedData(dataTypeFloatArray);
+        long curTime=DateTime.getDateTime();
+        if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
+            lastSaved = System.currentTimeMillis();
+            float[] samples = new float[3];
+            samples[0] = event.values[0];
+            samples[1] = event.values[1];
+            samples[2] = event.values[2];
+            DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
+            mDataKitApi.insert(dataSourceClient, dataTypeFloatArray);
+            callBack.onReceivedData(dataTypeFloatArray);
+        }
     }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -90,13 +97,21 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
         callBack = newcallBack;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-        if(frequency.equals(UI))
+        if(frequency.equals(UI)) {
+            FILTER_DATA_MIN_TIME=1000.0/16.0;
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
-        else if(frequency.equals(GAME))
+        }
+        else if(frequency.equals(GAME)) {
+            FILTER_DATA_MIN_TIME = 1000.0 / 50.0;
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
-        else if(frequency.equals(FASTEST))
+        }
+        else if(frequency.equals(FASTEST)) {
+            FILTER_DATA_MIN_TIME=1000.0/100.0;
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        else if(frequency.equals(NORMAL))
+        }
+        else if(frequency.equals(NORMAL)) {
+            FILTER_DATA_MIN_TIME=1000.0/6.0;
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 }

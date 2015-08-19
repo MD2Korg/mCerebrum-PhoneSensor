@@ -49,6 +49,8 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
     public static final String UI="UI: ~16 Hz";
     public static final String GAME="Game: ~50 Hz";
     public static final String FASTEST="Fastest: ~100Hz";
+    long lastSaved=DateTime.getDateTime();
+    double FILTER_DATA_MIN_TIME;
 
     public static String[] frequencyOptions={NORMAL,UI,GAME,FASTEST};
 
@@ -72,13 +74,18 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float[] samples=new float[3];
-        samples[0]=event.values[0];
-        samples[1]=event.values[1];
-        samples[2]=event.values[2];
-        DataTypeFloatArray dataTypeFloatArray=new DataTypeFloatArray(DateTime.getDateTime(),samples);
-        mDataKitApi.insert(dataSourceClient, dataTypeFloatArray);
-        callBack.onReceivedData(dataTypeFloatArray);
+        long curTime=DateTime.getDateTime();
+        if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
+            lastSaved = System.currentTimeMillis();
+
+            float[] samples = new float[3];
+            samples[0] = event.values[0];
+            samples[1] = event.values[1];
+            samples[2] = event.values[2];
+            DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
+            mDataKitApi.insert(dataSourceClient, dataTypeFloatArray);
+            callBack.onReceivedData(dataTypeFloatArray);
+        }
     }
 
     @Override
@@ -98,20 +105,22 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
         Log.d(TAG, "gyroscope: register(): " + frequency);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if(frequency.equals(UI)) {
-//            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
+            FILTER_DATA_MIN_TIME=1000.0/16.0;
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
             Log.d(TAG, "gyroscope: register() inside: " + frequency);
         }
         else if(frequency.equals(GAME)) {
+            FILTER_DATA_MIN_TIME=1000.0/50.0;
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
             Log.d(TAG, "gyroscope: register() inside: " + frequency);
         }
         else if(frequency.equals(FASTEST)) {
+            FILTER_DATA_MIN_TIME=1000.0/100.0;
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
             Log.d(TAG, "gyroscope: register() inside: " + frequency);
-
         }
         else if(frequency.equals(NORMAL)) {
+            FILTER_DATA_MIN_TIME=1000.0/6.0;
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
             Log.d(TAG, "gyroscope: register() inside: " + frequency);
         }
