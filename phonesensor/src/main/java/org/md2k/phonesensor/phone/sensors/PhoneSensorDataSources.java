@@ -67,6 +67,9 @@ public class PhoneSensorDataSources {
         phoneSensorDataSources.add(new Pressure(context, false));
         phoneSensorDataSources.add(new AmbientTemperature(context, false));
         phoneSensorDataSources.add(new Proximity(context, false));
+        phoneSensorDataSources.add(new CPU(context, false));
+        phoneSensorDataSources.add(new Memory(context, false));
+
         try {
             readDataSourceFromFile();
         } catch (FileNotFoundException e) {

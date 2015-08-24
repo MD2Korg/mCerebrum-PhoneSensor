@@ -76,13 +76,13 @@ public class ActivityPhoneSensor extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.d(TAG, "isChecked=" + isChecked);
+                Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
+
                 if(isChecked) {
                     starttimestamp = 0;
-                    Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
                     startService(intent);
                 }
                 else{
-                    Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
                     stopService(intent);
                 }
             }
@@ -181,33 +181,6 @@ public class ActivityPhoneSensor extends Activity {
         else textView.setText("Not Running");
     }
 
-/*
-    private void setupButtonService() {
-        final Button buttonStopService = (Button) findViewById(R.id.button_stopservice);
-        final Button buttonStartService = (Button) findViewById(R.id.button_startservice);
-        buttonStartService.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (!ServicePhoneSensor.isRunning) {
-                    starttimestamp = 0;
-                    Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
-                    startService(intent);
-                    TextView textView = (TextView) findViewById(R.id.service_info);
-                    textView.setText("Running");
-                }
-            }
-        });
-        buttonStopService.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (ServicePhoneSensor.isRunning) {
-                    Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
-                    stopService(intent);
-                    TextView textView = (TextView) findViewById(R.id.service_info);
-                    textView.setText("Not Running");
-                }
-            }
-        });
-    }
-*/
     long starttimestamp = 0;
     HashMap<String, TextView> hm = new HashMap<>();
     void updateServiceStatus(){
