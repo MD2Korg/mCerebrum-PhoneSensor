@@ -50,6 +50,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     public static final String GAME="Game: ~50 Hz";
     public static final String FASTEST="Fastest: ~100Hz";
     long lastSaved=DateTime.getDateTime();
+
     double FILTER_DATA_MIN_TIME;
     public static String[] frequencyOptions={NORMAL,UI,GAME,FASTEST};
 
@@ -99,24 +100,24 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Log.d(TAG,"accelerometer: register()"+frequency);
         if(frequency.equals(UI)) {
-            FILTER_DATA_MIN_TIME=1000.0/16.0;
+            FILTER_DATA_MIN_TIME=1000.0/(16.0+EPSILON_UI);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
             Log.d(TAG, "accelerometer: register() inside: " + frequency);
         }
         else if(frequency.equals(GAME)){
-            FILTER_DATA_MIN_TIME=1000.0/50.0;
+            FILTER_DATA_MIN_TIME=1000.0/(50.0+EPSILON_GAME);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
 
         Log.d(TAG, "accelerometer: register() inside: " + frequency);
     }
         else if(frequency.equals(FASTEST)){
-            FILTER_DATA_MIN_TIME=1000.0/100.0;
+            FILTER_DATA_MIN_TIME=1000.0/(100.0+EPSILON_FASTEST);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
             Log.d(TAG, "accelerometer: register() inside: " + frequency);
 
         }
         else if(frequency.equals(NORMAL)){
-            FILTER_DATA_MIN_TIME=1000.0/6.0;
+            FILTER_DATA_MIN_TIME=1000.0/(6.0+EPSILON_NORMAL);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
             Log.d(TAG, "accelerometer: register() inside: " + frequency);
         }

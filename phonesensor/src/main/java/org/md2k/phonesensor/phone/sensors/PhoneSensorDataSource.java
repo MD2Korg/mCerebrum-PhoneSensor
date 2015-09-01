@@ -49,6 +49,10 @@ public abstract class PhoneSensorDataSource {
     protected DataKitApi mDataKitApi;
     protected CallBack callBack;
     protected String frequency="UI";
+    double EPSILON_NORMAL=2.0;
+    double EPSILON_UI=5.0;
+    double EPSILON_GAME=10.0;
+    double EPSILON_FASTEST=50.0;
 
     public PhoneSensorDataSource(Context context, String dataSourceType, boolean enabled) {
         this.context = context;

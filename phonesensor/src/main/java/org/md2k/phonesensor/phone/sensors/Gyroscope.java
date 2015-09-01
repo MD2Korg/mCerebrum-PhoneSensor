@@ -105,22 +105,22 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
         Log.d(TAG, "gyroscope: register(): " + frequency);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if(frequency.equals(UI)) {
-            FILTER_DATA_MIN_TIME=1000.0/16.0;
+            FILTER_DATA_MIN_TIME=1000.0/(16.0+EPSILON_UI);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
             Log.d(TAG, "gyroscope: register() inside: " + frequency);
         }
         else if(frequency.equals(GAME)) {
-            FILTER_DATA_MIN_TIME=1000.0/50.0;
+            FILTER_DATA_MIN_TIME=1000.0/(50.0+EPSILON_GAME);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
             Log.d(TAG, "gyroscope: register() inside: " + frequency);
         }
         else if(frequency.equals(FASTEST)) {
-            FILTER_DATA_MIN_TIME=1000.0/100.0;
+            FILTER_DATA_MIN_TIME=1000.0/(100.0+EPSILON_FASTEST);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
             Log.d(TAG, "gyroscope: register() inside: " + frequency);
         }
         else if(frequency.equals(NORMAL)) {
-            FILTER_DATA_MIN_TIME=1000.0/6.0;
+            FILTER_DATA_MIN_TIME=1000.0/(6.0+EPSILON_NORMAL);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
             Log.d(TAG, "gyroscope: register() inside: " + frequency);
         }

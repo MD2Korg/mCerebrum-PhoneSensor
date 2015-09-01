@@ -98,19 +98,19 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         if(frequency.equals(UI)) {
-            FILTER_DATA_MIN_TIME=1000.0/16.0;
+            FILTER_DATA_MIN_TIME=1000.0/(16.0+EPSILON_UI);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
         }
         else if(frequency.equals(GAME)) {
-            FILTER_DATA_MIN_TIME = 1000.0 / 50.0;
+            FILTER_DATA_MIN_TIME=1000.0/(50.0+EPSILON_GAME);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
         }
         else if(frequency.equals(FASTEST)) {
-            FILTER_DATA_MIN_TIME=1000.0/100.0;
+            FILTER_DATA_MIN_TIME=1000.0/(100.0+EPSILON_FASTEST);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
         }
         else if(frequency.equals(NORMAL)) {
-            FILTER_DATA_MIN_TIME=1000.0/6.0;
+            FILTER_DATA_MIN_TIME=1000.0/(6.0+EPSILON_NORMAL);
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
