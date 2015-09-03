@@ -59,7 +59,7 @@ public class PhoneSensorDataSources {
         this.context = context;
         phoneSensorDataSources=new ArrayList<>();
         phoneSensorDataSources.add(new Battery(context, false));
-        phoneSensorDataSources.add(new Location(context, false));
+        phoneSensorDataSources.add(new LocationFused(context, false));
         phoneSensorDataSources.add(new Accelerometer(context, false));
         phoneSensorDataSources.add(new Gyroscope(context, false));
         phoneSensorDataSources.add(new Compass(context, false));

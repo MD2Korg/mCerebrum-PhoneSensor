@@ -1,17 +1,10 @@
 package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 
 import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
@@ -47,13 +40,10 @@ import org.md2k.phonesensor.phone.CallBack;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Location extends PhoneSensorDataSource implements
-        LocationListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        LocationListener {
 
     private static final String TAG = Location.class.getSimpleName();
-    LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
+    private LocationManager locationManager;
     private static final long INTERVAL = 1000L;
     private static final long FASTEST_INTERVAL = 1000L;
 //    public static String[] frequencyOptions={"5 Second","30 Second","60 Second","5 Minutes"};
@@ -63,10 +53,12 @@ public class Location extends PhoneSensorDataSource implements
 
     }
     protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, this);
+        } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000,1, this);
+        }
     }
 
     @Override
@@ -84,62 +76,30 @@ public class Location extends PhoneSensorDataSource implements
     }
 
     @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
     public void register(DataKitApi dataKitApi, DataSource dataSource, CallBack newCallBack) {
         mDataKitApi = dataKitApi;
         dataSourceClient = dataKitApi.register(dataSource).await();
         this.callBack = newCallBack;
-
-        if (!isGooglePlayServicesAvailable()) {
-            return;
-        }
         createLocationRequest();
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        mGoogleApiClient.connect();
-    }
-    private boolean isGooglePlayServicesAvailable() {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-        if (ConnectionResult.SUCCESS == status) {
-            return true;
-        } else {
-//            GooglePlayServicesUtil.getErrorDialog(status, context, 0).show();
-            return false;
-        }
     }
 
     @Override
     public void unregister() {
-        stopLocationUpdates();
-        mGoogleApiClient.disconnect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
-        startLocationUpdates();
-    }
-    protected void startLocationUpdates() {
-        PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
-        Log.d(TAG, "Location update started ..............: ");
-    }
-    protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
-        Log.d(TAG, "Location update stopped .......................");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Connection failed: " + connectionResult.toString());
-
+        locationManager.removeUpdates(this);
     }
 }

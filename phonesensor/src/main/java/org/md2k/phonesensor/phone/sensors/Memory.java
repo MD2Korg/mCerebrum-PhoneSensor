@@ -66,7 +66,7 @@ public class Memory extends PhoneSensorDataSource {
         dataSourceClient = dataKitApi.register(dataSource).await();
         callBack = newcallBack;
         scheduler = new Handler();
-        scheduler.postDelayed(statusMemory, 1000);
+        scheduler.post(statusMemory);
     }
 
     private float[] readUsage() {
