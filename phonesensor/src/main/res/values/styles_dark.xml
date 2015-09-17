@@ -1,0 +1,63 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppThemeDark" parent="@android:style/Theme.Holo"
+        >
+        <item name="android:textColorSecondary">@color/teal_a100</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:actionBarStyle">@style/actionbar_dark</item>
+        <item name="android:listSeparatorTextViewStyle">@style/PreferenceListHeader</item>
+    </style>
+    <style name="actionbar_dark" parent="@android:style/Widget.Holo.ActionBar">
+    <item name="android:background">@color/teal_800</item>
+</style>
+    <style name="textview_heading1_dark">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">@color/teal_a700</item>
+    </style>
+    <style name="textview_heading2_dark">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/teal_a100</item>
+    </style>
+
+    <style name="textview_normal_dark">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColor">@color/WHITE</item>
+
+    </style>
+
+    <style name="view_divider_dark">
+        <item name="android:background">@color/teal_50</item>
+        <item name="android:windowBackground">@color/teal_50</item>
+        <item name="android:colorBackground">@color/teal_50</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+    </style>
+
+    <style name="Widget.TextView.ListSeparator" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="PreferenceListHeader" parent="Widget.TextView.ListSeparator">
+        <item name="android:textColor">@color/WHITE</item>
+        <item name="android:background">@color/teal_900</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingLeft">12dp</item>
+
+    </style>
+
+    <style name="PreferenceScreen" parent="android:Theme.NoTitleBar">
+        <item name="android:listSeparatorTextViewStyle">@style/PreferenceListHeader</item>
+        <item name="android:background">#F2B1DBF3</item>
+    </style>
+</resources>

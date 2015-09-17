@@ -7,66 +7,53 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ActivityPhoneSensor">
+    tools:context=".ActivityPhoneSensor"
+    android:weightSum="1">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingBottom="10dp"
-        android:paddingTop="20dp">
+        android:paddingTop="0dp">
 
         <TextView
             android:id="@+id/service_text"
             style="@style/textview_heading1_dark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_column="0"
-            android:text="Service:" />
-
-        <View
-            style="@style/view_divider_dark" />
-
-        <Switch
-            android:id="@+id/switchService"
-            style="@style/switch_dark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:checked="false"
-            android:showText="false"
-            android:text="Service Status:" />
-
-        <TextView
-            android:id="@+id/service_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_column="0"
-            android:text="0 minutes" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="10dp"
-        android:paddingTop="20dp">
-
-        <TextView
-            android:id="@+id/configuration_text"
-            style="@style/textview_heading1_dark"
-            android:layout_width="wrap_content"
-            android:text="Active Sensors:" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Service"
+            android:textColor="@color/amber_900" />
 
         <View
             style="@style/view_divider_dark" />
 
         <TextView
-            android:id="@+id/configuration_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_column="0"
-            android:text="active sensor list" />
+            android:text="Time"
+            android:id="@+id/textViewTime"
+            android:textSize="40dp"
+            android:background="@drawable/circle_border"
+            android:textColor="@color/WHITE"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_gravity="center_horizontal"
+            android:minWidth="200dp"
+            android:minHeight="100dp"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Service"
+            android:id="@+id/buttonServiceStartStop"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/button_green" />
+
     </LinearLayout>
 
 
@@ -83,7 +70,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="0"
-            android:text="Samples:" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Configured Sensors"
+            android:textColor="@color/amber_900" />
 
         <View
             style="@style/view_divider_dark" />

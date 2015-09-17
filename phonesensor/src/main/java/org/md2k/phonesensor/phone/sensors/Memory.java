@@ -84,7 +84,6 @@ public class Memory extends PhoneSensorDataSource {
         @Override
         public void run() {
             float[] samples = readUsage();
-            Log.d(TAG, "Memory=" + samples[0]+" "+samples[1]);
             DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(DateTime.getDateTime(), samples);
             mDataKitApi.insert(dataSourceClient, dataTypeFloatArray);
             callBack.onReceivedData(dataTypeFloatArray);

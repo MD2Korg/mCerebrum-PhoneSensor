@@ -82,15 +82,14 @@ public abstract class PhoneSensorDataSource {
     }
 
     public DataSourceBuilder createDataSourceBuilder() {
-        if (enabled == false) return null;
+        if (!enabled) return null;
         Platform platform = PhoneSensorPlatform.getInstance(context).getPlatform();
         ApplicationBuilder applicationBuilder=new ApplicationBuilder();
         applicationBuilder.setId(context.getApplicationInfo().packageName);
         applicationBuilder.setType(context.getApplicationInfo().name);
         Application application=applicationBuilder.build();
         Log.d(TAG, "phonesensordatasource->DataSourceBuilder()");
-        DataSourceBuilder dataSourceBuilder = new DataSourceBuilder().setId(null).setType(dataSourceType).setPlatform(platform).setApplication(application);
-        return dataSourceBuilder;
+        return new DataSourceBuilder().setId(null).setType(dataSourceType).setPlatform(platform).setApplication(application);
     }
 
     public abstract void register(DataKitApi dataKitApi, DataSource dataSource, CallBack callback);
