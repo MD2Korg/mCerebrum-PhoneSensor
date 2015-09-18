@@ -78,6 +78,17 @@ public class ActivityPhoneSensor extends Activity {
                 }
             }
         });
+        ((TextView)findViewById(R.id.textViewTime)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
+                if(((TextView) findViewById(R.id.textViewTime)).getText().equals("OFF")){
+                    startService(intent);
+                }else{
+                    stopService(intent);
+                }
+            }
+        });
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
@@ -112,34 +123,34 @@ public class ActivityPhoneSensor extends Activity {
                 intent = new Intent(this, ActivityCopyright.class);
                 startActivity(intent);
                 break;
-            }
-            return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
+    }
 
-        TableRow createDefaultRow () {
-            TableRow row = new TableRow(this);
-            TextView tvSensor = new TextView(this);
-            tvSensor.setText("sensor");
-            tvSensor.setTypeface(null, Typeface.BOLD);
-            tvSensor.setTextColor(getResources().getColor(R.color.teal_a100));
-            TextView tvCount = new TextView(this);
-            tvCount.setText("count");
-            tvCount.setTypeface(null, Typeface.BOLD);
-            tvCount.setTextColor(getResources().getColor(R.color.teal_a100));
-            TextView tvFreq = new TextView(this);
-            tvFreq.setText("freq.");
-            tvFreq.setTypeface(null, Typeface.BOLD);
-            tvFreq.setTextColor(getResources().getColor(R.color.teal_a100));
-            TextView tvSample = new TextView(this);
-            tvSample.setText("samples");
-            tvSample.setTypeface(null, Typeface.BOLD);
-            tvSample.setTextColor(getResources().getColor(R.color.teal_a100));
-            row.addView(tvSensor);
-            row.addView(tvCount);
-            row.addView(tvFreq);
-            row.addView(tvSample);
-            return row;
-        }
+    TableRow createDefaultRow() {
+        TableRow row = new TableRow(this);
+        TextView tvSensor = new TextView(this);
+        tvSensor.setText("sensor");
+        tvSensor.setTypeface(null, Typeface.BOLD);
+        tvSensor.setTextColor(getResources().getColor(R.color.teal_a700));
+        TextView tvCount = new TextView(this);
+        tvCount.setText("count");
+        tvCount.setTypeface(null, Typeface.BOLD);
+        tvCount.setTextColor(getResources().getColor(R.color.teal_a700));
+        TextView tvFreq = new TextView(this);
+        tvFreq.setText("freq.");
+        tvFreq.setTypeface(null, Typeface.BOLD);
+        tvFreq.setTextColor(getResources().getColor(R.color.teal_a700));
+        TextView tvSample = new TextView(this);
+        tvSample.setText("samples");
+        tvSample.setTypeface(null, Typeface.BOLD);
+        tvSample.setTextColor(getResources().getColor(R.color.teal_a700));
+        row.addView(tvSensor);
+        row.addView(tvCount);
+        row.addView(tvFreq);
+        row.addView(tvSample);
+        return row;
+    }
 
     void prepareTable(PhoneSensorDataSources phsDataSources) {
         ArrayList<PhoneSensorDataSource> phoneSensorDataSources = phsDataSources.getPhoneSensorDataSources();
@@ -239,19 +250,21 @@ public class ActivityPhoneSensor extends Activity {
                 long time = Apps.serviceRunningTime(ActivityPhoneSensor.this, Constants.SERVICE_NAME);
                 if (time < 0) {
                     ((TextView) findViewById(R.id.textViewTime)).setText("OFF");
+
                     ((Button) findViewById(R.id.buttonServiceStartStop)).setText("Start Service");
                     findViewById(R.id.buttonServiceStartStop).setBackground(getResources().getDrawable(R.drawable.button_green));
 
                 } else {
                     long runtime = time / 1000;
-                    int second=(int)(runtime%60);
-                    runtime/=60;
+                    int second = (int) (runtime % 60);
+                    runtime /= 60;
                     int minute = (int) (runtime % 60);
-                    runtime/=60;
-                    int hour=(int)runtime;
-                    ((TextView) findViewById(R.id.textViewTime)).setText(String.format("%02d:%02d:%02d", hour,minute, second));
+                    runtime /= 60;
+                    int hour = (int) runtime;
+                    ((TextView) findViewById(R.id.textViewTime)).setText(String.format("%02d:%02d:%02d", hour, minute, second));
                     ((Button) findViewById(R.id.buttonServiceStartStop)).setText("Stop Service");
                     findViewById(R.id.buttonServiceStartStop).setBackground(getResources().getDrawable(R.drawable.button_red));
+
                 }
                 mHandler.postDelayed(this, 1000);
             }

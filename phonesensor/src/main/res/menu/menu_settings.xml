@@ -2,23 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ActivityTest">
     <item
-        android:title="menu"
         android:showAsAction="ifRoom"
-        >
-    <menu>
-        <item
-            android:id="@+id/action_settings"
-            android:icon="@drawable/icon_settings_dark"
-            android:title="Settings" />
-        <item
-            android:id="@+id/action_about"
-            android:title="About"
-            android:icon="@drawable/about"/>
-        <item
-            android:id="@+id/action_copyright"
-            android:title="Copyright"
-            android:icon="@drawable/copyright"/>
-
-    </menu>
+        android:title="menu">
+        <menu>
+            <item
+                android:id="@+id/action_settings"
+                android:icon="@drawable/icon_settings_dark"
+                android:title="Settings" />
+            <item
+                android:id="@+id/action_about"
+                android:icon="@drawable/about"
+                android:title="About" />
+            <item
+                android:id="@+id/action_copyright"
+                android:icon="@drawable/copyright"
+                android:title="Copyright" />
+        </menu>
     </item>
 </menu>
