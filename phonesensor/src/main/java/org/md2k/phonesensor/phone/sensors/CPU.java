@@ -6,8 +6,10 @@ import android.os.Handler;
 import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
+import org.md2k.phonesensor.BCMRecord;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.utilities.Report.Log;
 
@@ -57,10 +59,10 @@ public class CPU extends PhoneSensorDataSource {
 
 //        context.unregisterReceiver(batteryInfoReceiver);
     }
-    public void register(DataKitApi dataKitApi, DataSource dataSource, CallBack newcallBack) {
+
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
         Log.d(TAG, "register() ...");
-        mDataKitApi = dataKitApi;
-        dataSourceClient = dataKitApi.register(dataSource).await();
+        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
         callBack = newcallBack;
         scheduler=new Handler();
         scheduler.post(statusCPU);
@@ -96,7 +98,9 @@ public class CPU extends PhoneSensorDataSource {
 
             curValues=values;
             DataTypeFloat dataTypeFloat=new DataTypeFloat(DateTime.getDateTime(),samples);
-            mDataKitApi.insert(dataSourceClient, dataTypeFloat);
+            dataKitHandler.insert(dataSourceClient, dataTypeFloat);
+            BCMRecord.getInstance().saveDataToTextFile(DataSourceType.CPU, dataTypeFloat);
+
             callBack.onReceivedData(dataTypeFloat);
             scheduler.postDelayed(statusCPU,1000);
         }

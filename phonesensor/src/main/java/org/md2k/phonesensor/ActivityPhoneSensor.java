@@ -25,6 +25,9 @@ import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Apps;
+import org.md2k.utilities.Report.Log;
+import org.md2k.utilities.UI.ActivityAbout;
+import org.md2k.utilities.UI.ActivityCopyright;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,25 +75,27 @@ public class ActivityPhoneSensor extends Activity {
                 Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
 
                 if (buttonService.getText().equals("Start Service")) {
+                    Log.d(TAG, "Button click: start service...");
+                    startService(intent);
+                } else {
+                    Log.d(TAG, "button click: stop service...");
+                    stopService(intent);
+                }
+            }
+        });
+        findViewById(R.id.textViewTime).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
+                if (((TextView) findViewById(R.id.textViewTime)).getText().equals("OFF")) {
                     startService(intent);
                 } else {
                     stopService(intent);
                 }
             }
         });
-        ((TextView)findViewById(R.id.textViewTime)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
-                if(((TextView) findViewById(R.id.textViewTime)).getText().equals("OFF")){
-                    startService(intent);
-                }else{
-                    stopService(intent);
-                }
-            }
-        });
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
+        if (getActionBar() != null)
+            getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -182,7 +187,6 @@ public class ActivityPhoneSensor extends Activity {
                 ll.addView(row);
             }
         }
-
     }
 
     void updateTable(Intent intent) {
@@ -197,6 +201,7 @@ public class ActivityPhoneSensor extends Activity {
 
 
         DataType data = (DataType) intent.getSerializableExtra("data");
+
         if (data instanceof DataTypeFloat) {
             sampleStr = String.format("%.1f", ((DataTypeFloat) data).getSample());
         } else if (data instanceof DataTypeFloatArray) {

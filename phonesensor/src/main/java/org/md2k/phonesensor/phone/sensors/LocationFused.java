@@ -16,6 +16,7 @@ import com.google.android.gms.location.LocationServices;
 import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.CallBack;
@@ -79,14 +80,13 @@ public class LocationFused extends PhoneSensorDataSource implements
         samples[4]=location.getBearing();
         samples[5]=location.getAccuracy();
         DataTypeDoubleArray dataTypeDoubleArray=new DataTypeDoubleArray(DateTime.getDateTime(),samples);
-        mDataKitApi.insert(dataSourceClient, dataTypeDoubleArray);
+        dataKitHandler.insert(dataSourceClient, dataTypeDoubleArray);
         callBack.onReceivedData(dataTypeDoubleArray);
     }
 
     @Override
-    public void register(DataKitApi dataKitApi, DataSource dataSource, CallBack newCallBack) {
-        mDataKitApi = dataKitApi;
-        dataSourceClient = dataKitApi.register(dataSource).await();
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
         this.callBack = newCallBack;
 
         if (!isGooglePlayServicesAvailable()) {
@@ -118,18 +118,15 @@ public class LocationFused extends PhoneSensorDataSource implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected - isConnected ...............: " + mGoogleApiClient.isConnected());
         startLocationUpdates();
     }
     protected void startLocationUpdates() {
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
-        Log.d(TAG, "Location update started ..............: ");
     }
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
-        Log.d(TAG, "Location update stopped .......................");
     }
 
     @Override

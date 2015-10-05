@@ -20,18 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ActivityAbout"
-            android:label="About PhoneSensor"
-            android:icon="@drawable/about"
-            android:theme="@style/AppThemeDark">
-        </activity>
-        <activity
-            android:name=".ActivityCopyright"
-            android:label="Copyright"
-            android:icon="@drawable/copyright"
-            android:theme="@style/AppThemeDark">
-        </activity>
 
         <service
             android:name=".ServicePhoneSensor"

@@ -13,6 +13,7 @@ import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.phonesensor.phone.PhoneSensorPlatform;
 import org.md2k.utilities.Report.Log;
+import org.md2k.utilities.datakit.DataKitHandler;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -46,18 +47,19 @@ public abstract class PhoneSensorDataSource {
     protected String dataSourceType;
     protected DataSourceClient dataSourceClient;
     protected boolean enabled;
-    protected DataKitApi mDataKitApi;
     protected CallBack callBack;
     protected String frequency="UI";
     double EPSILON_NORMAL=2.0;
     double EPSILON_UI=5.0;
     double EPSILON_GAME=10.0;
     double EPSILON_FASTEST=50.0;
+    DataKitHandler dataKitHandler;
 
     public PhoneSensorDataSource(Context context, String dataSourceType, boolean enabled) {
         this.context = context;
         this.dataSourceType = dataSourceType;
         this.enabled = enabled;
+        dataKitHandler = DataKitHandler.getInstance(context);
     }
 
     public String getDataSourceType() {
@@ -92,12 +94,7 @@ public abstract class PhoneSensorDataSource {
         return new DataSourceBuilder().setId(null).setType(dataSourceType).setPlatform(platform).setApplication(application);
     }
 
-    public abstract void register(DataKitApi dataKitApi, DataSource dataSource, CallBack callback);
+    public abstract void register(DataSourceBuilder dataSourceBuilder, CallBack callback);
 
     public abstract void unregister();
-
-    private void sendMessage(DataType data) {
-        mDataKitApi.insert(dataSourceClient, data);
-        callBack.onReceivedData(data);
-    }
 }

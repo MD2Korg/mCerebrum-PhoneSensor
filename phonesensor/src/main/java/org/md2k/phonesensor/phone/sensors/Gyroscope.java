@@ -83,7 +83,7 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
             samples[1] = event.values[1];
             samples[2] = event.values[2];
             DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
-            mDataKitApi.insert(dataSourceClient, dataTypeFloatArray);
+            dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
             callBack.onReceivedData(dataTypeFloatArray);
         }
     }
@@ -97,9 +97,8 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataKitApi dataKitApi, DataSource dataSource, CallBack newcallBack) {
-        mDataKitApi = dataKitApi;
-        dataSourceClient = dataKitApi.register(dataSource).await();
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
+        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
         callBack = newcallBack;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Log.d(TAG, "gyroscope: register(): " + frequency);

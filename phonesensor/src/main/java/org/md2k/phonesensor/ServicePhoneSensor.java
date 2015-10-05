@@ -3,9 +3,14 @@ package org.md2k.phonesensor;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import org.md2k.datakitapi.DataKitApi;
+import android.widget.Toast;
+
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
+import org.md2k.utilities.Report.Log;
+import org.md2k.utilities.UI.UIShow;
+import org.md2k.utilities.datakit.DataKitHandler;
+
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
@@ -35,31 +40,53 @@ import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 
 public class ServicePhoneSensor extends Service {
     private static final String TAG = ServicePhoneSensor.class.getSimpleName();
-    public boolean isConnected=false;
-    DataKitApi dataKitApi = null;
     PhoneSensorDataSources phoneSensorDataSources = null;
+    DataKitHandler dataKitHandler;
 
     public void onCreate() {
         super.onCreate();
-        dataKitApi = new DataKitApi(getBaseContext());
-        if (!dataKitApi.connect(new OnConnectionListener() {
+        Log.d(TAG, "onCreate()");
+        if (Constants.TEST_BATTERY)
+            BCMRecord.getInstance();
+        if (!readSettings()) {
+            Log.d(TAG, "onCreate()..readSetting()=false");
+            UIShow.ErrorDialog(ServicePhoneSensor.this, "Configuration Error", "Configuration file for PhoneSensor doesn't exist.\n\nPlease go to Menu -> Settings");
+            stopSelf();
+        } else if (!connectDataKit()) {
+            Log.d(TAG, "onCreate()..connectDataKit()=false");
+            UIShow.ErrorDialog(ServicePhoneSensor.this, "DataKit Error", "DataKit is not available.\n\nPlease Install DataKit");
+            stopSelf();
+        } else
+            Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Service stared Successfully", Toast.LENGTH_LONG).show();
+
+    }
+
+    private boolean connectDataKit() {
+        dataKitHandler = DataKitHandler.getInstance(getApplicationContext());
+        return dataKitHandler.connect(new OnConnectionListener() {
             @Override
             public void onConnected() {
-                phoneSensorDataSources = new PhoneSensorDataSources(ServicePhoneSensor.this);
-                phoneSensorDataSources.register(dataKitApi);
-                isConnected=true;
+                phoneSensorDataSources.register();
             }
-        })) {
-            isConnected=false;
-        }
+        });
+    }
+
+    private boolean readSettings() {
+        phoneSensorDataSources = new PhoneSensorDataSources(ServicePhoneSensor.this);
+        return phoneSensorDataSources.size() != 0;
     }
 
     @Override
     public void onDestroy() {
-        if (phoneSensorDataSources != null)
+        Log.d(TAG, "onDestroy()...phoneSensorDataSources=" + phoneSensorDataSources + " isRunning=" + dataKitHandler.isConnected());
+        if (phoneSensorDataSources != null) {
             phoneSensorDataSources.unregister();
-        if(isConnected)
-            dataKitApi.disconnect();
+            phoneSensorDataSources = null;
+        }
+        if (Constants.TEST_BATTERY)
+            BCMRecord.getInstance().close();
+        if (dataKitHandler.isConnected()) dataKitHandler.disconnect();
+        dataKitHandler.close();
         super.onDestroy();
     }
 

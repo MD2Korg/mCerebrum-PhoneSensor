@@ -67,7 +67,7 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
     public void onSensorChanged(SensorEvent event) {
         float sample = event.values[0];
         DataTypeFloat dataTypeFloat = new DataTypeFloat(DateTime.getDateTime(), sample);
-        mDataKitApi.insert(dataSourceClient, dataTypeFloat);
+        dataKitHandler.insert(dataSourceClient, dataTypeFloat);
         callBack.onReceivedData(dataTypeFloat);
     }
 
@@ -80,9 +80,8 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataKitApi dataKitApi, DataSource dataSource, CallBack newcallBack) {
-        mDataKitApi = dataKitApi;
-        dataSourceClient = dataKitApi.register(dataSource).await();
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
+        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
         callBack = newcallBack;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);

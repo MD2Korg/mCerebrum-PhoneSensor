@@ -79,7 +79,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
             samples[1] = event.values[1];
             samples[2] = event.values[2];
             DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
-            mDataKitApi.insert(dataSourceClient, dataTypeFloatArray);
+            dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
             callBack.onReceivedData(dataTypeFloatArray);
         }
     }
@@ -92,9 +92,8 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataKitApi dataKitApi, DataSource dataSource, CallBack newcallBack) {
-        mDataKitApi = dataKitApi;
-        dataSourceClient = dataKitApi.register(dataSource).await();
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
+        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
         callBack = newcallBack;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);

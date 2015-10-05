@@ -5,8 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
-import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -78,7 +76,7 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
             samples[1] = event.values[1];
             samples[2] = event.values[2];
             DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
-            mDataKitApi.insert(dataSourceClient, dataTypeFloatArray);
+            dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
             callBack.onReceivedData(dataTypeFloatArray);
         }
     }
@@ -91,9 +89,8 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataKitApi dataKitApi, DataSource dataSource, CallBack newcallBack) {
-        mDataKitApi = dataKitApi;
-        dataSourceClient = dataKitApi.register(dataSource).await();
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
+        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
         callBack = newcallBack;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
