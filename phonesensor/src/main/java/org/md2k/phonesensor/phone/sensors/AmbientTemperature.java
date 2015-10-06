@@ -76,9 +76,8 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
-        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
-        callBack = newcallBack;
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+        super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);

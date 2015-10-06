@@ -108,7 +108,7 @@ public class PhoneSensorDataSources {
     }
 
     public void writeDataSourceToFile() throws IOException {
-        ArrayList<DataSource> dataSources = new ArrayList<DataSource>();
+        ArrayList<DataSource> dataSources = new ArrayList<>();
         if (phoneSensorDataSources == null) throw new NullPointerException();
         if (phoneSensorDataSources.size() == 0) throw new EmptyStackException();
         Log.d(TAG, "size=" + phoneSensorDataSources.size());
@@ -122,7 +122,7 @@ public class PhoneSensorDataSources {
         Files.writeDataSourceToFile(Constants.DIRECTORY, Constants.FILENAME, dataSources);
     }
 
-    HashMap<String, Integer> hm = new HashMap<String, Integer>();
+    HashMap<String, Integer> hm = new HashMap<>();
     long starttimestamp = 0;
 
     public void register() {
@@ -160,10 +160,11 @@ public class PhoneSensorDataSources {
     }
 
     public void unregister() {
-        hm.clear();
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
             if (!phoneSensorDataSources.get(i).isEnabled()) continue;
             phoneSensorDataSources.get(i).unregister();
         }
+        hm.clear();
+
     }
 }

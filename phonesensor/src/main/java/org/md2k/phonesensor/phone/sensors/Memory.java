@@ -62,10 +62,8 @@ public class Memory extends PhoneSensorDataSource {
 //        context.unregisterReceiver(batteryInfoReceiver);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
-        Log.d(TAG, "register() ...");
-        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
-        callBack = newcallBack;
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+        super.register(dataSourceBuilder, newCallBack);
         scheduler = new Handler();
         scheduler.post(statusMemory);
     }

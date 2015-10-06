@@ -50,29 +50,31 @@ public class ServicePhoneSensor extends Service {
             BCMRecord.getInstance();
         if (!readSettings()) {
             Log.d(TAG, "onCreate()..readSetting()=false");
-            UIShow.ErrorDialog(ServicePhoneSensor.this, "Configuration Error", "Configuration file for PhoneSensor doesn't exist.\n\nPlease go to Menu -> Settings");
+            UIShow.ErrorDialog(getApplicationContext(), "Configuration Error", "Configuration file for PhoneSensor doesn't exist.\n\nPlease go to Menu -> Settings");
             stopSelf();
         } else if (!connectDataKit()) {
             Log.d(TAG, "onCreate()..connectDataKit()=false");
-            UIShow.ErrorDialog(ServicePhoneSensor.this, "DataKit Error", "DataKit is not available.\n\nPlease Install DataKit");
+            UIShow.ErrorDialog(getApplicationContext(), "DataKit Error", "DataKit is not available.\n\nPlease Install DataKit");
             stopSelf();
         } else
-            Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Service stared Successfully", Toast.LENGTH_LONG).show();
-
+            Toast.makeText(getApplicationContext(), "PhoneSensor Service stared Successfully", Toast.LENGTH_LONG).show();
     }
 
     private boolean connectDataKit() {
+        Log.d(TAG, "connectDataKit()...");
+        DataKitHandler.getInstance(getApplicationContext()).close();
         dataKitHandler = DataKitHandler.getInstance(getApplicationContext());
         return dataKitHandler.connect(new OnConnectionListener() {
             @Override
             public void onConnected() {
+                Log.d(TAG, "onConnected()...");
                 phoneSensorDataSources.register();
             }
         });
     }
 
     private boolean readSettings() {
-        phoneSensorDataSources = new PhoneSensorDataSources(ServicePhoneSensor.this);
+        phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext());
         return phoneSensorDataSources.size() != 0;
     }
 

@@ -59,7 +59,6 @@ public abstract class PhoneSensorDataSource {
         this.context = context;
         this.dataSourceType = dataSourceType;
         this.enabled = enabled;
-        dataKitHandler = DataKitHandler.getInstance(context);
     }
 
     public String getDataSourceType() {
@@ -94,7 +93,11 @@ public abstract class PhoneSensorDataSource {
         return new DataSourceBuilder().setId(null).setType(dataSourceType).setPlatform(platform).setApplication(application);
     }
 
-    public abstract void register(DataSourceBuilder dataSourceBuilder, CallBack callback);
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+        dataKitHandler = DataKitHandler.getInstance(context);
+        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
+        callBack = newCallBack;
+    }
 
     public abstract void unregister();
 }

@@ -64,11 +64,9 @@ public class Battery extends PhoneSensorDataSource {
 //        context.unregisterReceiver(batteryInfoReceiver);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
-
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
         Log.d(TAG, "Battery(): register()");
-        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
-        callBack = newcallBack;
+        super.register(dataSourceBuilder, newCallBack);
         scheduler=new Handler();
         scheduler.post(batteryStatus);
     }

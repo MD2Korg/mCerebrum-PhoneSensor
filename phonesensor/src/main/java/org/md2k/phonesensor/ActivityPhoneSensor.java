@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -72,8 +73,7 @@ public class ActivityPhoneSensor extends Activity {
         buttonService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
-
+                Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);
                 if (buttonService.getText().equals("Start Service")) {
                     Log.d(TAG, "Button click: start service...");
                     startService(intent);
@@ -86,7 +86,7 @@ public class ActivityPhoneSensor extends Activity {
         findViewById(R.id.textViewTime).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ActivityPhoneSensor.this, ServicePhoneSensor.class);
+                Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);
                 if (((TextView) findViewById(R.id.textViewTime)).getText().equals("OFF")) {
                     startService(intent);
                 } else {
@@ -122,6 +122,12 @@ public class ActivityPhoneSensor extends Activity {
                 break;
             case R.id.action_about:
                 intent = new Intent(this, ActivityAbout.class);
+                try {
+                    intent.putExtra(org.md2k.utilities.Constants.VERSION_CODE, String.valueOf(this.getPackageManager().getPackageInfo(getPackageName(), 0).versionCode));
+                    intent.putExtra(org.md2k.utilities.Constants.VERSION_NAME, this.getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
                 startActivity(intent);
                 break;
             case R.id.action_copyright:
@@ -157,8 +163,8 @@ public class ActivityPhoneSensor extends Activity {
         return row;
     }
 
-    void prepareTable(PhoneSensorDataSources phsDataSources) {
-        ArrayList<PhoneSensorDataSource> phoneSensorDataSources = phsDataSources.getPhoneSensorDataSources();
+    void prepareTable() {
+        ArrayList<PhoneSensorDataSource> phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext()).getPhoneSensorDataSources();
         TableLayout ll = (TableLayout) findViewById(R.id.tableLayout);
         ll.removeAllViews();
         ll.addView(createDefaultRow());
@@ -233,9 +239,7 @@ public class ActivityPhoneSensor extends Activity {
     public void onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("phonesensor"));
-        PhoneSensorDataSources phoneSensorDataSources;
-        phoneSensorDataSources = new PhoneSensorDataSources(ActivityPhoneSensor.this);
-        prepareTable(phoneSensorDataSources);
+        prepareTable();
         mHandler.post(runnable);
         super.onResume();
     }
@@ -244,6 +248,7 @@ public class ActivityPhoneSensor extends Activity {
     public void onPause() {
         mHandler.removeCallbacks(runnable);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+
         super.onPause();
     }
 
@@ -275,4 +280,9 @@ public class ActivityPhoneSensor extends Activity {
             }
         }
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

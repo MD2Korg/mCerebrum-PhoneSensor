@@ -92,33 +92,34 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
-        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
-        callBack = newcallBack;
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+        super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Log.d(TAG,"accelerometer: register()"+frequency);
-        if(frequency.equals(UI)) {
-            FILTER_DATA_MIN_TIME=1000.0/(16.0+EPSILON_UI);
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
-            Log.d(TAG, "accelerometer: register() inside: " + frequency);
-        }
-        else if(frequency.equals(GAME)){
-            FILTER_DATA_MIN_TIME=1000.0/(50.0+EPSILON_GAME);
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
+        switch (frequency) {
+            case UI:
+                FILTER_DATA_MIN_TIME = 1000.0 / (16.0 + EPSILON_UI);
+                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
+                Log.d(TAG, "accelerometer: register() inside: " + frequency);
+                break;
+            case GAME:
+                FILTER_DATA_MIN_TIME = 1000.0 / (50.0 + EPSILON_GAME);
+                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
 
-        Log.d(TAG, "accelerometer: register() inside: " + frequency);
-    }
-        else if(frequency.equals(FASTEST)){
-            FILTER_DATA_MIN_TIME=1000.0/(100.0+EPSILON_FASTEST);
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
-            Log.d(TAG, "accelerometer: register() inside: " + frequency);
+                Log.d(TAG, "accelerometer: register() inside: " + frequency);
+                break;
+            case FASTEST:
+                FILTER_DATA_MIN_TIME = 1000.0 / (100.0 + EPSILON_FASTEST);
+                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                Log.d(TAG, "accelerometer: register() inside: " + frequency);
 
-        }
-        else if(frequency.equals(NORMAL)){
-            FILTER_DATA_MIN_TIME=1000.0/(6.0+EPSILON_NORMAL);
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            Log.d(TAG, "accelerometer: register() inside: " + frequency);
+                break;
+            case NORMAL:
+                FILTER_DATA_MIN_TIME = 1000.0 / (6.0 + EPSILON_NORMAL);
+                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                Log.d(TAG, "accelerometer: register() inside: " + frequency);
+                break;
         }
     }
 }

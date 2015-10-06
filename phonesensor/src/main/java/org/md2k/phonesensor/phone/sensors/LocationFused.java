@@ -1,8 +1,14 @@
 package org.md2k.phonesensor.phone.sensors;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -13,9 +19,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
@@ -84,10 +88,39 @@ public class LocationFused extends PhoneSensorDataSource implements
         callBack.onReceivedData(dataTypeDoubleArray);
     }
 
+    public void statusCheck() {
+        final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it? \n" +
+                "\nIf it is,Please select Mode -> High accuracy")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alert.show();
+    }
     @Override
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
-        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
-        this.callBack = newCallBack;
+        super.register(dataSourceBuilder, newCallBack);
+        statusCheck();
 
         if (!isGooglePlayServicesAvailable()) {
             return;
@@ -102,12 +135,8 @@ public class LocationFused extends PhoneSensorDataSource implements
     }
     private boolean isGooglePlayServicesAvailable() {
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-        if (ConnectionResult.SUCCESS == status) {
-            return true;
-        } else {
-//            GooglePlayServicesUtil.getErrorDialog(status, context, 0).show();
-            return false;
-        }
+        //            GooglePlayServicesUtil.getErrorDialog(status, context, 0).show();
+        return ConnectionResult.SUCCESS == status;
     }
 
     @Override
@@ -121,6 +150,7 @@ public class LocationFused extends PhoneSensorDataSource implements
         startLocationUpdates();
     }
     protected void startLocationUpdates() {
+
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }

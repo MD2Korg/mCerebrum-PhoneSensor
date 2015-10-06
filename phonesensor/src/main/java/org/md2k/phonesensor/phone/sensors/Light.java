@@ -82,18 +82,23 @@ public class Light extends PhoneSensorDataSource implements SensorEventListener{
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newcallBack) {
-        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
-        callBack = newcallBack;
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+        super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        if(frequency.equals(UI))
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
-        else if(frequency.equals(GAME))
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
-        else if(frequency.equals(FASTEST))
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        else if(frequency.equals(NORMAL))
-            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        switch (frequency) {
+            case UI:
+                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
+                break;
+            case GAME:
+                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
+                break;
+            case FASTEST:
+                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                break;
+            case NORMAL:
+                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                break;
+        }
     }
 }
