@@ -35,5 +35,5 @@ public class Constants {
     public static final String FILENAME = "config_phonesensor.json";
     public static final String DIR_FILENAME = DIRECTORY + File.separator + FILENAME;
     public static final String SERVICE_NAME = "org.md2k.phonesensor.ServicePhoneSensor";
-    public static final boolean TEST_BATTERY = false;
+    public static final boolean TEST_BATTERY = true;
 }
