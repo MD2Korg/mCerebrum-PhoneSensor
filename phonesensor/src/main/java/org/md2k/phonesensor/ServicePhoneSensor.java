@@ -1,31 +1,34 @@
 package org.md2k.phonesensor;
 
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Report.Log;
-import org.md2k.utilities.UI.UIShow;
 import org.md2k.utilities.datakit.DataKitHandler;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- *
+ * <p/>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * <p/>
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- *
+ * <p/>
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * <p/>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -49,15 +52,53 @@ public class ServicePhoneSensor extends Service {
         if (Constants.TEST_BATTERY)
             BCMRecord.getInstance();
         if (!readSettings()) {
-            Log.d(TAG, "onCreate()..readSetting()=false");
-            UIShow.ErrorDialog(getApplicationContext(), "Configuration Error", "Configuration file for PhoneSensor doesn't exist.\n\nPlease go to Menu -> Settings");
+            showAlertDialogConfiguration(this);
             stopSelf();
         } else if (!connectDataKit()) {
-            Log.d(TAG, "onCreate()..connectDataKit()=false");
-            UIShow.ErrorDialog(getApplicationContext(), "DataKit Error", "DataKit is not available.\n\nPlease Install DataKit");
+            showAlertDialogDataKit(this);
+            phoneSensorDataSources=null;
             stopSelf();
         } else
             Toast.makeText(getApplicationContext(), "PhoneSensor Service stared Successfully", Toast.LENGTH_LONG).show();
+    }
+    void showAlertDialogConfiguration(final Context context){
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Configuration Error")
+                .setIcon(R.drawable.ic_error_outline_white_24dp)
+                .setMessage("Phone Sensor is not configured.\n\n Please go to Menu -> Settings")
+                .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(context, ActivityPhoneSensorSettings.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create();
+
+        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alertDialog.show();
+    }
+    //            UIShow.ErrorDialog(getApplicationContext(), "DataKit Error", "DataKit is not available.\n\nPlease Install DataKit");
+    void showAlertDialogDataKit(final Context context){
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("DataKit Error")
+                .setIcon(R.drawable.ic_error_outline_white_24dp)
+                .setMessage("DataKit is not installed.\n\n Please install DataKit")
+                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create();
+
+        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alertDialog.show();
     }
 
     private boolean connectDataKit() {
@@ -80,15 +121,15 @@ public class ServicePhoneSensor extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy()...phoneSensorDataSources=" + phoneSensorDataSources + " isRunning=" + dataKitHandler.isConnected());
         if (phoneSensorDataSources != null) {
             phoneSensorDataSources.unregister();
             phoneSensorDataSources = null;
         }
         if (Constants.TEST_BATTERY)
             BCMRecord.getInstance().close();
-        if (dataKitHandler.isConnected()) dataKitHandler.disconnect();
-        dataKitHandler.close();
+        if (dataKitHandler != null && dataKitHandler.isConnected()) dataKitHandler.disconnect();
+        if (dataKitHandler != null)
+            dataKitHandler.close();
         super.onDestroy();
     }
 

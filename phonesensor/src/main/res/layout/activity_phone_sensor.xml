@@ -78,13 +78,20 @@
             style="@style/view_divider_dark" />
 
 
-        <TableLayout
-            android:id="@+id/tableLayout"
-            android:layout_width="match_parent"
+        <ScrollView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:stretchColumns="*">
+            android:id="@+id/scrollView" >
 
-        </TableLayout>
+            <TableLayout
+                android:id="@+id/tableLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+
+            </TableLayout>
+        </ScrollView>
+
     </LinearLayout>
 
 
