@@ -59,13 +59,13 @@ public class ServicePhoneSensor extends Service {
             phoneSensorDataSources=null;
             stopSelf();
         } else
-            Toast.makeText(getApplicationContext(), "PhoneSensor Service stared Successfully", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "PhoneSensor Service started Successfully", Toast.LENGTH_LONG).show();
     }
     void showAlertDialogConfiguration(final Context context){
         AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Configuration Error")
+                .setTitle("Error: Configuration File")
                 .setIcon(R.drawable.ic_error_outline_white_24dp)
-                .setMessage("Phone Sensor is not configured.\n\n Please go to Menu -> Settings")
+                .setMessage("Phone Sensor is not configured.\n\n Please go to Menu -> Settings (or, click Settings below)")
                 .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -87,7 +87,7 @@ public class ServicePhoneSensor extends Service {
     //            UIShow.ErrorDialog(getApplicationContext(), "DataKit Error", "DataKit is not available.\n\nPlease Install DataKit");
     void showAlertDialogDataKit(final Context context){
         AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("DataKit Error")
+                .setTitle("Error: DataKit")
                 .setIcon(R.drawable.ic_error_outline_white_24dp)
                 .setMessage("DataKit is not installed.\n\n Please install DataKit")
                 .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
