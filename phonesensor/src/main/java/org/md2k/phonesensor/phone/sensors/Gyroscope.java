@@ -6,7 +6,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -19,17 +18,17 @@ import org.md2k.utilities.Report.Log;
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- *
+ * <p/>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * <p/>
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- *
+ * <p/>
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * <p/>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -44,45 +43,42 @@ import org.md2k.utilities.Report.Log;
 public class Gyroscope extends PhoneSensorDataSource implements SensorEventListener {
     private static final String TAG = Gyroscope.class.getSimpleName();
     private SensorManager mSensorManager;
-    private Sensor mSensor;
-    public static final String NORMAL="Normal: ~6 Hz";
-    public static final String UI="UI: ~16 Hz";
-    public static final String GAME="Game: ~50 Hz";
-    public static final String FASTEST="Fastest: ~100Hz";
-    long lastSaved=DateTime.getDateTime();
+    private static final String NORMAL = "Normal: ~6 Hz";
+    private static final String UI = "UI: ~16 Hz";
+    private static final String GAME = "Game: ~50 Hz";
+    private static final String FASTEST = "Fastest: ~100Hz";
 
-    public static String[] frequencyOptions={NORMAL,UI,GAME,FASTEST};
+    public static final String[] frequencyOptions = {NORMAL, UI, GAME, FASTEST};
 
     public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder=super.createDataSourceBuilder();
-        if(dataSourceBuilder==null) return null;
-        dataSourceBuilder=dataSourceBuilder.setMetadata("frequency", frequency);
+        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
+        if (dataSourceBuilder == null) return null;
+        dataSourceBuilder = dataSourceBuilder.setMetadata("frequency", frequency);
         return dataSourceBuilder;
     }
 
-    public void updateDataSource(DataSource dataSource){
+    public void updateDataSource(DataSource dataSource) {
         super.updateDataSource(dataSource);
-        frequency=dataSource.getMetadata().get("frequency");
+        frequency = dataSource.getMetadata().get("frequency");
     }
 
-    public Gyroscope(Context context, boolean enabled) {
-        super(context, DataSourceType.GYROSCOPE, enabled);
-        frequency=UI;
+    public Gyroscope(Context context) {
+        super(context, DataSourceType.GYROSCOPE);
+        frequency = UI;
 
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        long curTime=DateTime.getDateTime();
-            lastSaved = System.currentTimeMillis();
+        long curTime = DateTime.getDateTime();
 
-            float[] samples = new float[3];
-            samples[0] = event.values[0];
-            samples[1] = event.values[1];
-            samples[2] = event.values[2];
-            DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
-            dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
-            callBack.onReceivedData(dataTypeFloatArray);
+        float[] samples = new float[3];
+        samples[0] = event.values[0];
+        samples[1] = event.values[1];
+        samples[2] = event.values[2];
+        DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
+        dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
+        callBack.onReceivedData(dataTypeFloatArray);
     }
 
     @Override
@@ -98,7 +94,7 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Log.d(TAG, "gyroscope: register(): " + frequency);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         switch (frequency) {
             case UI:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);

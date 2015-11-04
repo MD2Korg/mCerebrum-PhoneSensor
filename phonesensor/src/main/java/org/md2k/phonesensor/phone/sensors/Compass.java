@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -16,17 +17,17 @@ import org.md2k.phonesensor.phone.CallBack;
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- *
+ * <p/>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * <p/>
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- *
+ * <p/>
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * <p/>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,76 +39,68 @@ import org.md2k.phonesensor.phone.CallBack;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Compass extends PhoneSensorDataSource implements SensorEventListener{
-    private static final String TAG = Compass.class.getSimpleName();
+public class Compass extends PhoneSensorDataSource implements SensorEventListener {
     private SensorManager mSensorManager;
-    private Sensor mSensor;
-    public static final String NORMAL="Normal: ~6 Hz";
-    public static final String UI="UI: ~16 Hz";
-    public static final String GAME="Game: ~50 Hz";
-    public static final String FASTEST="Fastest: ~100Hz";
-    long lastSaved=DateTime.getDateTime();
-    double FILTER_DATA_MIN_TIME;
+    private static final String NORMAL = "Normal: ~6 Hz";
+    private static final String UI = "UI: ~16 Hz";
+    private static final String GAME = "Game: ~50 Hz";
+    private static final String FASTEST = "Fastest: ~100Hz";
 
-    public static String[] frequencyOptions={NORMAL,UI,GAME,FASTEST};
+    public static final String[] frequencyOptions = {NORMAL, UI, GAME, FASTEST};
 
     public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder=super.createDataSourceBuilder();
-        if(dataSourceBuilder==null) return null;
-        dataSourceBuilder=dataSourceBuilder.setMetadata("frequency", frequency);
+        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
+        if (dataSourceBuilder == null) return null;
+        dataSourceBuilder = dataSourceBuilder.setMetadata("frequency", frequency);
         return dataSourceBuilder;
     }
 
-    public void updateDataSource(DataSource dataSource){
+    public void updateDataSource(DataSource dataSource) {
         super.updateDataSource(dataSource);
-        frequency=dataSource.getMetadata().get("frequency");
+        frequency = dataSource.getMetadata().get("frequency");
     }
-    public Compass(Context context, boolean enabled) {
-        super(context, DataSourceType.COMPASS, enabled);
-        frequency=UI;
+
+    public Compass(Context context) {
+        super(context, DataSourceType.COMPASS);
+        frequency = UI;
     }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
-        long curTime=DateTime.getDateTime();
-        if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
-            lastSaved = System.currentTimeMillis();
-            float[] samples = new float[3];
-            samples[0] = event.values[0];
-            samples[1] = event.values[1];
-            samples[2] = event.values[2];
-            DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
-            dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
-            callBack.onReceivedData(dataTypeFloatArray);
-        }
+        long curTime = DateTime.getDateTime();
+        float[] samples = new float[3];
+        samples[0] = event.values[0];
+        samples[1] = event.values[1];
+        samples[2] = event.values[2];
+        DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
+        dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
+        callBack.onReceivedData(dataTypeFloatArray);
     }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
-    public void unregister(){
+    public void unregister() {
         mSensorManager.unregisterListener(this);
     }
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         switch (frequency) {
             case UI:
-                FILTER_DATA_MIN_TIME = 1000.0 / (16.0 + EPSILON_UI);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
             case GAME:
-                FILTER_DATA_MIN_TIME = 1000.0 / (50.0 + EPSILON_GAME);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
                 break;
             case FASTEST:
-                FILTER_DATA_MIN_TIME = 1000.0 / (100.0 + EPSILON_FASTEST);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 break;
             case NORMAL:
-                FILTER_DATA_MIN_TIME = 1000.0 / (6.0 + EPSILON_NORMAL);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

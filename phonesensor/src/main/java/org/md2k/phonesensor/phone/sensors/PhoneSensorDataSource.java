@@ -2,8 +2,6 @@ package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
 
-import org.md2k.datakitapi.DataKitApi;
-import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.application.ApplicationBuilder;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -43,22 +41,18 @@ import org.md2k.utilities.datakit.DataKitHandler;
  */
 public abstract class PhoneSensorDataSource {
     private static final String TAG = PhoneSensorDataSource.class.getSimpleName();
-    protected Context context;
-    protected String dataSourceType;
-    protected DataSourceClient dataSourceClient;
-    protected boolean enabled;
-    protected CallBack callBack;
-    protected String frequency="UI";
-    double EPSILON_NORMAL=2.0;
-    double EPSILON_UI=5.0;
-    double EPSILON_GAME=10.0;
-    double EPSILON_FASTEST=50.0;
+    final Context context;
+    private final String dataSourceType;
+    DataSourceClient dataSourceClient;
+    private boolean enabled;
+    CallBack callBack;
+    String frequency="UI";
     DataKitHandler dataKitHandler;
 
-    public PhoneSensorDataSource(Context context, String dataSourceType, boolean enabled) {
+    PhoneSensorDataSource(Context context, String dataSourceType) {
         this.context = context;
         this.dataSourceType = dataSourceType;
-        this.enabled = enabled;
+        this.enabled = false;
     }
 
     public String getDataSourceType() {

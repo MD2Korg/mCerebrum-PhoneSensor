@@ -5,8 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
-import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -44,14 +42,12 @@ import org.md2k.utilities.Report.Log;
 public class Accelerometer extends PhoneSensorDataSource implements SensorEventListener {
     private static final String TAG = Accelerometer.class.getSimpleName();
     private SensorManager mSensorManager;
-    private Sensor mSensor;
-    public static final String NORMAL = "Normal: ~6 Hz";
-    public static final String UI = "UI: ~16 Hz";
-    public static final String GAME = "Game: ~50 Hz";
-    public static final String FASTEST = "Fastest: ~100Hz";
-    long lastSaved = DateTime.getDateTime();
+    private static final String NORMAL = "Normal: ~6 Hz";
+    private static final String UI = "UI: ~16 Hz";
+    private static final String GAME = "Game: ~50 Hz";
+    private static final String FASTEST = "Fastest: ~100Hz";
 
-    public static String[] frequencyOptions = {NORMAL, UI, GAME, FASTEST};
+    public static final String[] frequencyOptions = {NORMAL, UI, GAME, FASTEST};
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
@@ -65,15 +61,14 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         frequency = dataSource.getMetadata().get("frequency");
     }
 
-    public Accelerometer(Context context, boolean enabled) {
-        super(context, DataSourceType.ACCELEROMETER, enabled);
+    public Accelerometer(Context context) {
+        super(context, DataSourceType.ACCELEROMETER);
         frequency = UI;
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         long curTime = DateTime.getDateTime();
-        lastSaved = System.currentTimeMillis();
         float[] samples = new float[3];
         samples[0] = event.values[0];
         samples[1] = event.values[1];
@@ -95,7 +90,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Log.d(TAG, "accelerometer: register()" + frequency);
         switch (frequency) {
             case UI:

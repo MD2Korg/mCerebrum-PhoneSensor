@@ -5,8 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
-import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -41,9 +39,7 @@ import org.md2k.phonesensor.phone.CallBack;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class AmbientTemperature extends PhoneSensorDataSource implements SensorEventListener{
-    private static final String TAG = AmbientTemperature.class.getSimpleName();
     private SensorManager mSensorManager;
-    private Sensor mSensor;
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder=super.createDataSourceBuilder();
@@ -56,8 +52,8 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
         super.updateDataSource(dataSource);
         frequency=dataSource.getMetadata().get("frequency");
     }
-    public AmbientTemperature(Context context, boolean enabled) {
-        super(context, DataSourceType.AMBIENT_TEMPERATURE, enabled);
+    public AmbientTemperature(Context context) {
+        super(context, DataSourceType.AMBIENT_TEMPERATURE);
         frequency="1.0 Hz";
     }
     @Override
@@ -79,7 +75,7 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 }

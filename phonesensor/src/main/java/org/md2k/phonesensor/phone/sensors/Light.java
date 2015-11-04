@@ -6,7 +6,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -41,15 +40,13 @@ import org.md2k.phonesensor.phone.CallBack;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Light extends PhoneSensorDataSource implements SensorEventListener{
-    private static final String TAG = Light.class.getSimpleName();
     private SensorManager mSensorManager;
-    private Sensor mSensor;
-    public static final String NORMAL="Normal: ~6 Hz";
-    public static final String UI="UI: ~16 Hz";
-    public static final String GAME="Game: ~50 Hz";
-    public static final String FASTEST="Fastest: ~100Hz";
+    private static final String NORMAL="Normal: ~6 Hz";
+    private static final String UI="UI: ~16 Hz";
+    private static final String GAME="Game: ~50 Hz";
+    private static final String FASTEST="Fastest: ~100Hz";
 
-    public static String[] frequencyOptions={NORMAL,UI,GAME,FASTEST};
+    public static final String[] frequencyOptions={NORMAL,UI,GAME,FASTEST};
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder=super.createDataSourceBuilder();
@@ -62,8 +59,8 @@ public class Light extends PhoneSensorDataSource implements SensorEventListener{
         super.updateDataSource(dataSource);
         frequency=dataSource.getMetadata().get("frequency");
     }
-    public Light(Context context, boolean enabled) {
-        super(context, DataSourceType.LIGHT, enabled);
+    public Light(Context context) {
+        super(context, DataSourceType.LIGHT);
         frequency=UI;
     }
     @Override
@@ -85,7 +82,7 @@ public class Light extends PhoneSensorDataSource implements SensorEventListener{
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         switch (frequency) {
             case UI:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);

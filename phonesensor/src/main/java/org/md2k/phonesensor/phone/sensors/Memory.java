@@ -4,19 +4,12 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Handler;
 
-import org.md2k.datakitapi.DataKitApi;
-import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
-import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.BCMRecord;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.Report.Log;
-
-import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -45,12 +38,11 @@ import java.io.RandomAccessFile;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Memory extends PhoneSensorDataSource {
-    private static final String TAG = Memory.class.getSimpleName();
-    Handler scheduler;
+    private Handler scheduler;
 
 
-    public Memory(Context context, boolean enabled) {
-        super(context, DataSourceType.MEMORY, enabled);
+    public Memory(Context context) {
+        super(context, DataSourceType.MEMORY);
         frequency = "1.0 Hz";
     }
 
@@ -71,14 +63,14 @@ public class Memory extends PhoneSensorDataSource {
     private float[] readUsage() {
         float[] samples = new float[2];
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         activityManager.getMemoryInfo(mi);
         samples[0] = (float) mi.totalMem/(float)(1024*1024);
         samples[1] = (float)mi.availMem/(float)(1024*1024);
         return samples;
     }
 
-    private Runnable statusMemory = new Runnable() {
+    private final Runnable statusMemory = new Runnable() {
 
         @Override
         public void run() {

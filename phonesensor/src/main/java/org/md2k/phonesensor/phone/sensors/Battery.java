@@ -1,21 +1,16 @@
 package org.md2k.phonesensor.phone.sensors;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Handler;
 
-import org.md2k.datakitapi.DataKitApi;
-import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.BCMRecord;
-import org.md2k.phonesensor.Constants;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.utilities.Report.Log;
 
@@ -47,11 +42,11 @@ import org.md2k.utilities.Report.Log;
  */
 public class Battery extends PhoneSensorDataSource {
     private static final String TAG = Battery.class.getSimpleName();
-    Handler scheduler;
+    private Handler scheduler;
 
 
-    public Battery(Context context, boolean enabled) {
-        super(context, DataSourceType.BATTERY, enabled);
+    public Battery(Context context) {
+        super(context, DataSourceType.BATTERY);
         frequency="1.0 Hz";
     }
 
@@ -70,12 +65,13 @@ public class Battery extends PhoneSensorDataSource {
         scheduler=new Handler();
         scheduler.post(batteryStatus);
     }
-    private Runnable batteryStatus=new Runnable(){
+    private final Runnable batteryStatus=new Runnable(){
 
         @Override
         public void run() {
             IntentFilter iFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
             Intent intent = context.registerReceiver(null, iFilter);
+            assert intent != null;
             int  level= intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
             int  scale= intent.getIntExtra(BatteryManager.EXTRA_SCALE,0);
             float percentage;

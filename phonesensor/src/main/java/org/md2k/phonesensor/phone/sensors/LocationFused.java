@@ -13,8 +13,6 @@ import android.view.WindowManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -57,17 +55,17 @@ public class LocationFused extends PhoneSensorDataSource implements
         GoogleApiClient.OnConnectionFailedListener{
 
     private static final String TAG = LocationFused.class.getSimpleName();
-    LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
     private static final long INTERVAL = 1000L;
     private static final long FASTEST_INTERVAL = 1000L;
 //    public static String[] frequencyOptions={"5 Second","30 Second","60 Second","5 Minutes"};
 
-    public LocationFused(Context context, boolean enabled) {
-        super(context, DataSourceType.LOCATION, enabled);
+    public LocationFused(Context context) {
+        super(context, DataSourceType.LOCATION);
 
     }
-    protected void createLocationRequest() {
+    private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
@@ -88,7 +86,7 @@ public class LocationFused extends PhoneSensorDataSource implements
         callBack.onReceivedData(dataTypeDoubleArray);
     }
 
-    public void statusCheck() {
+    private void statusCheck() {
         final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -149,12 +147,12 @@ public class LocationFused extends PhoneSensorDataSource implements
     public void onConnected(Bundle bundle) {
         startLocationUpdates();
     }
-    protected void startLocationUpdates() {
+    private void startLocationUpdates() {
 
-        PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this).await();
     }
-    protected void stopLocationUpdates() {
+    private void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }

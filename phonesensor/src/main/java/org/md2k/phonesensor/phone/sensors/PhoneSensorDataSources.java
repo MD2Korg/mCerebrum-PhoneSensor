@@ -60,17 +60,17 @@ public class PhoneSensorDataSources {
     public PhoneSensorDataSources(Context context) {
         this.context = context;
         phoneSensorDataSources = new ArrayList<>();
-        phoneSensorDataSources.add(new Battery(context, false));
-        phoneSensorDataSources.add(new LocationFused(context, false));
-        phoneSensorDataSources.add(new Accelerometer(context, false));
-        phoneSensorDataSources.add(new Gyroscope(context, false));
-        phoneSensorDataSources.add(new Compass(context, false));
-        phoneSensorDataSources.add(new Light(context, false));
-        phoneSensorDataSources.add(new Pressure(context, false));
-        phoneSensorDataSources.add(new AmbientTemperature(context, false));
-        phoneSensorDataSources.add(new Proximity(context, false));
-        phoneSensorDataSources.add(new CPU(context, false));
-        phoneSensorDataSources.add(new Memory(context, false));
+        phoneSensorDataSources.add(new Battery(context));
+        phoneSensorDataSources.add(new LocationFused(context));
+        phoneSensorDataSources.add(new Accelerometer(context));
+        phoneSensorDataSources.add(new Gyroscope(context));
+        phoneSensorDataSources.add(new Compass(context));
+        phoneSensorDataSources.add(new Light(context));
+        phoneSensorDataSources.add(new Pressure(context));
+        phoneSensorDataSources.add(new AmbientTemperature(context));
+        phoneSensorDataSources.add(new Proximity(context));
+        phoneSensorDataSources.add(new CPU(context));
+        phoneSensorDataSources.add(new Memory(context));
 
         try {
             readDataSourceFromFile();

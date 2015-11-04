@@ -6,7 +6,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -41,10 +40,7 @@ import org.md2k.phonesensor.phone.CallBack;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Pressure extends PhoneSensorDataSource implements SensorEventListener {
-    private static final String TAG = Pressure.class.getSimpleName();
     private SensorManager mSensorManager;
-    private Sensor mSensor;
-//    public static String[] frequencyOptions={"Normal","UI","Game","Fastest"};
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
@@ -58,8 +54,8 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
         frequency = dataSource.getMetadata().get("frequency");
     }
 
-    public Pressure(Context context, boolean enabled) {
-        super(context, DataSourceType.PRESSURE, enabled);
+    public Pressure(Context context) {
+        super(context, DataSourceType.PRESSURE);
         frequency = "~6 Hz";
     }
 
@@ -83,7 +79,7 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 }

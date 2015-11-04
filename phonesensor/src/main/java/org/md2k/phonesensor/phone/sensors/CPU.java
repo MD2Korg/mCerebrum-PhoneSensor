@@ -3,16 +3,12 @@ package org.md2k.phonesensor.phone.sensors;
 import android.content.Context;
 import android.os.Handler;
 
-import org.md2k.datakitapi.DataKitApi;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
-import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.BCMRecord;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.Report.Log;
-
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -43,12 +39,11 @@ import java.io.RandomAccessFile;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class CPU extends PhoneSensorDataSource {
-    private static final String TAG = CPU.class.getSimpleName();
-    Handler scheduler;
+    private Handler scheduler;
 
 
-    public CPU(Context context, boolean enabled) {
-        super(context, DataSourceType.CPU, enabled);
+    public CPU(Context context) {
+        super(context, DataSourceType.CPU);
         frequency="1.0 Hz";
     }
 
@@ -80,14 +75,9 @@ public class CPU extends PhoneSensorDataSource {
             ex.printStackTrace();
         }
     }
-    private Runnable statusFirst=new Runnable() {
-        @Override
-        public void run() {
 
-        }
-    };
-    long curValues[]=new long[2];
-    private Runnable statusCPU =new Runnable(){
+    private long[] curValues=new long[2];
+    private final Runnable statusCPU =new Runnable(){
         @Override
         public void run() {
             long values[]=new long[2];
