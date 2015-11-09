@@ -17,7 +17,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.phonesensor.phone.sensors.Accelerometer;
 import org.md2k.phonesensor.phone.sensors.Compass;
 import org.md2k.phonesensor.phone.sensors.Gyroscope;
-import org.md2k.phonesensor.phone.sensors.Light;
+import org.md2k.phonesensor.phone.sensors.AmbientLight;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Apps;
@@ -109,7 +109,7 @@ public class ActivityPhoneSensorSettings extends PreferenceActivity {
                 switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Compass.frequencyOptions));
                 break;
             case (DataSourceType.LIGHT):
-                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Light.frequencyOptions));
+                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(AmbientLight.frequencyOptions));
                 break;
             case (DataSourceType.PRESSURE):
 //                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Pressure.frequencyOptions));

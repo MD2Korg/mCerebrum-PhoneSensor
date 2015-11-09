@@ -65,7 +65,7 @@ public class PhoneSensorDataSources {
         phoneSensorDataSources.add(new Accelerometer(context));
         phoneSensorDataSources.add(new Gyroscope(context));
         phoneSensorDataSources.add(new Compass(context));
-        phoneSensorDataSources.add(new Light(context));
+        phoneSensorDataSources.add(new AmbientLight(context));
         phoneSensorDataSources.add(new Pressure(context));
         phoneSensorDataSources.add(new AmbientTemperature(context));
         phoneSensorDataSources.add(new Proximity(context));

@@ -39,7 +39,7 @@ import org.md2k.phonesensor.phone.CallBack;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Light extends PhoneSensorDataSource implements SensorEventListener{
+public class AmbientLight extends PhoneSensorDataSource implements SensorEventListener{
     private SensorManager mSensorManager;
     private static final String NORMAL="Normal: ~6 Hz";
     private static final String UI="UI: ~16 Hz";
@@ -59,8 +59,8 @@ public class Light extends PhoneSensorDataSource implements SensorEventListener{
         super.updateDataSource(dataSource);
         frequency=dataSource.getMetadata().get("frequency");
     }
-    public Light(Context context) {
-        super(context, DataSourceType.LIGHT);
+    public AmbientLight(Context context) {
+        super(context, DataSourceType.AMBIENT_LIGHT);
         frequency=UI;
     }
     @Override
