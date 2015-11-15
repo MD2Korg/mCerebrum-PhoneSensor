@@ -60,7 +60,7 @@ public class Light extends PhoneSensorDataSource implements SensorEventListener{
         frequency=dataSource.getMetadata().get("frequency");
     }
     public Light(Context context) {
-        super(context, DataSourceType.LIGHT);
+        super(context, DataSourceType.AMBIENT_LIGHT);
         frequency=UI;
     }
     @Override
