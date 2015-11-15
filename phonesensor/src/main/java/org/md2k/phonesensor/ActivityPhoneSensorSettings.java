@@ -108,7 +108,7 @@ public class ActivityPhoneSensorSettings extends PreferenceActivity {
             case (DataSourceType.COMPASS):
                 switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Compass.frequencyOptions));
                 break;
-            case (DataSourceType.LIGHT):
+            case (DataSourceType.AMBIENT_LIGHT):
                 switchPreference.setOnPreferenceClickListener(alertDialogFrequency(AmbientLight.frequencyOptions));
                 break;
             case (DataSourceType.PRESSURE):
