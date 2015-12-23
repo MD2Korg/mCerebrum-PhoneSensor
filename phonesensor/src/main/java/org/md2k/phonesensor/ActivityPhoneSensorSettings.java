@@ -8,6 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.SwitchPreference;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -51,19 +52,20 @@ import java.io.IOException;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class ActivityPhoneSensorSettings extends PreferenceActivity {
+public class ActivityPhoneSensorSettings extends AppCompatActivity {
     private static final String TAG = ActivityPhoneSensorSettings.class.getSimpleName();
-    PhoneSensorDataSources phoneSensorDataSources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        readConfiguration();
-        createPreferenceScreen();
-        setBackButton();
-        setSaveButton();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_phonesensor_settings);
+        getFragmentManager().beginTransaction().replace(R.id.layout_preference_fragment,
+                new PrefsFragmentPhoneSensorSettings()).commit();
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -75,160 +77,4 @@ public class ActivityPhoneSensorSettings extends PreferenceActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    void createPreferenceScreen() {
-        setContentView(R.layout.activity_phonesensor_settings);
-        addPreferencesFromResource(R.xml.pref_phonesensor_platform);
-        addPreferenceScreenSensors();
-        updatePreferenceScreen();
-    }
-
-    void readConfiguration() {
-        phoneSensorDataSources = new PhoneSensorDataSources(ActivityPhoneSensorSettings.this);
-    }
-
-    private SwitchPreference createSwitchPreference(String dataSourceType) {
-        SwitchPreference switchPreference = new SwitchPreference(this);
-        switchPreference.setKey(dataSourceType);
-        String title = dataSourceType;
-        title = title.replace("_", " ");
-        title = title.substring(0, 1).toUpperCase() + title.substring(1).toLowerCase();
-        switchPreference.setTitle(title);
-        switchPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
-        switch (dataSourceType) {
-            case (DataSourceType.ACCELEROMETER):
-                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Accelerometer.frequencyOptions));
-                break;
-            case (DataSourceType.GYROSCOPE):
-                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Gyroscope.frequencyOptions));
-                break;
-            case (DataSourceType.AMBIENT_TEMPERATURE):
-//                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(AmbientTemperature.frequencyOptions));
-                break;
-            case (DataSourceType.COMPASS):
-                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Compass.frequencyOptions));
-                break;
-            case (DataSourceType.AMBIENT_LIGHT):
-                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(AmbientLight.frequencyOptions));
-                break;
-            case (DataSourceType.PRESSURE):
-//                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Pressure.frequencyOptions));
-                break;
-            case (DataSourceType.PROXIMITY):
-//                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Proximity.frequencyOptions));
-                break;
-        }
-        return switchPreference;
-    }
-
-    private Preference.OnPreferenceClickListener alertDialogFrequency(final String[] frequencies) {
-        return new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                SwitchPreference switchPreference = (SwitchPreference) preference;
-                Log.d(TAG, "onPreferenceClickListener(): " + switchPreference.getKey() + "=" + switchPreference.isChecked());
-                phoneSensorDataSources.find(preference.getKey()).setEnabled(!switchPreference.isChecked());
-
-                UI.AlertDialogFrequency(ActivityPhoneSensorSettings.this, preference.getKey(), frequencies, new AlertDialogResponse() {
-                    @Override
-                    public void onResponse(String dataSourceType, String response) {
-                        if (response != null) {
-                            phoneSensorDataSources.find(dataSourceType).setFrequency(response);
-                            updatePreferenceScreen();
-                        }
-                    }
-                });
-                return false;
-            }
-        };
-    }
-
-    Preference.OnPreferenceChangeListener onPreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            Log.d(TAG, "OnPreferenceChangeListener(): " + preference.getKey() + "=" + newValue);
-            phoneSensorDataSources.find(preference.getKey()).setEnabled((Boolean) newValue);
-            updatePreferenceScreen();
-            return false;
-        }
-    };
-
-    protected void addPreferenceScreenSensors() {
-        String dataSourceType;
-        PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("dataSourceType");
-        Log.d(TAG, "Preference category: " + preferenceCategory);
-        preferenceCategory.removeAll();
-        for (int i = 0; i < phoneSensorDataSources.getPhoneSensorDataSources().size(); i++) {
-            dataSourceType = phoneSensorDataSources.getPhoneSensorDataSources().get(i).getDataSourceType();
-            SwitchPreference switchPreference = createSwitchPreference(dataSourceType);
-            preferenceCategory.addPreference(switchPreference);
-        }
-    }
-
-    void updatePreferenceScreen() {
-        PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("dataSourceType");
-        PhoneSensorDataSource phoneSensorDataSource;
-        for (int i = 0; i < phoneSensorDataSources.getPhoneSensorDataSources().size(); i++) {
-            phoneSensorDataSource = phoneSensorDataSources.getPhoneSensorDataSources().get(i);
-            SwitchPreference switchPreference = (SwitchPreference) preferenceCategory.findPreference(phoneSensorDataSource.getDataSourceType());
-            switchPreference.setChecked(phoneSensorDataSource.isEnabled());
-            switchPreference.setSummary(phoneSensorDataSource.getFrequency());
-        }
-    }
-
-    private void setBackButton() {
-        final Button button = (Button) findViewById(R.id.button_settings_cancel);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
-
-    private void setSaveButton() {
-        final Button button = (Button) findViewById(R.id.button_settings_save);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (Apps.isServiceRunning(ActivityPhoneSensorSettings.this, Constants.SERVICE_NAME)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ActivityPhoneSensorSettings.this);
-                    builder.setMessage("Save configuration file and restart the PhoneSensor Service?").setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener).show();
-                }
-                else{
-                    saveConfigurationFile();
-                    finish();
-                }
-            }
-        });
-    }
-
-    void saveConfigurationFile() {
-        try {
-            phoneSensorDataSources.writeDataSourceToFile();
-            Toast.makeText(getBaseContext(), "Configuration file is saved.", Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Toast.makeText(getBaseContext(), "!!!Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-    }
-    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-                    Intent intent = new Intent(ActivityPhoneSensorSettings.this, ServicePhoneSensor.class);
-                    stopService(intent);
-                    saveConfigurationFile();
-                    intent = new Intent(ActivityPhoneSensorSettings.this, ServicePhoneSensor.class);
-                    startService(intent);
-                    finish();
-                    break;
-
-                case DialogInterface.BUTTON_NEGATIVE:
-                    Toast.makeText(getBaseContext(), "Configuration file is not saved.", Toast.LENGTH_LONG).show();
-                    finish();
-                    break;
-            }
-        }
-    };
 }

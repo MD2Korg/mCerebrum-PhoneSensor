@@ -13,6 +13,8 @@ import android.view.WindowManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -133,7 +135,6 @@ public class LocationFused extends PhoneSensorDataSource implements
     }
     private boolean isGooglePlayServicesAvailable() {
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-        //            GooglePlayServicesUtil.getErrorDialog(status, context, 0).show();
         return ConnectionResult.SUCCESS == status;
     }
 
@@ -150,7 +151,12 @@ public class LocationFused extends PhoneSensorDataSource implements
     private void startLocationUpdates() {
 
         LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this).await();
+                mGoogleApiClient, mLocationRequest, this).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(Status status) {
+
+            }
+        });
     }
     private void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(

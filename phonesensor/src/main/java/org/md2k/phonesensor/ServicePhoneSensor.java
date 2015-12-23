@@ -64,7 +64,7 @@ public class ServicePhoneSensor extends Service {
     void showAlertDialogConfiguration(final Context context){
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Error: Configuration File")
-                .setIcon(R.drawable.ic_error_outline_white_24dp)
+                .setIcon(R.drawable.ic_error_red_50dp)
                 .setMessage("Phone Sensor is not configured.\n\n Please go to Menu -> Settings (or, click Settings below)")
                 .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
                     @Override
@@ -88,7 +88,7 @@ public class ServicePhoneSensor extends Service {
     void showAlertDialogDataKit(final Context context){
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Error: DataKit")
-                .setIcon(R.drawable.ic_error_outline_white_24dp)
+                .setIcon(R.drawable.ic_error_red_50dp)
                 .setMessage("DataKit is not installed.\n\n Please install DataKit")
                 .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                     @Override

@@ -1,6 +1,5 @@
 package org.md2k.phonesensor;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,42 +61,29 @@ import java.util.HashMap;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class ActivityPhoneSensor extends Activity {
-    private static final String TAG = ActivityPhoneSensor.class.getSimpleName();
+public class ActivityMain extends AppCompatActivity {
+    private static final String TAG = ActivityMain.class.getSimpleName();
     HashMap<String, TextView> hashMapData = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phone_sensor);
-        final Button buttonService = (Button) findViewById(R.id.buttonServiceStartStop);
+        setContentView(R.layout.activity_main);
+        final Button buttonService = (Button) findViewById(R.id.button_app_status);
 
         buttonService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);
-                if (buttonService.getText().equals("Start Service")) {
-                    Log.d(TAG, "Button click: start service...");
-                    startService(intent);
-                } else {
-                    Log.d(TAG, "button click: stop service...");
+                if (Apps.isServiceRunning(getBaseContext(), Constants.SERVICE_NAME)) {
                     stopService(intent);
+                }else{
+                    startService(intent);
                 }
             }
         });
-        findViewById(R.id.textViewTime).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);
-                if (((TextView) findViewById(R.id.textViewTime)).getText().equals("OFF")) {
-                    startService(intent);
-                } else {
-                    stopService(intent);
-                }
-            }
-        });
-        if (getActionBar() != null)
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -143,19 +131,19 @@ public class ActivityPhoneSensor extends Activity {
         TextView tvSensor = new TextView(this);
         tvSensor.setText("sensor");
         tvSensor.setTypeface(null, Typeface.BOLD);
-        tvSensor.setTextColor(getResources().getColor(R.color.teal_a700));
+        tvSensor.setTextColor(getResources().getColor(R.color.teal_A700));
         TextView tvCount = new TextView(this);
         tvCount.setText("count");
         tvCount.setTypeface(null, Typeface.BOLD);
-        tvCount.setTextColor(getResources().getColor(R.color.teal_a700));
+        tvCount.setTextColor(getResources().getColor(R.color.teal_A700));
         TextView tvFreq = new TextView(this);
         tvFreq.setText("freq.");
         tvFreq.setTypeface(null, Typeface.BOLD);
-        tvFreq.setTextColor(getResources().getColor(R.color.teal_a700));
+        tvFreq.setTextColor(getResources().getColor(R.color.teal_A700));
         TextView tvSample = new TextView(this);
         tvSample.setText("samples");
         tvSample.setTypeface(null, Typeface.BOLD);
-        tvSample.setTextColor(getResources().getColor(R.color.teal_a700));
+        tvSample.setTextColor(getResources().getColor(R.color.teal_A700));
         row.addView(tvSensor);
         row.addView(tvCount);
         row.addView(tvFreq);
@@ -257,12 +245,10 @@ public class ActivityPhoneSensor extends Activity {
         @Override
         public void run() {
             {
-                long time = Apps.serviceRunningTime(ActivityPhoneSensor.this, Constants.SERVICE_NAME);
+                long time = Apps.serviceRunningTime(ActivityMain.this, Constants.SERVICE_NAME);
                 if (time < 0) {
-                    ((TextView) findViewById(R.id.textViewTime)).setText("OFF");
-
-                    ((Button) findViewById(R.id.buttonServiceStartStop)).setText("Start Service");
-                    findViewById(R.id.buttonServiceStartStop).setBackground(getResources().getDrawable(R.drawable.button_green));
+                    ((Button) findViewById(R.id.button_app_status)).setText("START");
+                    findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_off));
 
                 } else {
                     long runtime = time / 1000;
@@ -271,9 +257,8 @@ public class ActivityPhoneSensor extends Activity {
                     int minute = (int) (runtime % 60);
                     runtime /= 60;
                     int hour = (int) runtime;
-                    ((TextView) findViewById(R.id.textViewTime)).setText(String.format("%02d:%02d:%02d", hour, minute, second));
-                    ((Button) findViewById(R.id.buttonServiceStartStop)).setText("Stop Service");
-                    findViewById(R.id.buttonServiceStartStop).setBackground(getResources().getDrawable(R.drawable.button_red));
+                    findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_on));
+                    ((Button) findViewById(R.id.button_app_status)).setText(String.format("%02d:%02d:%02d", hour, minute, second));
 
                 }
                 mHandler.postDelayed(this, 1000);
