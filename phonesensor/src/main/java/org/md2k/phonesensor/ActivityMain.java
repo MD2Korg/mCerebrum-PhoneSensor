@@ -24,6 +24,7 @@ import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Apps;
@@ -251,14 +252,8 @@ public class ActivityMain extends AppCompatActivity {
                     findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_off));
 
                 } else {
-                    long runtime = time / 1000;
-                    int second = (int) (runtime % 60);
-                    runtime /= 60;
-                    int minute = (int) (runtime % 60);
-                    runtime /= 60;
-                    int hour = (int) runtime;
                     findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_on));
-                    ((Button) findViewById(R.id.button_app_status)).setText(String.format("%02d:%02d:%02d", hour, minute, second));
+                    ((Button) findViewById(R.id.button_app_status)).setText(DateTime.convertTimestampToTimeStr(time));
 
                 }
                 mHandler.postDelayed(this, 1000);
