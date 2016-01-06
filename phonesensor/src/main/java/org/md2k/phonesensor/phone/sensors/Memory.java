@@ -5,11 +5,15 @@ import android.content.Context;
 import android.os.Handler;
 
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.BCMRecord;
 import org.md2k.phonesensor.phone.CallBack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -39,6 +43,34 @@ import org.md2k.phonesensor.phone.CallBack;
  */
 public class Memory extends PhoneSensorDataSource {
     private Handler scheduler;
+    HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
+        HashMap<String,String> dataDescriptor=new HashMap<>();
+        dataDescriptor.put(METADATA.NAME, name);
+        dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
+        dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
+        dataDescriptor.put(METADATA.UNIT, unit);
+        dataDescriptor.put(METADATA.FREQUENCY,frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION,description);
+        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getName());
+        return dataDescriptor;
+    }
+    ArrayList<HashMap<String,String>> createDataDescriptors(){
+        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
+        dataDescriptors.add(createDataDescriptor("Size",frequency,"Size of the memory",0,2048,"megabyte"));
+        dataDescriptors.add(createDataDescriptor("Available",frequency,"Available memory",0,2048, "megabyte"));
+        return dataDescriptors;
+    }
+
+    public DataSourceBuilder createDataSourceBuilder() {
+        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
+        if (dataSourceBuilder == null) return null;
+        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Memory");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures usage of memory");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloatArray.class.getName());
+        return dataSourceBuilder;
+    }
 
 
     public Memory(Context context) {
@@ -50,8 +82,6 @@ public class Memory extends PhoneSensorDataSource {
     public void unregister() {
         scheduler.removeCallbacks(statusMemory);
         scheduler = null;
-
-//        context.unregisterReceiver(batteryInfoReceiver);
     }
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {

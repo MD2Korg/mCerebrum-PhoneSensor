@@ -5,14 +5,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
-import org.md2k.datakitapi.source.datasource.METADATA;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.Report.Log;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -41,19 +44,41 @@ import org.md2k.utilities.Report.Log;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Accelerometer extends PhoneSensorDataSource implements SensorEventListener {
-    private static final String TAG = Accelerometer.class.getSimpleName();
     private SensorManager mSensorManager;
-    private static final String NORMAL = "Normal: ~6 Hz";
-    private static final String UI = "UI: ~16 Hz";
-    private static final String GAME = "Game: ~50 Hz";
-    private static final String FASTEST = "Fastest: ~100Hz";
+    private static final String SENSOR_DELAY_NORMAL = "SENSOR_DELAY_NORMAL";
+    private static final String SENSOR_DELAY_UI = "SENSOR_DELAY_UI";
+    private static final String SENSOR_DELAY_GAME = "SENSOR_DELAY_GAME";
+    private static final String SENSOR_DELAY_FASTEST = "SENSOR_DELAY_FASTEST";
 
-    public static final String[] frequencyOptions = {NORMAL, UI, GAME, FASTEST};
+    public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
+    HashMap<String,String> createDataDescriptor(String name, String frequency, String description){
+        HashMap<String,String> dataDescriptor=new HashMap<>();
+        dataDescriptor.put(METADATA.NAME, name);
+        dataDescriptor.put(METADATA.MIN_VALUE, "-20");
+        dataDescriptor.put(METADATA.MAX_VALUE, "+20");
+        dataDescriptor.put(METADATA.UNIT, "meter/second^2");
+        dataDescriptor.put(METADATA.FREQUENCY,frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION,description);
+        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getName());
+        return dataDescriptor;
+    }
+    ArrayList<HashMap<String,String>> createDataDescriptors(){
+        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
+        dataDescriptors.add(createDataDescriptor("Accelerometer X",frequency,"Acceleration minus Gx on the x-axis"));
+        dataDescriptors.add(createDataDescriptor("Accelerometer Y",frequency,"Acceleration minus Gy on the y-axis"));
+        dataDescriptors.add(createDataDescriptor("Accelerometer Z",frequency,"Acceleration minus Gz on the z-axis"));
+        return dataDescriptors;
+    }
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
         if (dataSourceBuilder == null) return null;
+        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Accelerometer");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "meter/second^2");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures the acceleration applied to the device");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloatArray.class.getName());
         return dataSourceBuilder;
     }
 
@@ -64,7 +89,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
 
     public Accelerometer(Context context) {
         super(context, DataSourceType.ACCELEROMETER);
-        frequency = UI;
+        frequency = SENSOR_DELAY_UI;
     }
 
     @Override
@@ -93,18 +118,18 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         switch (frequency) {
-            case UI:
+            case SENSOR_DELAY_UI:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
-            case GAME:
+            case SENSOR_DELAY_GAME:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
 
                 break;
-            case FASTEST:
+            case SENSOR_DELAY_FASTEST:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
 
                 break;
-            case NORMAL:
+            case SENSOR_DELAY_NORMAL:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

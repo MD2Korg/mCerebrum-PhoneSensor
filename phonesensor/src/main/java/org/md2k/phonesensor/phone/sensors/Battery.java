@@ -7,12 +7,16 @@ import android.os.BatteryManager;
 import android.os.Handler;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.datatype.DataTypeFloatArray;
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.BCMRecord;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.Report.Log;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -41,9 +45,36 @@ import org.md2k.utilities.Report.Log;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Battery extends PhoneSensorDataSource {
-    private static final String TAG = Battery.class.getSimpleName();
     private Handler scheduler;
+    HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
+        HashMap<String,String> dataDescriptor=new HashMap<>();
+        dataDescriptor.put(METADATA.NAME, name);
+        dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
+        dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
+        dataDescriptor.put(METADATA.UNIT, unit);
+        dataDescriptor.put(METADATA.FREQUENCY,frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION,description);
+        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getName());
+        return dataDescriptor;
+    }
+    ArrayList<HashMap<String,String>> createDataDescriptors(){
+        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
+        dataDescriptors.add(createDataDescriptor("Level",frequency,"current battery charge",0,100,"percentage"));
+        dataDescriptors.add(createDataDescriptor("Voltage",frequency,"current battery voltage level",0,5000, "voltage"));
+        dataDescriptors.add(createDataDescriptor("Temperature",frequency,"current battery temperature",-50,100, "celsius"));
+        return dataDescriptors;
+    }
 
+    public DataSourceBuilder createDataSourceBuilder() {
+        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
+        if (dataSourceBuilder == null) return null;
+        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Battery");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures the current status of the battery");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloatArray.class.getName());
+        return dataSourceBuilder;
+    }
 
     public Battery(Context context) {
         super(context, DataSourceType.BATTERY);
@@ -52,15 +83,11 @@ public class Battery extends PhoneSensorDataSource {
 
 
     public void unregister() {
-        Log.d(TAG, "Battery(): unregister()");
         scheduler.removeCallbacks(batteryStatus);
         scheduler=null;
-
-//        context.unregisterReceiver(batteryInfoReceiver);
     }
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
-        Log.d(TAG, "Battery(): register()");
         super.register(dataSourceBuilder, newCallBack);
         scheduler=new Handler();
         scheduler.post(batteryStatus);

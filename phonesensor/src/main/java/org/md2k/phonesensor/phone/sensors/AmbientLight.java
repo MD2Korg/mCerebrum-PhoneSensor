@@ -7,11 +7,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import org.md2k.datakitapi.datatype.DataTypeFloat;
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.CallBack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -41,27 +45,47 @@ import org.md2k.phonesensor.phone.CallBack;
  */
 public class AmbientLight extends PhoneSensorDataSource implements SensorEventListener{
     private SensorManager mSensorManager;
-    private static final String NORMAL="Normal: ~6 Hz";
-    private static final String UI="UI: ~16 Hz";
-    private static final String GAME="Game: ~50 Hz";
-    private static final String FASTEST="Fastest: ~100Hz";
+    private static final String SENSOR_DELAY_NORMAL = "SENSOR_DELAY_NORMAL";
+    private static final String SENSOR_DELAY_UI = "SENSOR_DELAY_UI";
+    private static final String SENSOR_DELAY_GAME = "SENSOR_DELAY_GAME";
+    private static final String SENSOR_DELAY_FASTEST = "SENSOR_DELAY_FASTEST";
 
-    public static final String[] frequencyOptions={NORMAL,UI,GAME,FASTEST};
+    public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
+
+    ArrayList<HashMap<String,String>> createDataDescriptors(){
+        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
+        HashMap<String,String> dataDescriptor=new HashMap<>();
+        dataDescriptor.put(METADATA.NAME, "Ambient light");
+        dataDescriptor.put(METADATA.MIN_VALUE, "0");
+        dataDescriptor.put(METADATA.MAX_VALUE, "+250");
+        dataDescriptor.put(METADATA.UNIT, "lux");
+        dataDescriptor.put(METADATA.FREQUENCY,frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION, "Ambient light level in SI lux units");
+        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getSimpleName());
+
+        dataDescriptors.add(dataDescriptor);
+        return dataDescriptors;
+    }
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder=super.createDataSourceBuilder();
         if(dataSourceBuilder==null) return null;
-        dataSourceBuilder=dataSourceBuilder.setMetadata("frequency", frequency);
+        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
+
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Ambient Light");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "lux");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Ambient light level in SI lux units");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());
         return dataSourceBuilder;
     }
 
     public void updateDataSource(DataSource dataSource){
         super.updateDataSource(dataSource);
-        frequency=dataSource.getMetadata().get("frequency");
+        frequency=dataSource.getMetadata().get(METADATA.FREQUENCY);
     }
     public AmbientLight(Context context) {
         super(context, DataSourceType.AMBIENT_LIGHT);
-        frequency=UI;
+        frequency=SENSOR_DELAY_UI;
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -84,16 +108,16 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         switch (frequency) {
-            case UI:
+            case SENSOR_DELAY_UI:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
-            case GAME:
+            case SENSOR_DELAY_GAME:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
                 break;
-            case FASTEST:
+            case SENSOR_DELAY_FASTEST:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 break;
-            case NORMAL:
+            case SENSOR_DELAY_NORMAL:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

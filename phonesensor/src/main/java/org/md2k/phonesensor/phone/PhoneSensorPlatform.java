@@ -2,8 +2,7 @@ package org.md2k.phonesensor.phone;
 
 import android.content.Context;
 import android.os.Build;
-import android.telephony.TelephonyManager;
-
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platform.PlatformBuilder;
 import org.md2k.datakitapi.source.platform.PlatformType;
@@ -36,7 +35,6 @@ import org.md2k.datakitapi.source.platform.PlatformType;
  */
 
 public class PhoneSensorPlatform {
-    private static final String TAG = PhoneSensorPlatform.class.getSimpleName();
     Context context;
     private static PhoneSensorPlatform instance=null;
     public static PhoneSensorPlatform getInstance(Context context){
@@ -45,7 +43,7 @@ public class PhoneSensorPlatform {
         return instance;
     }
     public String getId() {
-        return ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+        return null;
     }
     public String getOS(){
         return Build.VERSION.RELEASE;
@@ -66,6 +64,6 @@ public class PhoneSensorPlatform {
     public Platform getPlatform() {
         return new PlatformBuilder().
                 setId(getId()).setType(getType()).
-                setMetadata("Operating System", getOS()).setMetadata("manufacturer", getManufacturer()).setMetadata("Name",getName()).build();
+                setMetadata(METADATA.OPERATING_SYSTEM, getOS()).setMetadata(METADATA.MANUFACTURER, getManufacturer()).setMetadata(METADATA.MODEL, getName()).build();
     }
 }

@@ -20,10 +20,14 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.CallBack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -61,7 +65,38 @@ public class LocationFused extends PhoneSensorDataSource implements
     private GoogleApiClient mGoogleApiClient;
     private static final long INTERVAL = 1000L;
     private static final long FASTEST_INTERVAL = 1000L;
-//    public static String[] frequencyOptions={"5 Second","30 Second","60 Second","5 Minutes"};
+    HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
+        HashMap<String,String> dataDescriptor=new HashMap<>();
+        dataDescriptor.put(METADATA.NAME, name);
+        dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
+        dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
+        dataDescriptor.put(METADATA.UNIT, unit);
+        dataDescriptor.put(METADATA.FREQUENCY,frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION,description);
+        dataDescriptor.put(METADATA.DATA_TYPE,double.class.getName());
+        return dataDescriptor;
+    }
+    ArrayList<HashMap<String,String>> createDataDescriptors(){
+        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
+        dataDescriptors.add(createDataDescriptor("Latitude",frequency,"latitude, in degrees",-90,90,"degree"));
+        dataDescriptors.add(createDataDescriptor("Longitude",frequency,"Longitude, in degrees",-180,180, "degree"));
+        dataDescriptors.add(createDataDescriptor("Altitude",frequency,"Get the altitude if available, in meters above the WGS 84 reference ellipsoid",0,1000, "meters"));
+        dataDescriptors.add(createDataDescriptor("Speed",frequency,"speed over ground",0,500, "meter/second"));
+        dataDescriptors.add(createDataDescriptor("Bearing",frequency,"Bearing is the horizontal direction of travel of this device, and is not related to the device orientation",0,360, "degree"));
+        dataDescriptors.add(createDataDescriptor("Accuracy",frequency,"Get the estimated accuracy of this location, in meters",0,100, "radius"));
+        return dataDescriptors;
+    }
+
+    public DataSourceBuilder createDataSourceBuilder() {
+        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
+        if (dataSourceBuilder == null) return null;
+        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Location");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Represents a geographic location");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDoubleArray.class.getName());
+        return dataSourceBuilder;
+    }
 
     public LocationFused(Context context) {
         super(context, DataSourceType.LOCATION);

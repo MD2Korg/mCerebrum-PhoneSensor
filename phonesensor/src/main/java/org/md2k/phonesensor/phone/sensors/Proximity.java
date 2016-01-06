@@ -7,11 +7,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import org.md2k.datakitapi.datatype.DataTypeFloat;
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.CallBack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -41,17 +45,36 @@ import org.md2k.phonesensor.phone.CallBack;
  */
 public class Proximity extends PhoneSensorDataSource implements SensorEventListener{
     private SensorManager mSensorManager;
+    ArrayList<HashMap<String,String>> createDataDescriptors(){
+        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
+        HashMap<String,String> dataDescriptor=new HashMap<>();
+        dataDescriptor.put(METADATA.NAME, "Proximity");
+        dataDescriptor.put(METADATA.MIN_VALUE, "0");
+        dataDescriptor.put(METADATA.MAX_VALUE, "10");
+        dataDescriptor.put(METADATA.UNIT, "centimeter");
+        dataDescriptor.put(METADATA.FREQUENCY,frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION, "Proximity sensor distance measured in centimeters");
+        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getSimpleName());
+
+        dataDescriptors.add(dataDescriptor);
+        return dataDescriptors;
+    }
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder=super.createDataSourceBuilder();
         if(dataSourceBuilder==null) return null;
-        dataSourceBuilder=dataSourceBuilder.setMetadata("frequency", frequency);
+        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
+
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Proximity");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "centimeter");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Proximity sensor distance measured in centimeters");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());
         return dataSourceBuilder;
     }
 
     public void updateDataSource(DataSource dataSource){
         super.updateDataSource(dataSource);
-        frequency=dataSource.getMetadata().get("frequency");
+        frequency=dataSource.getMetadata().get(METADATA.FREQUENCY);
     }
     public Proximity(Context context) {
         super(context, DataSourceType.PROXIMITY);

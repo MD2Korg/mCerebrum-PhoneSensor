@@ -46,7 +46,7 @@ public abstract class PhoneSensorDataSource {
     DataSourceClient dataSourceClient;
     private boolean enabled;
     CallBack callBack;
-    String frequency="UI";
+    String frequency="SENSOR_DELAY_UI";
     DataKitHandler dataKitHandler;
 
     PhoneSensorDataSource(Context context, String dataSourceType) {
@@ -83,7 +83,6 @@ public abstract class PhoneSensorDataSource {
         applicationBuilder.setId(context.getApplicationInfo().packageName);
         applicationBuilder.setType(context.getApplicationInfo().name);
         Application application=applicationBuilder.build();
-        Log.d(TAG, "phonesensordatasource->DataSourceBuilder()");
         return new DataSourceBuilder().setId(null).setType(dataSourceType).setPlatform(platform).setApplication(application);
     }
 
