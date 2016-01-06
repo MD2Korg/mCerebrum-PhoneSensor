@@ -9,6 +9,7 @@ import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
+import org.md2k.datakitapi.source.datasource.METADATA;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.utilities.Report.Log;
@@ -52,13 +53,13 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
         if (dataSourceBuilder == null) return null;
-        dataSourceBuilder = dataSourceBuilder.setMetadata("frequency", frequency);
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         return dataSourceBuilder;
     }
 
     public void updateDataSource(DataSource dataSource) {
         super.updateDataSource(dataSource);
-        frequency = dataSource.getMetadata().get("frequency");
+        frequency = dataSource.getMetadata().get(METADATA.FREQUENCY);
     }
 
     public Accelerometer(Context context) {
@@ -91,25 +92,20 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        Log.d(TAG, "accelerometer: register()" + frequency);
         switch (frequency) {
             case UI:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
-                Log.d(TAG, "accelerometer: register() inside: " + frequency);
                 break;
             case GAME:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
 
-                Log.d(TAG, "accelerometer: register() inside: " + frequency);
                 break;
             case FASTEST:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                Log.d(TAG, "accelerometer: register() inside: " + frequency);
 
                 break;
             case NORMAL:
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-                Log.d(TAG, "accelerometer: register() inside: " + frequency);
                 break;
         }
     }

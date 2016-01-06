@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
@@ -26,6 +27,7 @@ import org.md2k.utilities.Apps;
 import org.md2k.utilities.Report.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -54,6 +56,7 @@ import java.io.IOException;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
+    private static final String TAG = PrefsFragmentPhoneSensorSettings.class.getSimpleName() ;
     PhoneSensorDataSources phoneSensorDataSources;
 
     @Override
@@ -85,10 +88,52 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         else{
             getActivity().startService(intent);
         }
+    }
+    void updatePhoneSensorDataSources(){
+        ArrayList<DefaultConfiguration.Default> defaultArrayList=DefaultConfiguration.read();
+        for(int i=0;i<phoneSensorDataSources.size();i++){
+            phoneSensorDataSources.getPhoneSensorDataSources().get(i).setEnabled(false);
+        }
+        assert defaultArrayList != null;
+        for(int i=0;i<defaultArrayList.size();i++){
+            String type=defaultArrayList.get(i).type;
+            String freq=defaultArrayList.get(i).frequency;
+            phoneSensorDataSources.find(type).setEnabled(true);
+            phoneSensorDataSources.find(type).setFrequency(freq);
+            Log.d(TAG,"type="+type+" freq="+freq);
+        }
 
+    }
+    void setDefaultSettings(){
+        final CheckBoxPreference checkBoxPreference= (CheckBoxPreference) findPreference("key_default_settings");
+        if(!DefaultConfiguration.isExist()) {
+            checkBoxPreference.setEnabled(false);
+        }else{
+            checkBoxPreference.setEnabled(true);
+            checkBoxPreference.setChecked(false);
+            checkBoxPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    boolean checked = ((CheckBoxPreference) preference).isChecked();
+                    Log.d(TAG, "checked=" + checked);
+                    if (checked) {
+                        PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("dataSourceType");
+                        preferenceCategory.setEnabled(false);
+                        updatePhoneSensorDataSources();
+                        updatePreferenceScreen();
+
+                    } else {
+                        PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("dataSourceType");
+                        preferenceCategory.setEnabled(true);
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     void createPreferenceScreen() {
+        setDefaultSettings();
         addPreferenceScreenSensors();
         updatePreferenceScreen();
     }
