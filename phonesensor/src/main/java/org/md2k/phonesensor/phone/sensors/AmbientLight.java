@@ -57,7 +57,7 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         HashMap<String,String> dataDescriptor=new HashMap<>();
         dataDescriptor.put(METADATA.NAME, "Ambient light");
         dataDescriptor.put(METADATA.MIN_VALUE, "0");
-        dataDescriptor.put(METADATA.MAX_VALUE, "+250");
+        dataDescriptor.put(METADATA.MAX_VALUE, "250");
         dataDescriptor.put(METADATA.UNIT, "lux");
         dataDescriptor.put(METADATA.FREQUENCY,frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, "Ambient light level in SI lux units");
@@ -75,6 +75,7 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Ambient Light");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "lux");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Ambient light level in SI lux units");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());
         return dataSourceBuilder;
     }

@@ -67,6 +67,7 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
         dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
 
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Pressure");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "hPa");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Atmospheric pressure in hPa (millibar)s");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());

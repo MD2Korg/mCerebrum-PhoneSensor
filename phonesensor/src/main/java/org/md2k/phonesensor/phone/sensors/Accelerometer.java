@@ -51,29 +51,31 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     private static final String SENSOR_DELAY_FASTEST = "SENSOR_DELAY_FASTEST";
 
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
-    HashMap<String,String> createDataDescriptor(String name, String frequency, String description){
-        HashMap<String,String> dataDescriptor=new HashMap<>();
+
+    HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
+        HashMap<String, String> dataDescriptor = new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
         dataDescriptor.put(METADATA.MIN_VALUE, "-20");
-        dataDescriptor.put(METADATA.MAX_VALUE, "+20");
+        dataDescriptor.put(METADATA.MAX_VALUE, "20");
         dataDescriptor.put(METADATA.UNIT, "meter/second^2");
-        dataDescriptor.put(METADATA.FREQUENCY,frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION,description);
-        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getName());
+        dataDescriptor.put(METADATA.FREQUENCY, frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION, description);
+        dataDescriptor.put(METADATA.DATA_TYPE, float.class.getName());
         return dataDescriptor;
     }
-    ArrayList<HashMap<String,String>> createDataDescriptors(){
-        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("Accelerometer X",frequency,"Acceleration minus Gx on the x-axis"));
-        dataDescriptors.add(createDataDescriptor("Accelerometer Y",frequency,"Acceleration minus Gy on the y-axis"));
-        dataDescriptors.add(createDataDescriptor("Accelerometer Z",frequency,"Acceleration minus Gz on the z-axis"));
+
+    ArrayList<HashMap<String, String>> createDataDescriptors() {
+        ArrayList<HashMap<String, String>> dataDescriptors = new ArrayList<>();
+        dataDescriptors.add(createDataDescriptor("Accelerometer X", frequency, "Acceleration minus Gx on the x-axis"));
+        dataDescriptors.add(createDataDescriptor("Accelerometer Y", frequency, "Acceleration minus Gy on the y-axis"));
+        dataDescriptors.add(createDataDescriptor("Accelerometer Z", frequency, "Acceleration minus Gz on the z-axis"));
         return dataDescriptors;
     }
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
         if (dataSourceBuilder == null) return null;
-        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
+        dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Accelerometer");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "meter/second^2");

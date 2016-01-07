@@ -51,7 +51,7 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
         HashMap<String, String> dataDescriptor = new HashMap<>();
         dataDescriptor.put(METADATA.NAME, "Ambient Temperature");
         dataDescriptor.put(METADATA.MIN_VALUE, "-50");
-        dataDescriptor.put(METADATA.MAX_VALUE, "+100");
+        dataDescriptor.put(METADATA.MAX_VALUE, "100");
         dataDescriptor.put(METADATA.UNIT, "degree celsius");
         dataDescriptor.put(METADATA.FREQUENCY, frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, "ambient (room) temperature in degree Celsius");
@@ -65,7 +65,7 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
         DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
         if (dataSourceBuilder == null) return null;
         dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
-
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Ambient Temperature");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "degree celsius");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "ambient (room) temperature in degree Celsius");

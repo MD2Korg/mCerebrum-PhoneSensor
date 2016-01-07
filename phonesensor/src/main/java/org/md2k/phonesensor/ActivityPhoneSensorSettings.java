@@ -1,30 +1,8 @@
 package org.md2k.phonesensor;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
-import android.preference.SwitchPreference;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
-import org.md2k.datakitapi.source.datasource.DataSourceType;
-import org.md2k.phonesensor.phone.sensors.Accelerometer;
-import org.md2k.phonesensor.phone.sensors.Compass;
-import org.md2k.phonesensor.phone.sensors.Gyroscope;
-import org.md2k.phonesensor.phone.sensors.AmbientLight;
-import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
-import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
-import org.md2k.utilities.Apps;
-import org.md2k.utilities.Report.Log;
-
-import java.io.IOException;
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
@@ -53,7 +31,6 @@ import java.io.IOException;
  */
 
 public class ActivityPhoneSensorSettings extends AppCompatActivity {
-    private static final String TAG = ActivityPhoneSensorSettings.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

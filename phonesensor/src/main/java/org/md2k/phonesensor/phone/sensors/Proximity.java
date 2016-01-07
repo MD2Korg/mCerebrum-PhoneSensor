@@ -66,6 +66,7 @@ public class Proximity extends PhoneSensorDataSource implements SensorEventListe
         dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
 
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Proximity");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "centimeter");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Proximity sensor distance measured in centimeters");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());
