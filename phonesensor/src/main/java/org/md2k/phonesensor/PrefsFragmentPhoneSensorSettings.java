@@ -74,20 +74,10 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v=super.onCreateView(inflater, container,savedInstanceState);
+        assert v != null;
         ListView lv = (ListView) v.findViewById(android.R.id.list);
         lv.setPadding(0, 0, 0, 0);
         return v;
-    }
-    void handleService(boolean opType) {
-        Intent intent = new Intent(getActivity(), ServicePhoneSensor.class);
-        if (!opType) {
-            if (Apps.isServiceRunning(getActivity(), Constants.SERVICE_NAME)) {
-                getActivity().stopService(intent);
-            }
-        }
-        else{
-            getActivity().startService(intent);
-        }
     }
     void updatePhoneSensorDataSources(){
         ArrayList<DataSource> defaultArrayList=DefaultConfiguration.read();
@@ -100,7 +90,6 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             String freq=defaultArrayList.get(i).getMetadata().get(METADATA.FREQUENCY);
             phoneSensorDataSources.find(type).setEnabled(true);
             phoneSensorDataSources.find(type).setFrequency(freq);
-            Log.d(TAG,"type="+type+" freq="+freq);
         }
 
     }
