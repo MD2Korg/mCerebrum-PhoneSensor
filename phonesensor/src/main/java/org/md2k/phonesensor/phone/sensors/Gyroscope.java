@@ -56,8 +56,8 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
     HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
         HashMap<String, String> dataDescriptor = new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
-        dataDescriptor.put(METADATA.MIN_VALUE, "-1");
-        dataDescriptor.put(METADATA.MAX_VALUE, "1");
+        dataDescriptor.put(METADATA.MIN_VALUE, "-5");
+        dataDescriptor.put(METADATA.MAX_VALUE, "5");
         dataDescriptor.put(METADATA.UNIT, "radians/second");
         dataDescriptor.put(METADATA.FREQUENCY, frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, description);
