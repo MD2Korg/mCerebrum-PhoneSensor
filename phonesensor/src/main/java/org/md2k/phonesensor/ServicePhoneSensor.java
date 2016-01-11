@@ -116,7 +116,7 @@ public class ServicePhoneSensor extends Service {
 
     private boolean readSettings() {
         phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext());
-        return phoneSensorDataSources.size() != 0;
+        return phoneSensorDataSources.countEnabled() != 0;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.utilities.Files;
 import org.md2k.utilities.Report.Log;
 
 import java.io.BufferedReader;
@@ -41,32 +42,19 @@ import java.util.List;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class DefaultConfiguration {
-    class Default{
-        String type;
-        String frequency;
-    }
     public static boolean isExist(){
         String outDir= Constants.CONFIG_DIRECTORY ;
         File outFile = new File(outDir, Constants.DEFAULT_FILENAME_PHONESENSOR);
         return outFile.exists();
     }
 
-    public static ArrayList<Default> read() {
+    public static ArrayList<DataSource> read() {
         String outDir= Constants.CONFIG_DIRECTORY ;
-        String filename=outDir+File.separator+Constants.DEFAULT_FILENAME_PHONESENSOR;
-
-        ArrayList<Default> defaults=null;
-        if (!isExist()) return null;
-        BufferedReader br = null;
+        String filename=outDir+Constants.DEFAULT_FILENAME_PHONESENSOR;
         try {
-            br = new BufferedReader(new FileReader(filename));
-            Gson gson = new Gson();
-            Type collectionType = new TypeToken<List<Default>>() {
-            }.getType();
-            defaults = gson.fromJson(br, collectionType);
+            return Files.readDataSourceFromFile(filename);
         } catch (FileNotFoundException e) {
-
+            return null;
         }
-        return defaults;
     }
 }

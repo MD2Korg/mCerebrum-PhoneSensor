@@ -89,7 +89,7 @@ public class PhoneSensorDataSources {
         }
     }
 
-    public int size() {
+    public int countEnabled() {
         int count = 0;
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
             if (phoneSensorDataSources.get(i).isEnabled())
@@ -111,7 +111,7 @@ public class PhoneSensorDataSources {
         ArrayList<DataSource> dataSources = new ArrayList<>();
         if (phoneSensorDataSources == null) throw new NullPointerException();
         if (phoneSensorDataSources.size() == 0) throw new EmptyStackException();
-        Log.d(TAG, "size=" + phoneSensorDataSources.size());
+        Log.d(TAG, "countEnabled=" + phoneSensorDataSources.size());
 
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
             if (!phoneSensorDataSources.get(i).isEnabled()) continue;

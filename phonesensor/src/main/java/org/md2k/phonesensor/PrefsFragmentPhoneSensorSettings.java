@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.md2k.datakitapi.source.METADATA;
+import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.phonesensor.phone.sensors.Accelerometer;
 import org.md2k.phonesensor.phone.sensors.AmbientLight;
@@ -67,8 +69,6 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         createPreferenceScreen();
         setBackButton();
         setSaveButton();
-
-//        setupPreferences();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,14 +90,14 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         }
     }
     void updatePhoneSensorDataSources(){
-        ArrayList<DefaultConfiguration.Default> defaultArrayList=DefaultConfiguration.read();
-        for(int i=0;i<phoneSensorDataSources.size();i++){
+        ArrayList<DataSource> defaultArrayList=DefaultConfiguration.read();
+        for(int i=0;i<phoneSensorDataSources.getPhoneSensorDataSources().size();i++){
             phoneSensorDataSources.getPhoneSensorDataSources().get(i).setEnabled(false);
         }
         assert defaultArrayList != null;
         for(int i=0;i<defaultArrayList.size();i++){
-            String type=defaultArrayList.get(i).type;
-            String freq=defaultArrayList.get(i).frequency;
+            String type=defaultArrayList.get(i).getType();
+            String freq=defaultArrayList.get(i).getMetadata().get(METADATA.FREQUENCY);
             phoneSensorDataSources.find(type).setEnabled(true);
             phoneSensorDataSources.find(type).setFrequency(freq);
             Log.d(TAG,"type="+type+" freq="+freq);
@@ -228,7 +228,8 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     }
 
     private void setBackButton() {
-        final Button button = (Button) getActivity().findViewById(R.id.button_cancel);
+        final Button button = (Button) getActivity().findViewById(R.id.button_2);
+        button.setText("Close");
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getActivity().finish();
@@ -237,7 +238,8 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     }
 
     private void setSaveButton() {
-        final Button button = (Button) getActivity().findViewById(R.id.button_save);
+        final Button button = (Button) getActivity().findViewById(R.id.button_1);
+        button.setText("Save");
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (Apps.isServiceRunning(getActivity(), Constants.SERVICE_NAME)) {
