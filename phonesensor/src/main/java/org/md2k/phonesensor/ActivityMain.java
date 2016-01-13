@@ -76,7 +76,7 @@ public class ActivityMain extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);
-                if (Apps.isServiceRunning(getBaseContext(), Constants.SERVICE_NAME)) {
+                if (Apps.isServiceRunning(getBaseContext(), ServicePhoneSensor.class.getName())) {
                     stopService(intent);
                 }else{
                     startService(intent);
@@ -246,7 +246,7 @@ public class ActivityMain extends AppCompatActivity {
         @Override
         public void run() {
             {
-                long time = Apps.serviceRunningTime(ActivityMain.this, Constants.SERVICE_NAME);
+                long time = Apps.serviceRunningTime(ActivityMain.this, ServicePhoneSensor.class.getName());
                 if (time < 0) {
                     ((Button) findViewById(R.id.button_app_status)).setText("START");
                     findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_off));

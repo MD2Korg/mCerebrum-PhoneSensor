@@ -8,7 +8,6 @@ import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
-import org.md2k.phonesensor.BCMRecord;
 import org.md2k.phonesensor.phone.CallBack;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -117,7 +116,6 @@ public class CPU extends PhoneSensorDataSource {
             curValues=values;
             DataTypeFloat dataTypeFloat=new DataTypeFloat(DateTime.getDateTime(),samples);
             dataKitHandler.insert(dataSourceClient, dataTypeFloat);
-            BCMRecord.getInstance().saveDataToTextFile(DataSourceType.CPU, dataTypeFloat);
 
             callBack.onReceivedData(dataTypeFloat);
             scheduler.postDelayed(statusCPU,1000);

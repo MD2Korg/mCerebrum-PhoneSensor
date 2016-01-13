@@ -9,7 +9,6 @@ import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
-import org.md2k.phonesensor.BCMRecord;
 import org.md2k.phonesensor.phone.CallBack;
 
 import java.util.ArrayList;
@@ -107,7 +106,6 @@ public class Memory extends PhoneSensorDataSource {
             float[] samples = readUsage();
             DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(DateTime.getDateTime(), samples);
             dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
-            BCMRecord.getInstance().saveDataToTextFile(DataSourceType.MEMORY, dataTypeFloatArray);
             callBack.onReceivedData(dataTypeFloatArray);
             scheduler.postDelayed(statusMemory,1000);
         }

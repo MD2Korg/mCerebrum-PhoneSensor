@@ -49,8 +49,6 @@ public class ServicePhoneSensor extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate()");
-        if (Constants.TEST_BATTERY)
-            BCMRecord.getInstance();
         if (!readSettings()) {
             showAlertDialogConfiguration(this);
             stopSelf();
@@ -125,8 +123,6 @@ public class ServicePhoneSensor extends Service {
             phoneSensorDataSources.unregister();
             phoneSensorDataSources = null;
         }
-        if (Constants.TEST_BATTERY)
-            BCMRecord.getInstance().close();
         if (dataKitHandler != null && dataKitHandler.isConnected()) dataKitHandler.disconnect();
         if (dataKitHandler != null)
             dataKitHandler.close();

@@ -28,6 +28,7 @@ import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Apps;
 import org.md2k.utilities.Report.Log;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -60,15 +61,24 @@ import java.util.ArrayList;
 public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     private static final String TAG = PrefsFragmentPhoneSensorSettings.class.getSimpleName() ;
     PhoneSensorDataSources phoneSensorDataSources;
+    ArrayList<DataSource> defaultConfig;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         readConfiguration();
+        readDefaultConfiguration();
         addPreferencesFromResource(R.xml.pref_phonesensor_platform);
         createPreferenceScreen();
         setBackButton();
         setSaveButton();
+    }
+    void readDefaultConfiguration(){
+        try {
+            defaultConfig = Configuration.readDefault();
+        } catch (FileNotFoundException e) {
+            defaultConfig =null;
+        }
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,15 +89,14 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         lv.setPadding(0, 0, 0, 0);
         return v;
     }
-    void updatePhoneSensorDataSources(){
-        ArrayList<DataSource> defaultArrayList=DefaultConfiguration.read();
+    void updateDefaultConfig(){
         for(int i=0;i<phoneSensorDataSources.getPhoneSensorDataSources().size();i++){
             phoneSensorDataSources.getPhoneSensorDataSources().get(i).setEnabled(false);
         }
-        assert defaultArrayList != null;
-        for(int i=0;i<defaultArrayList.size();i++){
-            String type=defaultArrayList.get(i).getType();
-            String freq=defaultArrayList.get(i).getMetadata().get(METADATA.FREQUENCY);
+        assert defaultConfig != null;
+        for(int i=0;i< defaultConfig.size();i++){
+            String type= defaultConfig.get(i).getType();
+            String freq= defaultConfig.get(i).getMetadata().get(METADATA.FREQUENCY);
             phoneSensorDataSources.find(type).setEnabled(true);
             phoneSensorDataSources.find(type).setFrequency(freq);
         }
@@ -95,9 +104,11 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     }
     void setDefaultSettings(){
         final CheckBoxPreference checkBoxPreference= (CheckBoxPreference) findPreference("key_default_settings");
-        if(!DefaultConfiguration.isExist()) {
+        if(defaultConfig ==null) {
             checkBoxPreference.setEnabled(false);
-        }else{
+            checkBoxPreference.setSummary("not available");
+        }
+        else{
             checkBoxPreference.setEnabled(true);
             checkBoxPreference.setChecked(false);
             checkBoxPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -108,7 +119,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
                     if (checked) {
                         PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("dataSourceType");
                         preferenceCategory.setEnabled(false);
-                        updatePhoneSensorDataSources();
+                        updateDefaultConfig();
                         updatePreferenceScreen();
 
                     } else {
@@ -231,7 +242,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         button.setText("Save");
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (Apps.isServiceRunning(getActivity(), Constants.SERVICE_NAME)) {
+                if (Apps.isServiceRunning(getActivity(), ServicePhoneSensor.class.getName())) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Save configuration file and restart the PhoneSensor Service?").setPositiveButton("Yes", dialogClickListener)
                             .setNegativeButton("No", dialogClickListener).show();

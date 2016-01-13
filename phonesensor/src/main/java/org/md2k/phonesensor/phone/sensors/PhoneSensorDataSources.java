@@ -9,9 +9,8 @@ import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.time.DateTime;
-import org.md2k.phonesensor.Constants;
+import org.md2k.phonesensor.Configuration;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.Files;
 import org.md2k.utilities.Report.Log;
 
 import java.io.FileNotFoundException;
@@ -80,8 +79,8 @@ public class PhoneSensorDataSources {
     }
 
     private void readDataSourceFromFile() throws FileNotFoundException {
-        ArrayList<DataSource> dataSources = Files.readDataSourceFromFile(Constants.DIR_FILENAME);
-        Log.d(TAG, "length=" + dataSources.size());
+        ArrayList<DataSource> dataSources = Configuration.read();
+        assert dataSources != null;
         for (int i = 0; i < dataSources.size(); i++) {
             PhoneSensorDataSource phoneSensorDataSource = find(dataSources.get(i).getType());
             if (phoneSensorDataSource == null) continue;
@@ -119,7 +118,7 @@ public class PhoneSensorDataSources {
             if (dataSource == null) continue;
             dataSources.add(dataSource);
         }
-        Files.writeDataSourceToFile(Constants.DIRECTORY, Constants.FILENAME, dataSources);
+        Configuration.write(dataSources);
     }
 
     HashMap<String, Integer> hm = new HashMap<>();

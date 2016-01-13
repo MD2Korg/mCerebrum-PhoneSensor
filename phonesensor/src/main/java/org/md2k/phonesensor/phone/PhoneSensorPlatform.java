@@ -63,7 +63,7 @@ public class PhoneSensorPlatform {
     }
     public Platform getPlatform() {
         return new PlatformBuilder().
-                setId(getId()).setType(getType()).
+                setId(getId()).setType(getType()).setMetadata(METADATA.NAME,"Phone").
                 setMetadata(METADATA.OPERATING_SYSTEM, getOS()).setMetadata(METADATA.MANUFACTURER, getManufacturer()).setMetadata(METADATA.MODEL, getName()).build();
     }
 }
