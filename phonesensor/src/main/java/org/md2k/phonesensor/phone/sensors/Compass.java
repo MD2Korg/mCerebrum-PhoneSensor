@@ -100,7 +100,7 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
         samples[1] = event.values[1];
         samples[2] = event.values[2];
         DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
-        dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
+        dataKitAPI.insert(dataSourceClient, dataTypeFloatArray);
         callBack.onReceivedData(dataTypeFloatArray);
     }
 

@@ -115,7 +115,7 @@ public class CPU extends PhoneSensorDataSource {
 
             curValues=values;
             DataTypeFloat dataTypeFloat=new DataTypeFloat(DateTime.getDateTime(),samples);
-            dataKitHandler.insert(dataSourceClient, dataTypeFloat);
+            dataKitAPI.insert(dataSourceClient, dataTypeFloat);
 
             callBack.onReceivedData(dataTypeFloat);
             scheduler.postDelayed(statusCPU,1000);

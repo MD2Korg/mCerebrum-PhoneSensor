@@ -88,7 +88,7 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
     public void onSensorChanged(SensorEvent event) {
         float sample = event.values[0];
         DataTypeFloat dataTypeFloat = new DataTypeFloat(DateTime.getDateTime(), sample);
-        dataKitHandler.insert(dataSourceClient, dataTypeFloat);
+        dataKitAPI.insert(dataSourceClient, dataTypeFloat);
         callBack.onReceivedData(dataTypeFloat);
     }
 

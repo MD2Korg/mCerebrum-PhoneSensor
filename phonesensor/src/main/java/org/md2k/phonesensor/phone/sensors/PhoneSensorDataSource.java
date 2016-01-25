@@ -2,6 +2,7 @@ package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
 
+import org.md2k.datakitapi.DataKitAPI;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.application.ApplicationBuilder;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -10,8 +11,6 @@ import org.md2k.datakitapi.source.datasource.DataSourceClient;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.phonesensor.phone.PhoneSensorPlatform;
-import org.md2k.utilities.Report.Log;
-import org.md2k.utilities.datakit.DataKitHandler;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -47,7 +46,7 @@ public abstract class PhoneSensorDataSource {
     private boolean enabled;
     CallBack callBack;
     String frequency="SENSOR_DELAY_UI";
-    DataKitHandler dataKitHandler;
+    DataKitAPI dataKitAPI;
 
     PhoneSensorDataSource(Context context, String dataSourceType) {
         this.context = context;
@@ -87,8 +86,8 @@ public abstract class PhoneSensorDataSource {
     }
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
-        dataKitHandler = DataKitHandler.getInstance(context);
-        dataSourceClient = dataKitHandler.register(dataSourceBuilder);
+        dataKitAPI = DataKitAPI.getInstance(context);
+        dataSourceClient = dataKitAPI.register(dataSourceBuilder);
         callBack = newCallBack;
     }
 

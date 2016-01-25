@@ -112,7 +112,7 @@ public class Battery extends PhoneSensorDataSource {
             samples[1]=intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,-1);
             samples[2]=intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,-1);
             DataTypeDoubleArray dataTypeDoubleArray=new DataTypeDoubleArray(DateTime.getDateTime(),samples);
-            dataKitHandler.insert(dataSourceClient, dataTypeDoubleArray);
+            dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);
             callBack.onReceivedData(dataTypeDoubleArray);
             scheduler.postDelayed(batteryStatus, 1000);
         }

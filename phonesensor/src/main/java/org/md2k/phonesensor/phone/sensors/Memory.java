@@ -105,7 +105,7 @@ public class Memory extends PhoneSensorDataSource {
         public void run() {
             float[] samples = readUsage();
             DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(DateTime.getDateTime(), samples);
-            dataKitHandler.insert(dataSourceClient, dataTypeFloatArray);
+            dataKitAPI.insert(dataSourceClient, dataTypeFloatArray);
             callBack.onReceivedData(dataTypeFloatArray);
             scheduler.postDelayed(statusMemory,1000);
         }
