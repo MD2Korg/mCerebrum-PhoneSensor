@@ -79,22 +79,6 @@ public class ServicePhoneSensor extends Service {
         alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         alertDialog.show();
     }
-    //            UIShow.ErrorDialog(getApplicationContext(), "DataKit Error", "DataKit is not available.\n\nPlease Install DataKit");
-    void showAlertDialogDataKit(final Context context){
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Error: DataKit")
-                .setIcon(R.drawable.ic_error_red_50dp)
-                .setMessage("DataKit is not installed.\n\n Please install DataKit")
-                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .create();
-
-        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        alertDialog.show();
-    }
 
     private void connectDataKit() {
         Log.d(TAG, "connectDataKit()...");
