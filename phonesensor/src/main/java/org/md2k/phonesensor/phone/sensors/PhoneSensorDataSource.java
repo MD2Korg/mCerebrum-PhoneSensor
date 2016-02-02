@@ -47,7 +47,10 @@ public abstract class PhoneSensorDataSource {
     CallBack callBack;
     String frequency="SENSOR_DELAY_UI";
     DataKitAPI dataKitAPI;
-
+    public static final double EPSILON_NORMAL=2.0;
+    public static final double EPSILON_UI=5.0;
+    public static final double EPSILON_GAME=10.0;
+    public static final double EPSILON_FASTEST=50.0;
     PhoneSensorDataSource(Context context, String dataSourceType) {
         this.context = context;
         this.dataSourceType = dataSourceType;
