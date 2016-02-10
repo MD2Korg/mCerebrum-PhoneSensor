@@ -45,17 +45,49 @@ import java.util.HashMap;
  */
 public class Battery extends PhoneSensorDataSource {
     private Handler scheduler;
+    private final Runnable batteryStatus = new Runnable() {
+
+        @Override
+        public void run() {
+            IntentFilter iFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+            Intent intent = context.registerReceiver(null, iFilter);
+            assert intent != null;
+            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+            int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
+            float percentage;
+            if (level == -1 || scale == -1) {
+                percentage = 0.0f;
+            } else {
+                percentage = ((float) level / (float) scale) * 100.0f;
+            }
+            double samples[] = new double[3];
+            samples[0] = percentage;
+            samples[1] = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
+            samples[2] = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
+            DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
+            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            callBack.onReceivedData(dataTypeDoubleArray);
+            scheduler.postDelayed(batteryStatus, 1000);
+        }
+    };
+
+    public Battery(Context context) {
+        super(context, DataSourceType.BATTERY);
+        frequency = "1.0 Hz";
+    }
+
     HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
         HashMap<String,String> dataDescriptor=new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
         dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
         dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
         dataDescriptor.put(METADATA.UNIT, unit);
-        dataDescriptor.put(METADATA.FREQUENCY,frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION,description);
-        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getName());
+        dataDescriptor.put(METADATA.FREQUENCY, frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION, description);
+        dataDescriptor.put(METADATA.DATA_TYPE, float.class.getName());
         return dataDescriptor;
     }
+
     ArrayList<HashMap<String,String>> createDataDescriptors(){
         ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
         dataDescriptors.add(createDataDescriptor("Level",frequency,"current battery charge",0,100,"percentage"));
@@ -75,12 +107,6 @@ public class Battery extends PhoneSensorDataSource {
         return dataSourceBuilder;
     }
 
-    public Battery(Context context) {
-        super(context, DataSourceType.BATTERY);
-        frequency="1.0 Hz";
-    }
-
-
     public void unregister() {
         scheduler.removeCallbacks(batteryStatus);
         scheduler=null;
@@ -91,30 +117,4 @@ public class Battery extends PhoneSensorDataSource {
         scheduler=new Handler();
         scheduler.post(batteryStatus);
     }
-    private final Runnable batteryStatus=new Runnable(){
-
-        @Override
-        public void run() {
-            IntentFilter iFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-            Intent intent = context.registerReceiver(null, iFilter);
-            assert intent != null;
-            int  level= intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-            int  scale= intent.getIntExtra(BatteryManager.EXTRA_SCALE,0);
-            float percentage;
-            if (level == -1 || scale == -1) {
-                percentage=0.0f;
-            }
-            else{
-                percentage=((float) level / (float) scale) * 100.0f;
-            }
-            double samples[]=new double[3];
-            samples[0]=percentage;
-            samples[1]=intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,-1);
-            samples[2]=intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,-1);
-            DataTypeDoubleArray dataTypeDoubleArray=new DataTypeDoubleArray(DateTime.getDateTime(),samples);
-            dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);
-            callBack.onReceivedData(dataTypeDoubleArray);
-            scheduler.postDelayed(batteryStatus, 1000);
-        }
-    };
 }

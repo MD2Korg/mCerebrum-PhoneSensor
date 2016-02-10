@@ -61,21 +61,28 @@ public class LocationFused extends PhoneSensorDataSource implements
         GoogleApiClient.OnConnectionFailedListener{
 
     private static final String TAG = LocationFused.class.getSimpleName();
-    private LocationRequest mLocationRequest;
-    private GoogleApiClient mGoogleApiClient;
     private static final long INTERVAL = 1000L;
     private static final long FASTEST_INTERVAL = 1000L;
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
+
+    public LocationFused(Context context) {
+        super(context, DataSourceType.LOCATION);
+
+    }
+
     HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
         HashMap<String,String> dataDescriptor=new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
         dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
         dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
         dataDescriptor.put(METADATA.UNIT, unit);
-        dataDescriptor.put(METADATA.FREQUENCY,frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION,description);
-        dataDescriptor.put(METADATA.DATA_TYPE,double.class.getName());
+        dataDescriptor.put(METADATA.FREQUENCY, frequency);
+        dataDescriptor.put(METADATA.DESCRIPTION, description);
+        dataDescriptor.put(METADATA.DATA_TYPE, double.class.getName());
         return dataDescriptor;
     }
+
     ArrayList<HashMap<String,String>> createDataDescriptors(){
         ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
         dataDescriptors.add(createDataDescriptor("Latitude",frequency,"latitude, in degrees",-90,90,"degree"));
@@ -98,10 +105,6 @@ public class LocationFused extends PhoneSensorDataSource implements
         return dataSourceBuilder;
     }
 
-    public LocationFused(Context context) {
-        super(context, DataSourceType.LOCATION);
-
-    }
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(INTERVAL);
@@ -119,7 +122,7 @@ public class LocationFused extends PhoneSensorDataSource implements
         samples[4]=location.getBearing();
         samples[5]=location.getAccuracy();
         DataTypeDoubleArray dataTypeDoubleArray=new DataTypeDoubleArray(DateTime.getDateTime(),samples);
-        dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);
+        dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
         callBack.onReceivedData(dataTypeDoubleArray);
     }
 

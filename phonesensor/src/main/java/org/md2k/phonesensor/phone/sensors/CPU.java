@@ -3,12 +3,14 @@ package org.md2k.phonesensor.phone.sensors;
 import android.content.Context;
 import android.os.Handler;
 
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.CallBack;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -42,6 +44,30 @@ import java.util.HashMap;
  */
 public class CPU extends PhoneSensorDataSource {
     private Handler scheduler;
+    private long[] curValues = new long[2];
+    private final Runnable statusCPU = new Runnable() {
+        @Override
+        public void run() {
+            long values[] = new long[2];
+            readUsage(values);
+
+            double[] sample = new double[1];
+            sample[0] = (float) (values[1] - curValues[1]) / (float) ((values[1] + values[0]) - (curValues[1] + curValues[0]));
+
+            curValues = values;
+            DataTypeDoubleArray dataTypeDouble = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
+            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDouble);
+
+            callBack.onReceivedData(dataTypeDouble);
+            scheduler.postDelayed(statusCPU, 1000);
+        }
+    };
+
+    public CPU(Context context) {
+        super(context, DataSourceType.CPU);
+        frequency = "1.0 Hz";
+    }
+
     HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
         HashMap<String,String> dataDescriptor=new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
@@ -53,6 +79,7 @@ public class CPU extends PhoneSensorDataSource {
         dataDescriptor.put(METADATA.DATA_TYPE,float.class.getName());
         return dataDescriptor;
     }
+
     ArrayList<HashMap<String,String>> createDataDescriptors(){
         ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
         dataDescriptors.add(createDataDescriptor("CPU usage",frequency,"CPU usage from the last record",0,1,""));
@@ -70,13 +97,6 @@ public class CPU extends PhoneSensorDataSource {
         return dataSourceBuilder;
     }
 
-
-    public CPU(Context context) {
-        super(context, DataSourceType.CPU);
-        frequency="1.0 Hz";
-    }
-
-
     public void unregister() {
         scheduler.removeCallbacks(statusCPU);
         scheduler=null;
@@ -89,6 +109,7 @@ public class CPU extends PhoneSensorDataSource {
         scheduler=new Handler();
         scheduler.post(statusCPU);
     }
+
     private void readUsage(long[] values) {
         try {
             RandomAccessFile reader = new RandomAccessFile("/proc/stat", "r");
@@ -104,21 +125,4 @@ public class CPU extends PhoneSensorDataSource {
             ex.printStackTrace();
         }
     }
-
-    private long[] curValues=new long[2];
-    private final Runnable statusCPU =new Runnable(){
-        @Override
-        public void run() {
-            long values[]=new long[2];
-            readUsage(values);
-            float samples = (float)(values[1] - curValues[1]) / (float)((values[1] + values[0]) - (curValues[1] + curValues[0]));
-
-            curValues=values;
-            DataTypeFloat dataTypeFloat=new DataTypeFloat(DateTime.getDateTime(),samples);
-            dataKitAPI.insert(dataSourceClient, dataTypeFloat);
-
-            callBack.onReceivedData(dataTypeFloat);
-            scheduler.postDelayed(statusCPU,1000);
-        }
-    };
 }

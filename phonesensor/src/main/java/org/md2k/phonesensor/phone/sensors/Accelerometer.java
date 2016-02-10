@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -44,14 +45,19 @@ import java.util.HashMap;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Accelerometer extends PhoneSensorDataSource implements SensorEventListener {
-    private SensorManager mSensorManager;
     private static final String SENSOR_DELAY_NORMAL = "SENSOR_DELAY_NORMAL";
     private static final String SENSOR_DELAY_UI = "SENSOR_DELAY_UI";
     private static final String SENSOR_DELAY_GAME = "SENSOR_DELAY_GAME";
     private static final String SENSOR_DELAY_FASTEST = "SENSOR_DELAY_FASTEST";
+    public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     long lastSaved=DateTime.getDateTime();
     double FILTER_DATA_MIN_TIME;
-    public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
+    private SensorManager mSensorManager;
+
+    public Accelerometer(Context context) {
+        super(context, DataSourceType.ACCELEROMETER);
+        frequency = SENSOR_DELAY_UI;
+    }
 
     HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
         HashMap<String, String> dataDescriptor = new HashMap<>();
@@ -90,23 +96,18 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         frequency = dataSource.getMetadata().get(METADATA.FREQUENCY);
     }
 
-    public Accelerometer(Context context) {
-        super(context, DataSourceType.ACCELEROMETER);
-        frequency = SENSOR_DELAY_UI;
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
         long curTime = DateTime.getDateTime();
         if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
             lastSaved = curTime;
-            float[] samples = new float[3];
+            double[] samples = new double[3];
             samples[0] = event.values[0];
             samples[1] = event.values[1];
             samples[2] = event.values[2];
-            DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(curTime, samples);
-            dataKitAPI.insert(dataSourceClient, dataTypeFloatArray);
-            callBack.onReceivedData(dataTypeFloatArray);
+            DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
+            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            callBack.onReceivedData(dataTypeDoubleArray);
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Handler;
 
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -42,6 +43,23 @@ import java.util.HashMap;
  */
 public class Memory extends PhoneSensorDataSource {
     private Handler scheduler;
+    private final Runnable statusMemory = new Runnable() {
+
+        @Override
+        public void run() {
+            double[] samples = readUsage();
+            DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
+            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            callBack.onReceivedData(dataTypeDoubleArray);
+            scheduler.postDelayed(statusMemory, 1000);
+        }
+    };
+
+    public Memory(Context context) {
+        super(context, DataSourceType.MEMORY);
+        frequency = "1.0 Hz";
+    }
+
     HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
         HashMap<String,String> dataDescriptor=new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
@@ -49,10 +67,11 @@ public class Memory extends PhoneSensorDataSource {
         dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
         dataDescriptor.put(METADATA.UNIT, unit);
         dataDescriptor.put(METADATA.FREQUENCY,frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION,description);
-        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getName());
+        dataDescriptor.put(METADATA.DESCRIPTION, description);
+        dataDescriptor.put(METADATA.DATA_TYPE, float.class.getName());
         return dataDescriptor;
     }
+
     ArrayList<HashMap<String,String>> createDataDescriptors(){
         ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
         dataDescriptors.add(createDataDescriptor("Size",frequency,"Size of the memory",0,2048,"megabyte"));
@@ -71,13 +90,6 @@ public class Memory extends PhoneSensorDataSource {
         return dataSourceBuilder;
     }
 
-
-    public Memory(Context context) {
-        super(context, DataSourceType.MEMORY);
-        frequency = "1.0 Hz";
-    }
-
-
     public void unregister() {
         scheduler.removeCallbacks(statusMemory);
         scheduler = null;
@@ -89,25 +101,13 @@ public class Memory extends PhoneSensorDataSource {
         scheduler.post(statusMemory);
     }
 
-    private float[] readUsage() {
-        float[] samples = new float[2];
+    private double[] readUsage() {
+        double[] samples = new double[2];
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         activityManager.getMemoryInfo(mi);
-        samples[0] = (float) mi.totalMem/(float)(1024*1024);
-        samples[1] = (float)mi.availMem/(float)(1024*1024);
+        samples[0] = (double) mi.totalMem / (double) (1024 * 1024);
+        samples[1] = (double) mi.availMem / (double) (1024 * 1024);
         return samples;
     }
-
-    private final Runnable statusMemory = new Runnable() {
-
-        @Override
-        public void run() {
-            float[] samples = readUsage();
-            DataTypeFloatArray dataTypeFloatArray = new DataTypeFloatArray(DateTime.getDateTime(), samples);
-            dataKitAPI.insert(dataSourceClient, dataTypeFloatArray);
-            callBack.onReceivedData(dataTypeFloatArray);
-            scheduler.postDelayed(statusMemory,1000);
-        }
-    };
 }

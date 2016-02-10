@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -46,6 +47,11 @@ import java.util.HashMap;
 public class Pressure extends PhoneSensorDataSource implements SensorEventListener {
     private SensorManager mSensorManager;
 
+    public Pressure(Context context) {
+        super(context, DataSourceType.PRESSURE);
+        frequency = "~6 Hz";
+    }
+
     ArrayList<HashMap<String,String>> createDataDescriptors(){
         ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
         HashMap<String,String> dataDescriptor=new HashMap<>();
@@ -79,17 +85,13 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
         frequency = dataSource.getMetadata().get(METADATA.FREQUENCY);
     }
 
-    public Pressure(Context context) {
-        super(context, DataSourceType.PRESSURE);
-        frequency = "~6 Hz";
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float sample = event.values[0];
-        DataTypeFloat dataTypeFloat = new DataTypeFloat(DateTime.getDateTime(), sample);
-        dataKitAPI.insert(dataSourceClient, dataTypeFloat);
-        callBack.onReceivedData(dataTypeFloat);
+        double[] sample = new double[1];
+        sample[0] = event.values[0];
+        DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
+        dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        callBack.onReceivedData(dataTypeDoubleArray);
     }
 
     @Override
