@@ -9,8 +9,8 @@ android {
         applicationId "org.md2k.phonesensor"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 9
-        versionName '0.7.2'
+        versionCode 10
+        versionName '0.7.3'
     }
     buildTypes {
         release {
