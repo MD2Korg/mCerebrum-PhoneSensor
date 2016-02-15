@@ -2,6 +2,7 @@ package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
@@ -134,7 +135,7 @@ public class PhoneSensorDataSources {
             final int finalI = i;
             Intent intent = new Intent("phonesensor");
             intent.putExtra("operation", "register");
-            intent.putExtra("datasource", dataSourceBuilder.build());
+            intent.putExtra("datasource", (Parcelable) dataSourceBuilder.build());
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
             phoneSensorDataSources.get(i).register(dataSourceBuilder, new CallBack() {
@@ -150,8 +151,8 @@ public class PhoneSensorDataSources {
                     intent.putExtra("count", hm.get(dataSourceType));
                     intent.putExtra("timestamp", data.getDateTime());
                     intent.putExtra("starttimestamp", starttimestamp);
-                    intent.putExtra("data", data);
-                    intent.putExtra("datasource", dataSourceBuilder.build());
+                    intent.putExtra("data",(Parcelable) data);
+                    intent.putExtra("datasource", (Parcelable)dataSourceBuilder.build());
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             });

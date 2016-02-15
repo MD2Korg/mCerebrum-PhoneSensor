@@ -186,7 +186,7 @@ public class ActivityMain extends AppCompatActivity {
 
     void updateTable(Intent intent) {
         String sampleStr = "";
-        String dataSourceType = ((DataSource) intent.getSerializableExtra("datasource")).getType();
+        String dataSourceType = ((DataSource) intent.getParcelableExtra("datasource")).getType();
         int count = intent.getIntExtra("count", 0);
         hashMapData.get(dataSourceType + "_count").setText(String.valueOf(count));
 
@@ -195,7 +195,7 @@ public class ActivityMain extends AppCompatActivity {
         hashMapData.get(dataSourceType + "_freq").setText(String.format("%.1f", freq));
 
 
-        DataType data = (DataType) intent.getSerializableExtra("data");
+        DataType data = intent.getParcelableExtra("data");
 
         if (data instanceof DataTypeFloat) {
             sampleStr = String.format("%.1f", ((DataTypeFloat) data).getSample());
