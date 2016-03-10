@@ -19,6 +19,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
@@ -28,12 +30,13 @@ import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Apps;
-import org.md2k.utilities.Report.Log;
 import org.md2k.utilities.UI.ActivityAbout;
 import org.md2k.utilities.UI.ActivityCopyright;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -65,10 +68,36 @@ import java.util.HashMap;
 public class ActivityMain extends AppCompatActivity {
     private static final String TAG = ActivityMain.class.getSimpleName();
     HashMap<String, TextView> hashMapData = new HashMap<>();
+    Handler mHandler = new Handler();
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            {
+                long time = Apps.serviceRunningTime(ActivityMain.this, ServicePhoneSensor.class.getName());
+                if (time < 0) {
+                    ((Button) findViewById(R.id.button_app_status)).setText("START");
+                    findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_off));
+
+                } else {
+                    findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_on));
+                    ((Button) findViewById(R.id.button_app_status)).setText(DateTime.convertTimestampToTimeStr(time));
+
+                }
+                mHandler.postDelayed(this, 1000);
+            }
+        }
+    };
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateTable(intent);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         final Button buttonService = (Button) findViewById(R.id.button_app_status);
 
@@ -78,7 +107,7 @@ public class ActivityMain extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);
                 if (Apps.isServiceRunning(getBaseContext(), ServicePhoneSensor.class.getName())) {
                     stopService(intent);
-                }else{
+                } else {
                     startService(intent);
                 }
             }
@@ -217,13 +246,6 @@ public class ActivityMain extends AppCompatActivity {
         hashMapData.get(dataSourceType + "_sample").setText(sampleStr);
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            updateTable(intent);
-        }
-    };
-
     @Override
     public void onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -240,26 +262,6 @@ public class ActivityMain extends AppCompatActivity {
 
         super.onPause();
     }
-
-    Handler mHandler = new Handler();
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            {
-                long time = Apps.serviceRunningTime(ActivityMain.this, ServicePhoneSensor.class.getName());
-                if (time < 0) {
-                    ((Button) findViewById(R.id.button_app_status)).setText("START");
-                    findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_off));
-
-                } else {
-                    findViewById(R.id.button_app_status).setBackground(ContextCompat.getDrawable(ActivityMain.this, R.drawable.button_status_on));
-                    ((Button) findViewById(R.id.button_app_status)).setText(DateTime.convertTimestampToTimeStr(time));
-
-                }
-                mHandler.postDelayed(this, 1000);
-            }
-        }
-    };
 
     @Override
     public void onDestroy() {
