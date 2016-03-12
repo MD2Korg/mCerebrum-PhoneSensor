@@ -26,6 +26,7 @@ android {
         targetSdkVersion 23
         versionCode 11
         versionName '0.8.0'
+
     }
     buildTypes {
         release {
@@ -39,7 +40,8 @@ android {
             }
         }
     }
-    productFlavors {
+    lintOptions {
+        abortOnError false
     }
 }
 
