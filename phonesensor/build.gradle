@@ -14,6 +14,11 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+ext {
+    travisBuild = System.getenv("TRAVIS") == "true"
+    // allows for -Dpre-dex=false to be set
+    preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+}
 
 android {
     signingConfigs {
@@ -27,6 +32,10 @@ android {
         versionCode 11
         versionName '0.8.0'
 
+    }
+    dexOptions {
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !travisBuild
     }
     buildTypes {
         release {
