@@ -1,13 +1,17 @@
 language: android
 
 before_cache:
-- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 
 cache:
   directories:
-  - "$HOME/.gradle/caches/"
-  - "$HOME/.gradle/wrapper/"
-  - "$HOME/.m2/"
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
+    - "$HOME/.m2/"
+
+env:
+  global:
+    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
 
 android:
   components:
@@ -20,11 +24,11 @@ android:
     - build-tools-23.0.2
     - android-23
   licenses:
-      - '.+'
+    - '.+'
 
 before_install:
-- git clone https://github.com/MD2Korg/mCerebrum-Utilities.git /home/travis/build/MD2Korg/mCerebrum-Utilities
-- git clone https://github.com/MD2Korg/mCerebrum-DataKitAPI.git /home/travis/build/MD2Korg/mCerebrum-DataKitAPI
+  - git clone https://github.com/MD2Korg/mCerebrum-Utilities.git /home/travis/build/MD2Korg/mCerebrum-Utilities
+  - git clone https://github.com/MD2Korg/mCerebrum-DataKitAPI.git /home/travis/build/MD2Korg/mCerebrum-DataKitAPI
 
 script:
   - ./gradlew build test
