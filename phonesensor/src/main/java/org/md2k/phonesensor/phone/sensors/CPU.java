@@ -5,6 +5,7 @@ import android.os.Handler;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
@@ -56,7 +57,15 @@ public class CPU extends PhoneSensorDataSource {
 
             curValues = values;
             DataTypeDoubleArray dataTypeDouble = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
-            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDouble);
+            try {
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDouble);
+            } catch (DataKitException e) {
+                try {
+                    reconnect();
+                } catch (DataKitException e1) {
+                    e1.printStackTrace();
+                }
+            }
 
             callBack.onReceivedData(dataTypeDouble);
             scheduler.postDelayed(statusCPU, 1000);
@@ -104,7 +113,7 @@ public class CPU extends PhoneSensorDataSource {
 //        context.unregisterReceiver(batteryInfoReceiver);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         scheduler=new Handler();
         scheduler.post(statusCPU);

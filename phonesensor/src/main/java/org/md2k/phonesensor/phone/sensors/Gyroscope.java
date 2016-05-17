@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -108,7 +109,15 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
             samples[1] = event.values[1];
             samples[2] = event.values[2];
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
-            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            try {
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            } catch (DataKitException e) {
+                try {
+                    reconnect();
+                } catch (DataKitException e1) {
+                    e1.printStackTrace();
+                }
+            }
             callBack.onReceivedData(dataTypeDoubleArray);
         }
     }
@@ -122,7 +131,7 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);

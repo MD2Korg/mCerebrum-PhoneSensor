@@ -8,6 +8,7 @@ import android.os.Handler;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
@@ -65,7 +66,15 @@ public class Battery extends PhoneSensorDataSource {
             samples[1] = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
             samples[2] = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
-            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            try {
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            } catch (DataKitException e) {
+                try {
+                    reconnect();
+                } catch (DataKitException e1) {
+                    e1.printStackTrace();
+                }
+            }
             callBack.onReceivedData(dataTypeDoubleArray);
             scheduler.postDelayed(batteryStatus, 1000);
         }
@@ -112,7 +121,7 @@ public class Battery extends PhoneSensorDataSource {
         scheduler=null;
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         scheduler=new Handler();
         scheduler.post(batteryStatus);

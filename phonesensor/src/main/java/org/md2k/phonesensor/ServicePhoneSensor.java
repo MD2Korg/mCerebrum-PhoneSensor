@@ -10,9 +10,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.md2k.datakitapi.DataKitAPI;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
-import org.md2k.datakitapi.messagehandler.OnExceptionListener;
-import org.md2k.datakitapi.status.Status;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Report.Log;
 
@@ -82,23 +81,23 @@ public class ServicePhoneSensor extends Service {
 
     private void connectDataKit() {
         Log.d(TAG, "connectDataKit()...");
-        DataKitAPI.getInstance(getApplicationContext()).close();
+        DataKitAPI.getInstance(getApplicationContext()).disconnect();
+
         dataKitAPI = DataKitAPI.getInstance(getApplicationContext());
-        dataKitAPI.connect(new OnConnectionListener() {
-            @Override
-            public void onConnected() {
-                Log.d(TAG, "onConnected()...");
-                Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Started successfully", Toast.LENGTH_LONG).show();
-                phoneSensorDataSources.register();
-            }
-        }, new OnExceptionListener() {
-            @Override
-            public void onException(Status status) {
-                android.util.Log.d(TAG, "onException...");
-                Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Stopped. Error: " + status.getStatusMessage(), Toast.LENGTH_LONG).show();
-                stopSelf();
-            }
-        });
+        try {
+            dataKitAPI.connect(new OnConnectionListener() {
+                @Override
+                public void onConnected() {
+                    Log.d(TAG, "onConnected()...");
+                    Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Started successfully", Toast.LENGTH_LONG).show();
+                    phoneSensorDataSources.register();
+                }
+            });
+        } catch (DataKitException e) {
+            android.util.Log.d(TAG, "onException...");
+            Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Stopped", Toast.LENGTH_LONG).show();
+            stopSelf();
+        }
     }
 
     private boolean readSettings() {
@@ -112,9 +111,9 @@ public class ServicePhoneSensor extends Service {
             phoneSensorDataSources.unregister();
             phoneSensorDataSources = null;
         }
-        if (dataKitAPI != null && dataKitAPI.isConnected()) dataKitAPI.disconnect();
-        if (dataKitAPI != null)
-            dataKitAPI.close();
+        if (dataKitAPI != null && dataKitAPI.isConnected()) {
+            dataKitAPI.disconnect();
+        }
         super.onDestroy();
     }
 

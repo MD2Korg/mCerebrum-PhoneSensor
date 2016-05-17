@@ -7,6 +7,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataType;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.time.DateTime;
@@ -50,12 +51,9 @@ import java.util.HashMap;
 public class PhoneSensorDataSources {
     private static final String TAG = PhoneSensorDataSources.class.getSimpleName();
     protected Context context;
-
-    public ArrayList<PhoneSensorDataSource> getPhoneSensorDataSources() {
-        return phoneSensorDataSources;
-    }
-
     ArrayList<PhoneSensorDataSource> phoneSensorDataSources;
+    HashMap<String, Integer> hm = new HashMap<>();
+    long starttimestamp = 0;
 
     public PhoneSensorDataSources(Context context) {
         this.context = context;
@@ -77,6 +75,10 @@ public class PhoneSensorDataSources {
         } catch (FileNotFoundException e) {
             Toast.makeText(context, "PhoneSensor Configuration file is not available.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public ArrayList<PhoneSensorDataSource> getPhoneSensorDataSources() {
+        return phoneSensorDataSources;
     }
 
     private void readDataSourceFromFile() throws FileNotFoundException {
@@ -122,9 +124,6 @@ public class PhoneSensorDataSources {
         Configuration.write(dataSources);
     }
 
-    HashMap<String, Integer> hm = new HashMap<>();
-    long starttimestamp = 0;
-
     public void register() {
         hm.clear();
         starttimestamp = DateTime.getDateTime();
@@ -138,24 +137,29 @@ public class PhoneSensorDataSources {
             intent.putExtra("datasource", (Parcelable) dataSourceBuilder.build());
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
-            phoneSensorDataSources.get(i).register(dataSourceBuilder, new CallBack() {
-                @Override
-                public void onReceivedData(DataType data) {
-                    String dataSourceType = phoneSensorDataSources.get(finalI).getDataSourceType();
-                    Intent intent = new Intent("phonesensor");
-                    intent.putExtra("operation", "data");
-                    if (!hm.containsKey(dataSourceType)) {
-                        hm.put(dataSourceType, 0);
+            try {
+                phoneSensorDataSources.get(i).register(dataSourceBuilder, new CallBack() {
+                    @Override
+                    public void onReceivedData(DataType data) {
+                        String dataSourceType = phoneSensorDataSources.get(finalI).getDataSourceType();
+                        Intent intent = new Intent("phonesensor");
+                        intent.putExtra("operation", "data");
+                        if (!hm.containsKey(dataSourceType)) {
+                            hm.put(dataSourceType, 0);
+                        }
+                        hm.put(dataSourceType, hm.get(dataSourceType) + 1);
+                        intent.putExtra("count", hm.get(dataSourceType));
+                        intent.putExtra("timestamp", data.getDateTime());
+                        intent.putExtra("starttimestamp", starttimestamp);
+                        intent.putExtra("data", (Parcelable) data);
+                        intent.putExtra("datasource", (Parcelable) dataSourceBuilder.build());
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     }
-                    hm.put(dataSourceType, hm.get(dataSourceType) + 1);
-                    intent.putExtra("count", hm.get(dataSourceType));
-                    intent.putExtra("timestamp", data.getDateTime());
-                    intent.putExtra("starttimestamp", starttimestamp);
-                    intent.putExtra("data",(Parcelable) data);
-                    intent.putExtra("datasource", (Parcelable)dataSourceBuilder.build());
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                }
-            });
+                });
+            } catch (DataKitException e) {
+                //TODO: Exception handler here?
+                e.printStackTrace();
+            }
         }
     }
 

@@ -3,13 +3,13 @@ package org.md2k.phonesensor;
 import android.os.Environment;
 
 import org.md2k.datakitapi.source.datasource.DataSource;
-import org.md2k.utilities.Files;
+import org.md2k.utilities.FileManager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
+/*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
@@ -41,14 +41,14 @@ public class Configuration {
     public static final String CONFIG_FILENAME = "config.json";
 
     public static ArrayList<DataSource> read() throws FileNotFoundException {
-        return Files.readJSONArray(CONFIG_DIRECTORY, CONFIG_FILENAME,DataSource.class);
+        return FileManager.readJSONArray(CONFIG_DIRECTORY, CONFIG_FILENAME, DataSource.class);
     }
 
     public static ArrayList<DataSource> readDefault() throws FileNotFoundException {
-        return Files.readJSONArray(CONFIG_DIRECTORY, DEFAULT_CONFIG_FILENAME,DataSource.class);
+        return FileManager.readJSONArray(CONFIG_DIRECTORY, DEFAULT_CONFIG_FILENAME, DataSource.class);
     }
 
     public static void write(ArrayList<DataSource> dataSources) throws IOException {
-        Files.writeJSONArray(CONFIG_DIRECTORY,CONFIG_FILENAME,dataSources);
+        FileManager.writeJSONArray(CONFIG_DIRECTORY, CONFIG_FILENAME, dataSources);
     }
 }

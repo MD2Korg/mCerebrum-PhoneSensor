@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
@@ -122,7 +123,15 @@ public class LocationFused extends PhoneSensorDataSource implements
         samples[4]=location.getBearing();
         samples[5]=location.getAccuracy();
         DataTypeDoubleArray dataTypeDoubleArray=new DataTypeDoubleArray(DateTime.getDateTime(),samples);
-        dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        try {
+            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        } catch (DataKitException e) {
+            try {
+                reconnect();
+            } catch (DataKitException e1) {
+                e1.printStackTrace();
+            }
+        }
         callBack.onReceivedData(dataTypeDoubleArray);
     }
 
@@ -156,7 +165,7 @@ public class LocationFused extends PhoneSensorDataSource implements
         alert.show();
     }
     @Override
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         statusCheck();
 

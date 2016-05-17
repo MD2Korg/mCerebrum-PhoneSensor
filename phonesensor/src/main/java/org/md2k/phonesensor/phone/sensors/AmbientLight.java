@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -95,7 +96,15 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         double[] sample = new double[1];
         sample[0] = event.values[0];
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
-        dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        try {
+            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        } catch (DataKitException e) {
+            try {
+                reconnect();
+            } catch (DataKitException e1) {
+                e1.printStackTrace();
+            }
+        }
         callBack.onReceivedData(dataTypeDoubleArray);
     }
     @Override
@@ -107,7 +116,7 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         mSensorManager.unregisterListener(this);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
