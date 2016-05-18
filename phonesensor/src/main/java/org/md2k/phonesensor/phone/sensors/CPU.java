@@ -2,6 +2,7 @@ package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
 import android.os.Handler;
+import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
@@ -61,14 +62,19 @@ public class CPU extends PhoneSensorDataSource {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDouble);
             } catch (DataKitException e) {
                 try {
+                    unregister();
                     reconnect();
+                    dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDouble);
                 } catch (DataKitException e1) {
+                    Toast.makeText(context, "Reconnection Error", Toast.LENGTH_LONG).show();
                     e1.printStackTrace();
                 }
             }
 
             callBack.onReceivedData(dataTypeDouble);
-            scheduler.postDelayed(statusCPU, 1000);
+            if (scheduler != null) {
+                scheduler.postDelayed(statusCPU, 1000);
+            }
         }
     };
 
@@ -107,10 +113,10 @@ public class CPU extends PhoneSensorDataSource {
     }
 
     public void unregister() {
-        scheduler.removeCallbacks(statusCPU);
-        scheduler=null;
-
-//        context.unregisterReceiver(batteryInfoReceiver);
+        if (scheduler != null) {
+            scheduler.removeCallbacks(statusCPU);
+            scheduler = null;
+        }
     }
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {

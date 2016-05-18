@@ -31,7 +31,7 @@ android {
         targetSdkVersion 23
         versionCode 11
         versionName '0.8.0'
-
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
@@ -64,4 +64,17 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
+
+    // Required -- JUnit 4 framework
+    testCompile 'junit:junit:4.12'
+
+    // Unit testing dependencies
+    androidTestCompile 'junit:junit:4.12'
+    // Set this dependency if you want to use the Hamcrest matcher library
+    androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
+    // more stuff, e.g., Mockito
+
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+
 }

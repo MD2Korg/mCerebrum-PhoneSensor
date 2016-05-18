@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
@@ -100,8 +101,11 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
             dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
         } catch (DataKitException e) {
             try {
+                unregister();
                 reconnect();
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
             } catch (DataKitException e1) {
+                Toast.makeText(context, "Reconnection Error", Toast.LENGTH_LONG).show();
                 e1.printStackTrace();
             }
         }
@@ -112,8 +116,10 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
 
     }
 
-    public void unregister(){
-        mSensorManager.unregisterListener(this);
+    public void unregister() {
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(this);
+        }
     }
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {

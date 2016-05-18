@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -127,8 +128,11 @@ public class LocationFused extends PhoneSensorDataSource implements
             dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
         } catch (DataKitException e) {
             try {
+                unregister();
                 reconnect();
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
             } catch (DataKitException e1) {
+                Toast.makeText(context, "Reconnection Error", Toast.LENGTH_LONG).show();
                 e1.printStackTrace();
             }
         }
@@ -187,8 +191,10 @@ public class LocationFused extends PhoneSensorDataSource implements
 
     @Override
     public void unregister() {
-        stopLocationUpdates();
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null) {
+            stopLocationUpdates();
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override

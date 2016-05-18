@@ -101,6 +101,7 @@ public abstract class PhoneSensorDataSource {
     }
 
     public void reconnect() throws DataKitException {
+        dataKitAPI = DataKitAPI.getInstance(context);
         dataSourceClient = dataKitAPI.register(dataSourceBuilder);
     }
 
