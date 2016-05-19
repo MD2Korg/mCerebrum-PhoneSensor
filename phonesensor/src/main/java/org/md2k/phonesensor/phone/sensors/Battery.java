@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Handler;
+import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
@@ -65,9 +67,22 @@ public class Battery extends PhoneSensorDataSource {
             samples[1] = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
             samples[2] = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
-            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            try {
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            } catch (DataKitException e) {
+                try {
+                    unregister();
+                    reconnect();
+                    dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+                } catch (DataKitException e1) {
+                    Toast.makeText(context, "Reconnection Error", Toast.LENGTH_LONG).show();
+                    e1.printStackTrace();
+                }
+            }
             callBack.onReceivedData(dataTypeDoubleArray);
-            scheduler.postDelayed(batteryStatus, 1000);
+            if (scheduler != null) {
+                scheduler.postDelayed(batteryStatus, 1000);
+            }
         }
     };
 
@@ -108,11 +123,13 @@ public class Battery extends PhoneSensorDataSource {
     }
 
     public void unregister() {
-        scheduler.removeCallbacks(batteryStatus);
-        scheduler=null;
+        if (scheduler != null) {
+            scheduler.removeCallbacks(batteryStatus);
+            scheduler = null;
+        }
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         scheduler=new Handler();
         scheduler.post(batteryStatus);

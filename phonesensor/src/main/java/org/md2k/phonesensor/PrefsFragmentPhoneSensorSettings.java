@@ -36,17 +36,17 @@ import java.util.ArrayList;
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- * <p/>
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * <p/>
+ *
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- * <p/>
+ *
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * <p/>
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -62,6 +62,34 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     private static final String TAG = PrefsFragmentPhoneSensorSettings.class.getSimpleName() ;
     PhoneSensorDataSources phoneSensorDataSources;
     ArrayList<DataSource> defaultConfig;
+    Preference.OnPreferenceChangeListener onPreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            phoneSensorDataSources.find(preference.getKey()).setEnabled((Boolean) newValue);
+            updatePreferenceScreen();
+            return false;
+        }
+    };
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    Intent intent = new Intent(getActivity(), ServicePhoneSensor.class);
+                    getActivity().stopService(intent);
+                    saveConfigurationFile();
+                    intent = new Intent(getActivity(), ServicePhoneSensor.class);
+                    getActivity().startService(intent);
+                    getActivity().finish();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    Toast.makeText(getActivity(), "Configuration file is not saved.", Toast.LENGTH_LONG).show();
+                    getActivity().finish();
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +101,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         setBackButton();
         setSaveButton();
     }
+
     void readDefaultConfiguration(){
         try {
             defaultConfig = Configuration.readDefault();
@@ -80,6 +109,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             defaultConfig =null;
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -89,6 +119,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         lv.setPadding(0, 0, 0, 0);
         return v;
     }
+
     void updateDefaultConfig(){
         for(int i=0;i<phoneSensorDataSources.getPhoneSensorDataSources().size();i++){
             phoneSensorDataSources.getPhoneSensorDataSources().get(i).setEnabled(false);
@@ -102,6 +133,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         }
 
     }
+
     void setDefaultSettings(){
         final CheckBoxPreference checkBoxPreference= (CheckBoxPreference) findPreference("key_default_settings");
         if(defaultConfig ==null) {
@@ -137,6 +169,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         addPreferenceScreenSensors();
         updatePreferenceScreen();
     }
+
     void readConfiguration() {
         phoneSensorDataSources = new PhoneSensorDataSources(getActivity());
     }
@@ -195,15 +228,6 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             }
         };
     }
-
-    Preference.OnPreferenceChangeListener onPreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            phoneSensorDataSources.find(preference.getKey()).setEnabled((Boolean) newValue);
-            updatePreferenceScreen();
-            return false;
-        }
-    };
 
     protected void addPreferenceScreenSensors() {
         String dataSourceType;
@@ -264,24 +288,4 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             e.printStackTrace();
         }
     }
-    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-                    Intent intent = new Intent(getActivity(), ServicePhoneSensor.class);
-                    getActivity().stopService(intent);
-                    saveConfigurationFile();
-                    intent = new Intent(getActivity(), ServicePhoneSensor.class);
-                    getActivity().startService(intent);
-                    getActivity().finish();
-                    break;
-
-                case DialogInterface.BUTTON_NEGATIVE:
-                    Toast.makeText(getActivity(), "Configuration file is not saved.", Toast.LENGTH_LONG).show();
-                    getActivity().finish();
-                    break;
-            }
-        }
-    };
 }

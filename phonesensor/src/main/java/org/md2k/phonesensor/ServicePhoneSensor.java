@@ -10,9 +10,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.md2k.datakitapi.DataKitAPI;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
-import org.md2k.datakitapi.messagehandler.OnExceptionListener;
-import org.md2k.datakitapi.status.Status;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Report.Log;
 
@@ -20,17 +19,17 @@ import org.md2k.utilities.Report.Log;
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- * <p/>
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * <p/>
+ *
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- * <p/>
+ *
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * <p/>
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -82,23 +81,23 @@ public class ServicePhoneSensor extends Service {
 
     private void connectDataKit() {
         Log.d(TAG, "connectDataKit()...");
-        DataKitAPI.getInstance(getApplicationContext()).close();
+        DataKitAPI.getInstance(getApplicationContext()).disconnect();
+
         dataKitAPI = DataKitAPI.getInstance(getApplicationContext());
-        dataKitAPI.connect(new OnConnectionListener() {
-            @Override
-            public void onConnected() {
-                Log.d(TAG, "onConnected()...");
-                Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Started successfully", Toast.LENGTH_LONG).show();
-                phoneSensorDataSources.register();
-            }
-        }, new OnExceptionListener() {
-            @Override
-            public void onException(Status status) {
-                android.util.Log.d(TAG, "onException...");
-                Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Stopped. Error: " + status.getStatusMessage(), Toast.LENGTH_LONG).show();
-                stopSelf();
-            }
-        });
+        try {
+            dataKitAPI.connect(new OnConnectionListener() {
+                @Override
+                public void onConnected() {
+                    Log.d(TAG, "onConnected()...");
+                    Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Started successfully", Toast.LENGTH_LONG).show();
+                    phoneSensorDataSources.register();
+                }
+            });
+        } catch (DataKitException e) {
+            android.util.Log.d(TAG, "onException...");
+            Toast.makeText(ServicePhoneSensor.this, "DataKit unavailable", Toast.LENGTH_LONG).show();
+            stopSelf();
+        }
     }
 
     private boolean readSettings() {
@@ -112,9 +111,9 @@ public class ServicePhoneSensor extends Service {
             phoneSensorDataSources.unregister();
             phoneSensorDataSources = null;
         }
-        if (dataKitAPI != null && dataKitAPI.isConnected()) dataKitAPI.disconnect();
-        if (dataKitAPI != null)
-            dataKitAPI.close();
+        if (dataKitAPI != null && dataKitAPI.isConnected()) {
+            dataKitAPI.disconnect();
+        }
         super.onDestroy();
     }
 

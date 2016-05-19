@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -20,6 +21,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
@@ -122,7 +124,18 @@ public class LocationFused extends PhoneSensorDataSource implements
         samples[4]=location.getBearing();
         samples[5]=location.getAccuracy();
         DataTypeDoubleArray dataTypeDoubleArray=new DataTypeDoubleArray(DateTime.getDateTime(),samples);
-        dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        try {
+            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        } catch (DataKitException e) {
+            try {
+                unregister();
+                reconnect();
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            } catch (DataKitException e1) {
+                Toast.makeText(context, "Reconnection Error", Toast.LENGTH_LONG).show();
+                e1.printStackTrace();
+            }
+        }
         callBack.onReceivedData(dataTypeDoubleArray);
     }
 
@@ -156,7 +169,7 @@ public class LocationFused extends PhoneSensorDataSource implements
         alert.show();
     }
     @Override
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         statusCheck();
 
@@ -178,8 +191,10 @@ public class LocationFused extends PhoneSensorDataSource implements
 
     @Override
     public void unregister() {
-        stopLocationUpdates();
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null) {
+            stopLocationUpdates();
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override

@@ -5,9 +5,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
@@ -90,7 +92,18 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
         double[] sample = new double[1];
         sample[0] = event.values[0];
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
-        dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        try {
+            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+        } catch (DataKitException e) {
+            try {
+                unregister();
+                reconnect();
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            } catch (DataKitException e1) {
+                Toast.makeText(context, "Reconnection Error", Toast.LENGTH_LONG).show();
+                e1.printStackTrace();
+            }
+        }
         callBack.onReceivedData(dataTypeDoubleArray);
     }
 
@@ -100,10 +113,12 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
     }
 
     public void unregister() {
-        mSensorManager.unregisterListener(this);
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(this);
+        }
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);

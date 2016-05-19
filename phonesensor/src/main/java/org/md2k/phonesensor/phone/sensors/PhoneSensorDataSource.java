@@ -3,6 +3,7 @@ package org.md2k.phonesensor.phone.sensors;
 import android.content.Context;
 
 import org.md2k.datakitapi.DataKitAPI;
+import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.application.ApplicationBuilder;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -39,18 +40,20 @@ import org.md2k.phonesensor.phone.PhoneSensorPlatform;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public abstract class PhoneSensorDataSource {
+    public static final double EPSILON_NORMAL = 2.0;
+    public static final double EPSILON_UI = 5.0;
+    public static final double EPSILON_GAME = 10.0;
+    public static final double EPSILON_FASTEST = 50.0;
     private static final String TAG = PhoneSensorDataSource.class.getSimpleName();
     final Context context;
     private final String dataSourceType;
     DataSourceClient dataSourceClient;
-    private boolean enabled;
     CallBack callBack;
     String frequency="SENSOR_DELAY_UI";
     DataKitAPI dataKitAPI;
-    public static final double EPSILON_NORMAL=2.0;
-    public static final double EPSILON_UI=5.0;
-    public static final double EPSILON_GAME=10.0;
-    public static final double EPSILON_FASTEST=50.0;
+    private boolean enabled;
+    private DataSourceBuilder dataSourceBuilder;
+
     PhoneSensorDataSource(Context context, String dataSourceType) {
         this.context = context;
         this.dataSourceType = dataSourceType;
@@ -60,12 +63,13 @@ public abstract class PhoneSensorDataSource {
     public String getDataSourceType() {
         return dataSourceType;
     }
-    public void setEnabled(boolean enabled){
-        this.enabled=enabled;
-    }
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void updateDataSource(DataSource dataSource){
@@ -88,10 +92,17 @@ public abstract class PhoneSensorDataSource {
         return new DataSourceBuilder().setId(null).setType(dataSourceType).setPlatform(platform).setApplication(application);
     }
 
-    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) {
+
+    public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         dataKitAPI = DataKitAPI.getInstance(context);
+        this.dataSourceBuilder = dataSourceBuilder;
         dataSourceClient = dataKitAPI.register(dataSourceBuilder);
         callBack = newCallBack;
+    }
+
+    public void reconnect() throws DataKitException {
+        dataKitAPI = DataKitAPI.getInstance(context);
+        dataSourceClient = dataKitAPI.register(dataSourceBuilder);
     }
 
     public abstract void unregister();
