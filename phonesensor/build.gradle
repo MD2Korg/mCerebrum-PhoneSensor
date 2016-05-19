@@ -29,8 +29,8 @@ android {
         applicationId "org.md2k.phonesensor"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 11
-        versionName '0.8.0'
+        versionCode 12
+        versionName '0.9.0'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     dexOptions {
