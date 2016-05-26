@@ -138,6 +138,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         final CheckBoxPreference checkBoxPreference= (CheckBoxPreference) findPreference("key_default_settings");
         if(defaultConfig ==null) {
             checkBoxPreference.setEnabled(false);
+            checkBoxPreference.setChecked(false);
             checkBoxPreference.setSummary("not available");
         }
         else{
@@ -214,16 +215,19 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 SwitchPreference switchPreference = (SwitchPreference) preference;
                 phoneSensorDataSources.find(preference.getKey()).setEnabled(!switchPreference.isChecked());
+                if(switchPreference.isChecked()) {
 
-                UI.AlertDialogFrequency(getActivity(), preference.getKey(), frequencies, new AlertDialogResponse() {
-                    @Override
-                    public void onResponse(String dataSourceType, String response) {
-                        if (response != null) {
-                            phoneSensorDataSources.find(dataSourceType).setFrequency(response);
-                            updatePreferenceScreen();
+                    UI.AlertDialogFrequency(getActivity(), preference.getKey(), frequencies, new AlertDialogResponse() {
+                        @Override
+                        public void onResponse(String dataSourceType, String response) {
+                            if (response != null) {
+                                phoneSensorDataSources.find(dataSourceType).setEnabled(true);
+                                phoneSensorDataSources.find(dataSourceType).setFrequency(response);
+                                updatePreferenceScreen();
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 return false;
             }
         };
