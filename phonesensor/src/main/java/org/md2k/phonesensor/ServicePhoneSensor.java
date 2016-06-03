@@ -89,7 +89,7 @@ public class ServicePhoneSensor extends Service {
                 @Override
                 public void onConnected() {
                     Log.d(TAG, "onConnected()...");
-                    Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Started successfully", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Started successfully", Toast.LENGTH_LONG).show();
                     phoneSensorDataSources.register();
                 }
             });
