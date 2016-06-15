@@ -14,6 +14,7 @@ import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Report.Log;
+import org.md2k.utilities.UI.AlertDialogs;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -56,27 +57,16 @@ public class ServicePhoneSensor extends Service {
         } else connectDataKit();
     }
     void showAlertDialogConfiguration(final Context context){
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Error: Configuration File")
-                .setIcon(R.drawable.ic_error_red_50dp)
-                .setMessage("Phone Sensor is not configured.\n\n Please go to Menu -> Settings (or, click Settings below)")
-                .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(context, ActivityPhoneSensorSettings.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .create();
-
-        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        alertDialog.show();
+        AlertDialogs.AlertDialog(this, "Error: Phone Sensor Settings", "Please configure the phone sensor", R.drawable.ic_error_red_50dp, "Settings", "Cancel", null, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which==AlertDialog.BUTTON_POSITIVE){
+                    Intent intent = new Intent(context, ActivityPhoneSensorSettings.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            }
+        });
     }
 
     private void connectDataKit() {

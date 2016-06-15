@@ -12,6 +12,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceClient;
 import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.phonesensor.phone.PhoneSensorPlatform;
+import org.md2k.utilities.Report.Log;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -69,6 +70,7 @@ public abstract class PhoneSensorDataSource {
     }
 
     public void setEnabled(boolean enabled) {
+        Log.d(TAG,"type="+dataSourceType+" enabled="+enabled);
         this.enabled = enabled;
     }
 
