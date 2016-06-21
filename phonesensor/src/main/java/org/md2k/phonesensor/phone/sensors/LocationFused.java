@@ -204,8 +204,14 @@ public class LocationFused extends PhoneSensorDataSource implements
     }
 
     private void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
+        try {
+            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(
+                        mGoogleApiClient, this);
+            }
+        }catch (Exception ignored){
+
+        }
     }
 
     @Override
