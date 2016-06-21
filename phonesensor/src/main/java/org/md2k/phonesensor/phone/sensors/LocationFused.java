@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
+import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.utilities.UI.AlertDialogs;
 
@@ -131,7 +133,8 @@ public class LocationFused extends PhoneSensorDataSource implements
                 reconnect();
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
             } catch (DataKitException e1) {
-                Toast.makeText(context, "Reconnection Error", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(ServicePhoneSensor.INTENT_RESTART);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 e1.printStackTrace();
             }
         }

@@ -1,7 +1,9 @@
 package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
@@ -11,6 +13,7 @@ import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
+import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 
 import java.io.IOException;
@@ -66,7 +69,8 @@ public class CPU extends PhoneSensorDataSource {
                     reconnect();
                     dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDouble);
                 } catch (DataKitException e1) {
-                    Toast.makeText(context, "Reconnection Error", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ServicePhoneSensor.INTENT_RESTART);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     e1.printStackTrace();
                 }
             }

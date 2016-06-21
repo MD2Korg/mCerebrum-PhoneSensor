@@ -2,10 +2,13 @@ package org.md2k.phonesensor;
 
 import android.app.AlertDialog;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -45,12 +48,14 @@ import org.md2k.utilities.UI.AlertDialogs;
 
 public class ServicePhoneSensor extends Service {
     private static final String TAG = ServicePhoneSensor.class.getSimpleName();
+    public static final String INTENT_RESTART = "intent_restart";
     PhoneSensorDataSources phoneSensorDataSources = null;
     DataKitAPI dataKitAPI;
 
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate()");
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(INTENT_RESTART));
         if (!readSettings()) {
             showAlertDialogConfiguration(this);
             stopSelf();
@@ -89,6 +94,15 @@ public class ServicePhoneSensor extends Service {
             stopSelf();
         }
     }
+    private void disconnectDataKit(){
+        if (phoneSensorDataSources != null) {
+            phoneSensorDataSources.unregister();
+            phoneSensorDataSources = null;
+        }
+        if (dataKitAPI != null && dataKitAPI.isConnected()) {
+            dataKitAPI.disconnect();
+        }
+    }
 
     private boolean readSettings() {
         phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext());
@@ -97,15 +111,18 @@ public class ServicePhoneSensor extends Service {
 
     @Override
     public void onDestroy() {
-        if (phoneSensorDataSources != null) {
-            phoneSensorDataSources.unregister();
-            phoneSensorDataSources = null;
-        }
-        if (dataKitAPI != null && dataKitAPI.isConnected()) {
-            dataKitAPI.disconnect();
-        }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(
+                mMessageReceiver);
+        disconnectDataKit();
         super.onDestroy();
     }
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            disconnectDataKit();
+            connectDataKit();
+        }
+    };
 
     @Override
     public IBinder onBind(Intent intent) {
