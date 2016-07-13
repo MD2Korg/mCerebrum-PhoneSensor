@@ -1,7 +1,11 @@
 package org.md2k.phonesensor;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -111,7 +115,6 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             phoneSensorDataSources.find(type).setEnabled(true);
             phoneSensorDataSources.find(type).setFrequency(freq);
         }
-
     }
 
     void setDefaultSettings() {
@@ -153,6 +156,42 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     void readConfiguration() {
         phoneSensorDataSources = new PhoneSensorDataSources(getActivity());
     }
+    boolean isSensorSupported(String dataSourceType){
+        SensorManager mSensorManager;
+        Sensor mSensor=null;
+        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        switch(dataSourceType){
+            case DataSourceType.ACCELEROMETER:
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                break;
+            case (DataSourceType.GYROSCOPE):
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+                break;
+            case (DataSourceType.AMBIENT_TEMPERATURE):
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+                break;
+            case (DataSourceType.COMPASS):
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+                break;
+            case (DataSourceType.AMBIENT_LIGHT):
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+                break;
+            case (DataSourceType.PRESSURE):
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+                break;
+            case (DataSourceType.PROXIMITY):
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+                break;
+            case DataSourceType.LOCATION:
+                return getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
+            case (DataSourceType.MEMORY):
+            case DataSourceType.CPU:
+            case DataSourceType.BATTERY:
+                return true;
+
+        }
+        return mSensor != null;
+    }
 
     private SwitchPreference createSwitchPreference(String dataSourceType) {
         SwitchPreference switchPreference = new SwitchPreference(getActivity());
@@ -162,8 +201,10 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         title = title.substring(0, 1).toUpperCase() + title.substring(1).toLowerCase();
         switchPreference.setTitle(title);
         switchPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        switchPreference.setEnabled(isSensorSupported(dataSourceType));
         switch (dataSourceType) {
             case (DataSourceType.ACCELEROMETER):
+
                 switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Accelerometer.frequencyOptions));
                 break;
             case (DataSourceType.GYROSCOPE):
@@ -239,7 +280,10 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             phoneSensorDataSource = phoneSensorDataSources.getPhoneSensorDataSources().get(i);
             SwitchPreference switchPreference = (SwitchPreference) preferenceCategory.findPreference(phoneSensorDataSource.getDataSourceType());
             switchPreference.setChecked(phoneSensorDataSource.isEnabled());
-            switchPreference.setSummary(phoneSensorDataSource.getFrequency());
+            if(!isSensorSupported(phoneSensorDataSource.getDataSourceType()))
+                switchPreference.setSummary("Not Supported");
+            else
+                switchPreference.setSummary(phoneSensorDataSource.getFrequency());
         }
     }
 
