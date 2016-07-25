@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.md2k.datakitapi.DataKitAPI;
@@ -47,20 +46,28 @@ import org.md2k.utilities.UI.AlertDialogs;
  */
 
 public class ServicePhoneSensor extends Service {
+    public static final String INTENT_STOP = "intent_stop";
     private static final String TAG = ServicePhoneSensor.class.getSimpleName();
-    public static final String INTENT_RESTART = "intent_restart";
     PhoneSensorDataSources phoneSensorDataSources = null;
     DataKitAPI dataKitAPI;
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            disconnectDataKit();
+            stopSelf();
+        }
+    };
 
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate()");
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(INTENT_RESTART));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(INTENT_STOP));
         if (!readSettings()) {
             showAlertDialogConfiguration(this);
             stopSelf();
         } else connectDataKit();
     }
+
     void showAlertDialogConfiguration(final Context context){
         AlertDialogs.AlertDialog(this, "Error: Phone Sensor Settings", "Please configure the phone sensor", R.drawable.ic_error_red_50dp, "Settings", "Cancel", null, new DialogInterface.OnClickListener() {
             @Override
@@ -91,9 +98,11 @@ public class ServicePhoneSensor extends Service {
         } catch (DataKitException e) {
             android.util.Log.d(TAG, "onException...");
             Toast.makeText(ServicePhoneSensor.this, "DataKit unavailable", Toast.LENGTH_LONG).show();
+            disconnectDataKit();
             stopSelf();
         }
     }
+
     private void disconnectDataKit(){
         if (phoneSensorDataSources != null) {
             phoneSensorDataSources.unregister();
@@ -116,13 +125,6 @@ public class ServicePhoneSensor extends Service {
         disconnectDataKit();
         super.onDestroy();
     }
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            disconnectDataKit();
-            connectDataKit();
-        }
-    };
 
     @Override
     public IBinder onBind(Intent intent) {

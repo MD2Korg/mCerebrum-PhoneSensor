@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -127,18 +126,10 @@ public class LocationFused extends PhoneSensorDataSource implements
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
         try {
             dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            callBack.onReceivedData(dataTypeDoubleArray);
         } catch (DataKitException e) {
-            try {
-                unregister();
-                reconnect();
-                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
-            } catch (DataKitException e1) {
-                Intent intent = new Intent(ServicePhoneSensor.INTENT_RESTART);
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                e1.printStackTrace();
-            }
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
         }
-        callBack.onReceivedData(dataTypeDoubleArray);
     }
 
     private void statusCheck() {

@@ -7,7 +7,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
@@ -115,18 +114,10 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+                callBack.onReceivedData(dataTypeDoubleArray);
             } catch (DataKitException e) {
-                try {
-                    unregister();
-                    reconnect();
-                    dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
-                } catch (DataKitException e1) {
-                    Intent intent = new Intent(ServicePhoneSensor.INTENT_RESTART);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                    e1.printStackTrace();
-                }
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
             }
-            callBack.onReceivedData(dataTypeDoubleArray);
         }
     }
 

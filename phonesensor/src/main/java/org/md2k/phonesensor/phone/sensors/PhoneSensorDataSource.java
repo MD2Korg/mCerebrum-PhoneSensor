@@ -102,10 +102,5 @@ public abstract class PhoneSensorDataSource {
         callBack = newCallBack;
     }
 
-    public void reconnect() throws DataKitException {
-        dataKitAPI = DataKitAPI.getInstance(context);
-        dataSourceClient = dataKitAPI.register(dataSourceBuilder);
-    }
-
     public abstract void unregister();
 }

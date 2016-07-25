@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
@@ -56,20 +55,10 @@ public class Memory extends PhoneSensorDataSource {
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
-            } catch (DataKitException e) {
-                try {
-                    unregister();
-                    reconnect();
-                    dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
-                } catch (DataKitException e1) {
-                    Intent intent = new Intent(ServicePhoneSensor.INTENT_RESTART);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                    e1.printStackTrace();
-                }
-            }
-            callBack.onReceivedData(dataTypeDoubleArray);
-            if (scheduler != null) {
+                callBack.onReceivedData(dataTypeDoubleArray);
                 scheduler.postDelayed(statusMemory, 1000);
+            } catch (DataKitException e) {
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
             }
         }
     };

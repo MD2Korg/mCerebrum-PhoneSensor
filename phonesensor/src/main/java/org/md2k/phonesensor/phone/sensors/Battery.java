@@ -6,7 +6,6 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
@@ -25,17 +24,17 @@ import java.util.HashMap;
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- *
+ * <p/>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * <p/>
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- *
+ * <p/>
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * <p/>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -71,20 +70,10 @@ public class Battery extends PhoneSensorDataSource {
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
-            } catch (DataKitException e) {
-                try {
-                    unregister();
-                    reconnect();
-                    dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
-                } catch (DataKitException e1) {
-                    Intent intent1 = new Intent(ServicePhoneSensor.INTENT_RESTART);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent1);
-                    e1.printStackTrace();
-                }
-            }
-            callBack.onReceivedData(dataTypeDoubleArray);
-            if (scheduler != null) {
+                callBack.onReceivedData(dataTypeDoubleArray);
                 scheduler.postDelayed(batteryStatus, 1000);
+            } catch (DataKitException e) {
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
             }
         }
     };
@@ -94,8 +83,8 @@ public class Battery extends PhoneSensorDataSource {
         frequency = "1.0 Hz";
     }
 
-    HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
-        HashMap<String,String> dataDescriptor=new HashMap<>();
+    HashMap<String, String> createDataDescriptor(String name, String frequency, String description, int minValue, int maxValue, String unit) {
+        HashMap<String, String> dataDescriptor = new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
         dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
         dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
@@ -106,18 +95,18 @@ public class Battery extends PhoneSensorDataSource {
         return dataDescriptor;
     }
 
-    ArrayList<HashMap<String,String>> createDataDescriptors(){
-        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("Level",frequency,"current battery charge",0,100,"percentage"));
-        dataDescriptors.add(createDataDescriptor("Voltage",frequency,"current battery voltage level",0,5000, "voltage"));
-        dataDescriptors.add(createDataDescriptor("Temperature",frequency,"current battery temperature",-50,100, "celsius"));
+    ArrayList<HashMap<String, String>> createDataDescriptors() {
+        ArrayList<HashMap<String, String>> dataDescriptors = new ArrayList<>();
+        dataDescriptors.add(createDataDescriptor("Level", frequency, "current battery charge", 0, 100, "percentage"));
+        dataDescriptors.add(createDataDescriptor("Voltage", frequency, "current battery voltage level", 0, 5000, "voltage"));
+        dataDescriptors.add(createDataDescriptor("Temperature", frequency, "current battery temperature", -50, 100, "celsius"));
         return dataDescriptors;
     }
 
     public DataSourceBuilder createDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
         if (dataSourceBuilder == null) return null;
-        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
+        dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Battery");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures the current status of the battery");
@@ -134,7 +123,7 @@ public class Battery extends PhoneSensorDataSource {
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
-        scheduler=new Handler();
+        scheduler = new Handler();
         scheduler.post(batteryStatus);
     }
 }

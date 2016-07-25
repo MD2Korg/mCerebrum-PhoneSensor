@@ -69,7 +69,7 @@ import io.fabric.sdk.android.Fabric;
 public class ActivityMain extends AppCompatActivity {
     private static final String TAG = ActivityMain.class.getSimpleName();
     HashMap<String, TextView> hashMapData = new HashMap<>();
-    Handler mHandler = new Handler();
+    Handler mHandler;
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -106,6 +106,7 @@ public class ActivityMain extends AppCompatActivity {
 
         // Initialize Fabric with the debug-disabled crashlytics.
         Fabric.with(this, crashlyticsKit);
+        mHandler = new Handler();
 
         setContentView(R.layout.activity_main);
         final Button buttonService = (Button) findViewById(R.id.button_app_status);
