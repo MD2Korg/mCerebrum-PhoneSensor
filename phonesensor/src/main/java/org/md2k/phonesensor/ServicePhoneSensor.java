@@ -69,16 +69,19 @@ public class ServicePhoneSensor extends Service {
     }
 
     void showAlertDialogConfiguration(final Context context){
-        AlertDialogs.AlertDialog(this, "Error: Phone Sensor Settings", "Please configure the phone sensor", R.drawable.ic_error_red_50dp, "Settings", "Cancel", null, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(which==AlertDialog.BUTTON_POSITIVE){
-                    Intent intent = new Intent(context, ActivityPhoneSensorSettings.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
+        try {
+            AlertDialogs.AlertDialog(this, "Error: Phone Sensor Settings", "Please configure the phone sensor", R.drawable.ic_error_red_50dp, "Settings", "Cancel", null, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == AlertDialog.BUTTON_POSITIVE) {
+                        Intent intent = new Intent(context, ActivityPhoneSensorSettings.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception ignored) {
+        }
     }
 
     private void connectDataKit() {

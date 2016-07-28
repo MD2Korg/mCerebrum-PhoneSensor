@@ -105,7 +105,7 @@ public class ActivityMain extends AppCompatActivity {
                 .build();
 
         // Initialize Fabric with the debug-disabled crashlytics.
-        Fabric.with(this, crashlyticsKit);
+        Fabric.with(this, crashlyticsKit, new Crashlytics());
         mHandler = new Handler();
 
         setContentView(R.layout.activity_main);

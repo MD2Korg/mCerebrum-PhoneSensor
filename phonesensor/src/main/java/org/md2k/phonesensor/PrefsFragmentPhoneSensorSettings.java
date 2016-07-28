@@ -246,16 +246,20 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
                                 break;
                             }
                     }
-                    AlertDialogs.AlertDialogSingleChoice(getActivity(), "Select Frequency", frequencies, curSelected, "Select", "Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (which >= 0) {
-                                Log.d(TAG,"preferencekey="+preference.getKey()+" which="+which);
-                                phoneSensorDataSources.find(preference.getKey()).setFrequency(frequencies[which]);
-                                updatePreferenceScreen();
+                    try {
+                        AlertDialogs.AlertDialogSingleChoice(getActivity(), "Select Frequency", frequencies, curSelected, "Select", "Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which >= 0) {
+                                    Log.d(TAG, "preferencekey=" + preference.getKey() + " which=" + which);
+                                    phoneSensorDataSources.find(preference.getKey()).setFrequency(frequencies[which]);
+                                    updatePreferenceScreen();
+                                }
                             }
-                        }
-                    });
+                        });
+                    } catch (Exception ignored) {
+
+                    }
                 }
                 return false;
             }
