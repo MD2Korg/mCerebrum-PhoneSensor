@@ -14,8 +14,10 @@ import android.widget.Toast;
 import org.md2k.datakitapi.DataKitAPI;
 import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
+import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Report.Log;
+import org.md2k.utilities.Report.LogStorage;
 import org.md2k.utilities.UI.AlertDialogs;
 
 /**
@@ -53,6 +55,7 @@ public class ServicePhoneSensor extends Service {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",broadcast_receiver_stop_service");
             disconnectDataKit();
             stopSelf();
         }
@@ -60,6 +63,8 @@ public class ServicePhoneSensor extends Service {
 
     public void onCreate() {
         super.onCreate();
+        LogStorage.startLogFileStorageProcess(getApplicationContext().getPackageName());
+        Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",service_start");
         Log.d(TAG, "onCreate()");
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(INTENT_STOP));
         if (!readSettings()) {
@@ -86,8 +91,6 @@ public class ServicePhoneSensor extends Service {
 
     private void connectDataKit() {
         Log.d(TAG, "connectDataKit()...");
-        DataKitAPI.getInstance(getApplicationContext()).disconnect();
-
         dataKitAPI = DataKitAPI.getInstance(getApplicationContext());
         try {
             dataKitAPI.connect(new OnConnectionListener() {
@@ -123,6 +126,7 @@ public class ServicePhoneSensor extends Service {
 
     @Override
     public void onDestroy() {
+        Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",service_stop");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
                 mMessageReceiver);
         disconnectDataKit();
