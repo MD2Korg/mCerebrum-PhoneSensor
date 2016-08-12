@@ -52,6 +52,7 @@ public class ServicePhoneSensor extends Service {
     private static final String TAG = ServicePhoneSensor.class.getSimpleName();
     PhoneSensorDataSources phoneSensorDataSources = null;
     DataKitAPI dataKitAPI;
+    private boolean isStopping;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -63,6 +64,7 @@ public class ServicePhoneSensor extends Service {
 
     public void onCreate() {
         super.onCreate();
+        isStopping = false;
         LogStorage.startLogFileStorageProcess(getApplicationContext().getPackageName());
         Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",service_start");
         Log.d(TAG, "onCreate()");
@@ -109,7 +111,11 @@ public class ServicePhoneSensor extends Service {
         }
     }
 
-    private void disconnectDataKit(){
+    private synchronized void disconnectDataKit() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(
+                mMessageReceiver);
+        if (isStopping) return;
+        isStopping = true;
         if (phoneSensorDataSources != null) {
             phoneSensorDataSources.unregister();
             phoneSensorDataSources = null;

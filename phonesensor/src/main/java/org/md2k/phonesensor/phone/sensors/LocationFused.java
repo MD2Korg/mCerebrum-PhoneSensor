@@ -125,7 +125,7 @@ public class LocationFused extends PhoneSensorDataSource implements
         samples[5] = location.getAccuracy();
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
         try {
-            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);
             callBack.onReceivedData(dataTypeDoubleArray);
         } catch (DataKitException e) {
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
