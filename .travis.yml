@@ -1,41 +1,49 @@
 language: android
-
 before_cache:
-  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
   directories:
-    - "$HOME/.gradle/caches/"
-    - "$HOME/.gradle/wrapper/"
-    - "$HOME/.m2/"
-
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+  - "$HOME/.m2/"
 env:
   global:
-    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
-
+  - ADB_INSTALL_TIMEOUT=20
+  - secure: pOWY1/1WTwHzCTpMGbCLrIVcH1pUdN3oXkeYSBFBV0GtZoBKg8//Pv7nP+ViKzk/Sv/evBRPgSjFzRg61TAqsWaAIm/l0FbaCEEIMttU0KJAthKz9Iu0epcncIrJUVRbDGck7L46VIcSjDT07XEan/4sSakKZJp30MNo2/kveQVkGsmWRTYGbGgToqJ+Vdh0dLy5317XBx/KWUAOfFuxfEUiHJdX59qZiyCC7/yvRMrapTr9kkQbb/O7KBvA5NM3Hr01FiZb/Q5UbvLImnjW2xiJ4+fiWmBp/S3OwValSIbE2iAKpZUcXW8wNHRI1SXtVrPO1OXxjO5mpBmcO+NYCpQ6TJBOMHnPVNtURVAo4r8Xcsyu76+Gkuf3x0Rk2FyEj/yDK7mO8iVQuhS/JB5hImVfvo9E6JeXZFVBVoJfIiqoPZ8M/aN5HQio7XD1xSR0Ls1KXvEuEVB8B1mSRshxCgJOC2NgxKZqoePRIpCJU7eXu938vpNNrBPGImx0jBnUAlixnwvmBhZzfVXPfEA5VSS8dbLG2L4ksFkSvp3YUfi+QvwIDUfDWe6e8xsxM2Vw4DXXSEJN6JwCXMtc3G55+EgwBK58VFRr5UUL67eSnNbdSGfthwxc6C22Q0IMXxHOIMOmGkLIVx92T2vgX/4ZbSsvu0ag205+DFHyLpiB0Kc=
+  - secure: jd/ZTFJAZXJU4PqGyTjVtqGdL4CHYSzLjhg4rqXMl/zsSdcKLyqTS84yKvaoPzzgueGBS/hqQCTc+0OffcL1/eT8rNYk0A0D2527iI53tZnUupeTvQS13jhZAhurulR2ErbTI51KtqnbgfgxjuuUWUYh6rKklW9/jum4pUD/xZSGtd6At0w/OSM/MXm9pDZbwACqAj6uuvPOvkR3HCumKolylWMbJ83sDbM39ptOLLMa2I4xe+D+mrMMTaqYym4GHS/gv+bs5l3stXF443MdEHDALa9KRgCfJQWNJqY38DK7OxTOKHk0eSJkpS2vcqTlMTOyOYuMMBhfqsGJHmpi9zOvFGBgZJO1eqm+hh/12AGGxuGGgmOPzwh432B5rRA4hLAv7d6n9FX0AhqTC+DKKExMg0jdBcTqD4vwMXtnBtiOG4J+r46E1DkrI2f+V2wSNi6gGrrR8rFLN0dw1W/CBGLXWMHNJXwgcqusWEzlpFaf7CzpOCJ07O6g39H9nQjimajPjmyeY3k7LiBzx8UebLSN3gOg8nw80d2InGWwu9dIfw3r+FMJRzoiI2SSq3qD3PoByKYbvtV4Ou9a+Fe4otjh6genthmGUE0PcyfMCDVxFiQt568tN2A5XhFsbZSV1TwUM0pwK7ktei2yG5+F6uRv6nl5x37Mn2nhwICBWKY=
+  - secure: k8/LC/9vR61khQv7SnlkD+YFs3wMslJHPiAkucBCYWBIgSVqu0C3Ec9h3uojiMckraBYxERLW3cnviTOZnS1vrCNrTYnqaY/0V9meLK6Q8QIOpKo9iC9tutIue4ad1EgFOWmKsKpIMQk04G0p1KwF+5OqtTB+oTZIq8lktkrTU8ZdS/wQJ/6mr8zhgk/pQsbV705qRo1oOmysn3ff793NVm0y/w907leM+1Uox9rYckXAkXePeJJZSa04H255h9xiQhk3K+fkNJR0NsBWsBVbKKnEh1O7WMsZlVYr2Y2W0qRpefSFuYESQkPzPyg4BXqNcmPoKWN5jA0Tu/hLLHuAxw5cvcDCbY8+aNaoRNU/RKod/uwMrdw9yQjAJK904+48xezzQD7TMoonILDOduuF2cXQzfjdjHXMDkOaXJAOUdw3oRJgR5vi7mtLBz7cADlp20AHhLS9X2gk9+bHFLdhZcViUbTB5ZE/+piLL3eIGLwOdv1heUWLglkGhbTVZ71Ds1W/JbudmqVCXgFmWZvabTILhtqItGxdFW7LaQab1a4riPZo48GTrCLeMUyOBeh0/lC0zgs9XOO//t4/VDll6Zijk0wSG4hsA3jp5RnkN94jWwzBOZiqz1tFljB3V80OLO5fjwyv53gXU8PEuG65ykC9YNRGhr5XryfwDgkRRU=
+  - secure: kA/FFxwBc98RfE+malmrxkD77IxG72ImnMOpkr+1rYWdK7fPM29AS4y9Gv8QpTMOSblESj0frtUbc5A3vXV+HOhFBm6XuHCdDV2T7mljnAgoACO3s20j/euq9GQPsyAHMZfs6OdQAXjvRiDuZmrJ8KGuACae0lkPZ5n9sVjSiB7MP0/INN+6WTsCMryCQiwhe/ld9tUaMtxf+KxEUYFtKkdbp7Z0YwcoTBOcUiA9AhnWHJYoqH5QjqHXLStp528lc+y72Ris5Ic23HVKDulW2ZnVOyNVllzBtEMMkPDas31D/TXEOAQwe7afSkkbi2aNhiJfi/f976R15evyiDfS8iUDEm/fKg+tpwIUuArPB+Tdra2abr3HWhDAUuccn8LFkB+0jXwSAyhKhYKBuV8Ls9nYM7anLTNBFAjcpJr6epZuczaIDyUrymjHReApD1k/93bh1G9GqYjc7F9w3g9XlV//NgvYt6FemYKOn2Xt7h9pZnklJGSLVuxodXcC1d7Ie4iiDuQ4ajvjik4iMPa2GOR1nJilN90PTcA3hynavATdzqebDL80VGHA9qI4ZGxqKJjJ79Xa0a0HPVcEaGvtJad4mkn3SkR2xljpJC/nza2uVbK4wGGhnuedacxEwCRrmXS6VAWzqYKMxaqlbVzfqzr4UAkXb50qv0N/rNeM5wE=
 android:
   components:
-    - platform-tools
-    - tools
-    - extra-android-support
-    - extra-google-google_play_services
-    - extra-android-m2repository
-    - extra-google-m2repository
-    - build-tools-23.0.2
-    - android-23
+  - platform-tools
+  - tools
+  - extra-android-support
+  - extra-google-google_play_services
+  - extra-android-m2repository
+  - extra-google-m2repository
+  - build-tools-23.0.2
+  - android-23
   licenses:
-    - '.+'
-
+  - ".+"
 before_install:
-  - git clone https://github.com/MD2Korg/mCerebrum-Utilities.git /home/travis/build/MD2Korg/mCerebrum-Utilities
-  - git clone https://github.com/MD2Korg/mCerebrum-DataKitAPI.git /home/travis/build/MD2Korg/mCerebrum-DataKitAPI
-
+- openssl aes-256-cbc -K $encrypted_cdc5814e44a6_key -iv $encrypted_cdc5814e44a6_iv -in phonesensor/release-key.keystore.enc -out phonesensor/release-key.keystore -d
+- git clone https://github.com/MD2Korg/mCerebrum-Utilities.git /home/travis/build/MD2Korg/mCerebrum-Utilities
+- git clone https://github.com/MD2Korg/mCerebrum-DataKitAPI.git /home/travis/build/MD2Korg/mCerebrum-DataKitAPI
 script:
-  - ./gradlew assembleRelease
-
+- "./gradlew assembleRelease"
 notifications:
   slack:
     secure: drSaLEsi+xlUePocfcDTLO9S/5XSBsnR6h7OzPhU4xsO+mBjH3qb93Qe4Jwzz9IZQ0UFzDcmu7ObHOksd6fDgvnIcmznowuABs7QFSF5dodF3eXuF/NJc5J3SqptrOZhlPhGQJcan8siBpLw5z+UBal9ORQPJ8e0SN2bxvRH30GzOlaBOrS0w9hGmtoIY/c8ZIjxGn7BK+b7qL6pNqD4tTg3BImh4Q8Q0icjlT/Pe4kq9pJuYP+Ph4B6THE5PY6W5kmaPSZT2wk72tbNa+1f0lxkO106+Fi4X/qEf6BNQ/2ufUi8cGyjYhu8ZRfGEQVwmwtk0goZvPRyxzHx94tc0/utmW+ZvEEdXOTfs1cE84xGvsYOmoMaMacJC0DPSRTJ269LnmUlTYZoZPyEaqEJp0vFLnS7ZwYcYBzEQ/coS1zKOEWX5a29ijvCOxeFGWF9NcEvaGfpoP/RiLJXjguKfrQLQiek+xkzmubSRWpP9LFoqtXwVMxle/zi/99Ry02nvmEUSK3BbAM57LBnrT+0lYDC/ocxTpQ3Gvd52qFoZBzb8Fshu2+3UYCSCHROkOdHtBmBvRKE4LiTz8/6xtzeL1n+1RSrbN13tbk01gkNIHagSLWUildtFkvok2pJXawslE88ZhRzOOK8ViWFenbhca6sPfvBebXccTJKnzi4GQc=
-    on_success: change  # options: [always|never|change] default: always
-    on_failure: always  # options: [always|never|change] default: always
-    on_start: false     # default: false
+    on_success: change
+    on_failure: always
+    on_start: false
+deploy:
+  file_glob: true
+  provider: releases
+  api_key:
+    secure: JXwhRCJGTRQ5S9pPML3w9kunX5Fd2n8RgZAKAr2E8t6osHcfFOBBb2WuFZTe/IwyDUeda/Airj6ymCTb2N4FxTP+pEaSgh39SAmknZgTKG6QU5wnpEVS7MWLixmN3HOkU/TZgGNabWLqmQuSllJoQYzxoYMh3nnAGSkCaxs/Hj6n4NLvRGTzozrmEv1PniuVQzSuy/eV23n7yJldE+ozjnc7h47Hbf9no+LYeKrpQOPIEJ6PT7EFED2ZpiRR2r8skA9d3I82zFcC3hnKyHVA5MoFJI3VYpNvLG7xGuVYwb3zRFH74v1L0WzfqqmXhsXcL74EptbMzkQAIQdik2z4oSJakueVOszgM2uISGpkZcRZvX8KsUMcx80Vp9s0Pzqc3pxNSuVuSF3dmJMFm12xBpXlO8NcdLh94ZiHT5SGOMq07vkJX4IT28zZR6NVHud+csD3+MjFp2gszyz8oX+3KRB0wThnMcfq79MEVy0JBapq8b24KGa+o0jhoKjjmdKI68qW3GqKKKu9j09mIPKkPdSw+9lnvjVO1zHFAd96qedMyexu4ZQZqWyLzlfhAScLVDavYIczmmfa96NxJSesC0fa6EOa8K9+ZHM4DlE4PkJyR0fCH5deHTP4YnjF07+M1HEWmg0ExyYDsrkiFrO1YIYmQQh7huIN9nSSQz+5/kk=
+  file: phonesensor/build/outputs/apk/phonesensor*.*.*.apk
+  on:
+    repo: MD2Korg/mCerebrum-PhoneSensor
+    tags: true
+  skip_cleanup: true
