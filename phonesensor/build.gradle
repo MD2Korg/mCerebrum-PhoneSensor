@@ -18,10 +18,42 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-def store_file = hasProperty('MD2K_RELEASE_STORE_FILE') ? MD2K_RELEASE_STORE_FILE : System.getenv('MD2K_RELEASE_STORE_FILE')
-def store_password= hasProperty('MD2K_RELEASE_STORE_PASSWORD') ? MD2K_RELEASE_STORE_PASSWORD : System.getenv('MD2K_RELEASE_STORE_PASSWORD')
-def key_alias = hasProperty('MD2K_RELEASE_KEY_ALIAS') ? MD2K_RELEASE_KEY_ALIAS : System.getenv('MD2K_RELEASE_KEY_ALIAS')
-def key_password = hasProperty('MD2K_RELEASE_KEY_PASSWORD') ? MD2K_RELEASE_KEY_PASSWORD : System.getenv('MD2K_RELEASE_KEY_PASSWORD')
+def store_file = "keystore_missing"
+if ( hasProperty('MD2K_RELEASE_STORE_FILE') ) {
+    store_file = MD2K_RELEASE_STORE_FILE
+} else if ( System.getenv('MD2K_RELEASE_STORE_FILE') ){
+    store_file = System.getenv('MD2K_RELEASE_STORE_FILE')
+} else {
+    println "ERROR: " + store_file
+}
+
+def store_password = "keystore_password_missing"
+if ( hasProperty('MD2K_RELEASE_STORE_PASSWORD') ) {
+    store_password = MD2K_RELEASE_STORE_PASSWORD
+} else if ( System.getenv('MD2K_RELEASE_STORE_PASSWORD') ){
+    store_password = System.getenv('MD2K_RELEASE_STORE_PASSWORD')
+} else {
+    println "ERROR: " + store_password
+}
+
+
+def key_alias = "release_key_alias_missing"
+if ( hasProperty('MD2K_RELEASE_KEY_ALIAS') ) {
+    key_alias = MD2K_RELEASE_KEY_ALIAS
+} else if ( System.getenv('MD2K_RELEASE_KEY_ALIAS') ){
+    key_alias = System.getenv('MD2K_RELEASE_KEY_ALIAS')
+} else {
+    println "ERROR: " + key_alias
+}
+
+def key_password = "release_key_password_missing"
+if ( hasProperty('MD2K_RELEASE_KEY_PASSWORD') ) {
+    key_password = MD2K_RELEASE_KEY_PASSWORD
+} else if ( System.getenv('MD2K_RELEASE_KEY_PASSWORD') ){
+    key_password = System.getenv('MD2K_RELEASE_KEY_PASSWORD')
+} else {
+    println "ERROR: " + key_password
+}
 
 
 ext {
