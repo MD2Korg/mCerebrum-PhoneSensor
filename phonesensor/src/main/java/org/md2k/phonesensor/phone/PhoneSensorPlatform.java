@@ -35,32 +35,40 @@ import org.md2k.datakitapi.source.platform.PlatformType;
  */
 
 public class PhoneSensorPlatform {
-    Context context;
     private static PhoneSensorPlatform instance=null;
-    public static PhoneSensorPlatform getInstance(Context context){
-        if(instance==null)
-            instance=new PhoneSensorPlatform(context);
-        return instance;
-    }
-    public String getId() {
-        return null;
-    }
-    public String getOS(){
-        return Build.VERSION.RELEASE;
-    }
-    public String getType(){
-        return PlatformType.PHONE;
-    }
-    public String getManufacturer(){
-        return Build.MANUFACTURER;
-    }
-    public String getName(){
-        return android.os.Build.MODEL;
-    }
+    Context context;
 
     private PhoneSensorPlatform(Context context) {
         this.context = context;
     }
+
+    public static PhoneSensorPlatform getInstance(Context context){
+        if(instance==null)
+            instance=new PhoneSensorPlatform(context);
+        return instance;
+
+    }
+
+    public String getId() {
+        return null;
+    }
+
+    public String getOS(){
+        return Build.VERSION.RELEASE;
+    }
+
+    public String getType(){
+        return PlatformType.PHONE;
+    }
+
+    public String getManufacturer(){
+        return Build.MANUFACTURER;
+    }
+
+    public String getName(){
+        return android.os.Build.MODEL;
+    }
+
     public Platform getPlatform() {
         return new PlatformBuilder().
                 setId(getId()).setType(getType()).setMetadata(METADATA.NAME,"Phone").

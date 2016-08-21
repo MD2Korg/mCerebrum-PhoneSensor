@@ -3,6 +3,7 @@ package org.md2k.phonesensor.phone.sensors;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
@@ -54,7 +55,7 @@ public class PhoneSensorDataSources {
     ArrayList<PhoneSensorDataSource> phoneSensorDataSources;
     HashMap<String, Integer> hm = new HashMap<>();
     long starttimestamp = 0;
-
+    PowerManager.WakeLock wl;
     public PhoneSensorDataSources(Context context) {
         this.context = context;
         phoneSensorDataSources = new ArrayList<>();
@@ -69,7 +70,8 @@ public class PhoneSensorDataSources {
         phoneSensorDataSources.add(new Proximity(context));
         phoneSensorDataSources.add(new CPU(context));
         phoneSensorDataSources.add(new Memory(context));
-
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
         try {
             readDataSourceFromFile();
         } catch (FileNotFoundException e) {
@@ -125,6 +127,7 @@ public class PhoneSensorDataSources {
     }
 
     public void register() {
+        wl.acquire();
         hm.clear();
         starttimestamp = DateTime.getDateTime();
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
@@ -165,6 +168,7 @@ public class PhoneSensorDataSources {
     }
 
     public void unregister() {
+        wl.release();
         if (phoneSensorDataSources != null) {
             for (int i = 0; i < phoneSensorDataSources.size(); i++) {
                 if (!phoneSensorDataSources.get(i).isEnabled()) continue;
