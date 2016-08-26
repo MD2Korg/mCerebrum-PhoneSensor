@@ -99,8 +99,12 @@ public class ServicePhoneSensor extends Service {
                 @Override
                 public void onConnected() {
                     Log.d(TAG, "onConnected()...");
+                    try {
 //                    Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Started successfully", Toast.LENGTH_LONG).show();
-                    phoneSensorDataSources.register();
+                        phoneSensorDataSources.register();
+                    } catch (Exception e) {
+                        LocalBroadcastManager.getInstance(ServicePhoneSensor.this).sendBroadcast(new Intent(INTENT_STOP));
+                    }
                 }
             });
         } catch (DataKitException e) {
