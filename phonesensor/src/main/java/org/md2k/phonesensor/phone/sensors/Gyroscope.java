@@ -49,10 +49,10 @@ import java.util.HashMap;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Gyroscope extends PhoneSensorDataSource implements SensorEventListener {
-    private static final String SENSOR_DELAY_NORMAL = "SENSOR_DELAY_NORMAL";
-    private static final String SENSOR_DELAY_UI = "SENSOR_DELAY_UI";
-    private static final String SENSOR_DELAY_GAME = "SENSOR_DELAY_GAME";
-    private static final String SENSOR_DELAY_FASTEST = "SENSOR_DELAY_FASTEST";
+    private static final String SENSOR_DELAY_NORMAL = "6";
+    private static final String SENSOR_DELAY_UI = "16";
+    private static final String SENSOR_DELAY_GAME = "50";
+    private static final String SENSOR_DELAY_FASTEST = "100";
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     long lastSaved=DateTime.getDateTime();
     double FILTER_DATA_MIN_TIME;

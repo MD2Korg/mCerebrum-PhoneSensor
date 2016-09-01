@@ -203,7 +203,14 @@ public class ActivityMain extends AppCompatActivity {
                 TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
                 row.setLayoutParams(lp);
                 TextView tvSensor = new TextView(this);
-                tvSensor.setText(dataSourceType.toLowerCase() + "\n(" + phoneSensorDataSources.get(i).getFrequency() + ")");
+                tvSensor.setPadding(10,0,0,0);
+                try {
+                    Double.parseDouble(phoneSensorDataSources.get(i).getFrequency());
+                    tvSensor.setText(dataSourceType.toLowerCase() + " (" + phoneSensorDataSources.get(i).getFrequency() + " Hz)");
+                } catch (NumberFormatException nfe) {
+                    tvSensor.setText(dataSourceType.toLowerCase() + " (" + phoneSensorDataSources.get(i).getFrequency() + ")");
+                }
+
                 TextView tvCount = new TextView(this);
                 tvCount.setText("0");
                 hashMapData.put(dataSourceType + "_count", tvCount);

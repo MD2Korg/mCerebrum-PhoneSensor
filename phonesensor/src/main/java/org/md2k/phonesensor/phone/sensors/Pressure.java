@@ -53,7 +53,7 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
 
     public Pressure(Context context) {
         super(context, DataSourceType.PRESSURE);
-        frequency = "~6 Hz";
+        frequency = "6.0";
     }
 
     ArrayList<HashMap<String,String>> createDataDescriptors(){

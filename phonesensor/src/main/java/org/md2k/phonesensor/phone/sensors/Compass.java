@@ -49,12 +49,14 @@ import java.util.HashMap;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Compass extends PhoneSensorDataSource implements SensorEventListener {
-    private static final String SENSOR_DELAY_NORMAL = "SENSOR_DELAY_NORMAL";
-    private static final String SENSOR_DELAY_UI = "SENSOR_DELAY_UI";
-    private static final String SENSOR_DELAY_GAME = "SENSOR_DELAY_GAME";
-    private static final String SENSOR_DELAY_FASTEST = "SENSOR_DELAY_FASTEST";
+    private static final String SENSOR_DELAY_NORMAL = "6";
+    private static final String SENSOR_DELAY_UI = "16";
+    private static final String SENSOR_DELAY_GAME = "50";
+    private static final String SENSOR_DELAY_FASTEST = "100";
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     private SensorManager mSensorManager;
+    double FILTER_DATA_MIN_TIME;
+    long lastSaved=DateTime.getDateTime();
 
     public Compass(Context context) {
         super(context, DataSourceType.COMPASS);
@@ -101,16 +103,19 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
     @Override
     public void onSensorChanged(SensorEvent event) {
         long curTime = DateTime.getDateTime();
-        double[] samples = new double[3];
-        samples[0] = event.values[0];
-        samples[1] = event.values[1];
-        samples[2] = event.values[2];
-        DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
-        try {
-            dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
-            callBack.onReceivedData(dataTypeDoubleArray);
-        } catch (DataKitException e) {
-            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
+        if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
+            lastSaved = curTime;
+            double[] samples = new double[3];
+            samples[0] = event.values[0];
+            samples[1] = event.values[1];
+            samples[2] = event.values[2];
+            DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
+            try {
+                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+                callBack.onReceivedData(dataTypeDoubleArray);
+            } catch (DataKitException e) {
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
+            }
         }
     }
 
@@ -131,15 +136,19 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         switch (frequency) {
             case SENSOR_DELAY_UI:
+                FILTER_DATA_MIN_TIME = 1000.0 / (16.0 + EPSILON_UI);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
             case SENSOR_DELAY_GAME:
+                FILTER_DATA_MIN_TIME = 1000.0 / (50.0 + EPSILON_GAME);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
                 break;
             case SENSOR_DELAY_FASTEST:
+                FILTER_DATA_MIN_TIME = 1000.0 / (100.0 + EPSILON_FASTEST);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 break;
             case SENSOR_DELAY_NORMAL:
+                FILTER_DATA_MIN_TIME = 1000.0 / (6.0 + EPSILON_NORMAL);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

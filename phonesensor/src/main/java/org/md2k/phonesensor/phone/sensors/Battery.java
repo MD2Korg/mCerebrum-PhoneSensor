@@ -80,7 +80,7 @@ public class Battery extends PhoneSensorDataSource {
 
     public Battery(Context context) {
         super(context, DataSourceType.BATTERY);
-        frequency = "1.0 Hz";
+        frequency = "1.0";
     }
 
     HashMap<String, String> createDataDescriptor(String name, String frequency, String description, int minValue, int maxValue, String unit) {

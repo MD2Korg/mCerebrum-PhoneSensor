@@ -70,6 +70,7 @@ public class LocationFused extends PhoneSensorDataSource implements
 
     public LocationFused(Context context) {
         super(context, DataSourceType.LOCATION);
+        frequency="1.0";
 
     }
 

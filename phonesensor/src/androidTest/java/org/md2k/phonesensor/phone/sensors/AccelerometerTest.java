@@ -66,7 +66,7 @@ public class AccelerometerTest {
     @Test
     public void createDataDescriptorShouldContainKeys() throws Exception {
         Accelerometer accel = new Accelerometer(context);
-        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120hz", "Test Description");
+        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120", "Test Description");
 
         //Check for mandatory fields
         Assert.assertTrue(dataDescriptor.containsKey(METADATA.NAME));
@@ -82,17 +82,17 @@ public class AccelerometerTest {
     @Test
     public void createDataDescriptorShouldMatchValues() throws Exception {
         Accelerometer accel = new Accelerometer(context);
-        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120hz", "Test Description");
+        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120", "Test Description");
 
         Assert.assertSame("Names are equal", "Test Accel", dataDescriptor.get(METADATA.NAME));
-        Assert.assertSame("Frequency matches", "120hz", dataDescriptor.get(METADATA.FREQUENCY));
+        Assert.assertSame("Frequency matches", "120", dataDescriptor.get(METADATA.FREQUENCY));
         Assert.assertSame("Description matches", "Test Description", dataDescriptor.get(METADATA.DESCRIPTION));
     }
 
     @Test
     public void createDataDescriptorShouldMatchAccelerometerUnit() throws Exception {
         Accelerometer accel = new Accelerometer(context);
-        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120hz", "Test Description");
+        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120", "Test Description");
 
         Assert.assertSame("Names are equal", "meter/second^2", dataDescriptor.get(METADATA.UNIT));
         Assert.assertNotSame("Names are different", "m/s^2", dataDescriptor.get(METADATA.UNIT));
