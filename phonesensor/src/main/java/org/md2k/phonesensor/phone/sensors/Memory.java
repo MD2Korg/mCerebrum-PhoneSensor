@@ -65,7 +65,7 @@ public class Memory extends PhoneSensorDataSource {
 
     public Memory(Context context) {
         super(context, DataSourceType.MEMORY);
-        frequency = "1.0 Hz";
+        frequency = "1.0";
     }
 
     HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){

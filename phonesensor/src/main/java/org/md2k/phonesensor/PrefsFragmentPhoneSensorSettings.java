@@ -156,11 +156,12 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     void readConfiguration() {
         phoneSensorDataSources = new PhoneSensorDataSources(getActivity());
     }
-    boolean isSensorSupported(String dataSourceType){
+
+    boolean isSensorSupported(String dataSourceType) {
         SensorManager mSensorManager;
-        Sensor mSensor=null;
+        Sensor mSensor = null;
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        switch(dataSourceType){
+        switch (dataSourceType) {
             case DataSourceType.ACCELEROMETER:
                 mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
                 break;
@@ -230,18 +231,20 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     }
 
     private Preference.OnPreferenceClickListener alertDialogFrequency(final String[] frequencies) {
+        for (int i = 0; i < frequencies.length; i++)
+            frequencies[i] = frequencies[i] + " Hz";
         return new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(final Preference preference) {
                 SwitchPreference switchPreference = (SwitchPreference) preference;
-                Log.d(TAG,"preferencekey="+preference.getKey());
+                Log.d(TAG, "preferencekey=" + preference.getKey());
                 phoneSensorDataSources.find(preference.getKey()).setEnabled(switchPreference.isChecked());
                 if (switchPreference.isChecked()) {
-                    int curSelected=0;
-                    String freq=phoneSensorDataSources.find(preference.getKey()).getFrequency();
-                    if(freq!=null){
-                        for(int i=0;i<frequencies.length;i++)
-                            if(frequencies[i].equals(freq)) {
+                    int curSelected = 0;
+                    String freq = phoneSensorDataSources.find(preference.getKey()).getFrequency();
+                    if (freq != null) {
+                        for (int i = 0; i < frequencies.length; i++)
+                            if (frequencies[i].equals(freq + " Hz")) {
                                 curSelected = i;
                                 break;
                             }
@@ -252,7 +255,8 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which >= 0) {
                                     Log.d(TAG, "preferencekey=" + preference.getKey() + " which=" + which);
-                                    phoneSensorDataSources.find(preference.getKey()).setFrequency(frequencies[which]);
+                                    String freq[] = frequencies[which].split(" ");
+                                    phoneSensorDataSources.find(preference.getKey()).setFrequency(freq[0]);
                                     updatePreferenceScreen();
                                 }
                             }
@@ -284,16 +288,22 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             phoneSensorDataSource = phoneSensorDataSources.getPhoneSensorDataSources().get(i);
             SwitchPreference switchPreference = (SwitchPreference) preferenceCategory.findPreference(phoneSensorDataSource.getDataSourceType());
             switchPreference.setChecked(phoneSensorDataSource.isEnabled());
-            if(!isSensorSupported(phoneSensorDataSource.getDataSourceType()))
+            if (!isSensorSupported(phoneSensorDataSource.getDataSourceType()))
                 switchPreference.setSummary("Not Supported");
-            else
-                switchPreference.setSummary(phoneSensorDataSource.getFrequency());
+            else {
+                try {
+                    Double.parseDouble(phoneSensorDataSource.getFrequency());
+                    switchPreference.setSummary(phoneSensorDataSource.getFrequency() + " Hz");
+                } catch (NumberFormatException nfe) {
+                    switchPreference.setSummary(phoneSensorDataSource.getFrequency());
+                }
+            }
         }
     }
 
     private void setBackButton() {
         final Button button = (Button) getActivity().findViewById(R.id.button_2);
-        button.setText("Close");
+        button.setText(R.string.button_close);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getActivity().finish();
@@ -307,7 +317,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (Apps.isServiceRunning(getActivity(), ServicePhoneSensor.class.getName())) {
-                    AlertDialogs.AlertDialog(getActivity(), "Save and Restart?", "Save configuration file and restart PhoneSensor App?", R.drawable.ic_info_teal_48dp, "Yes", "Cancel",null, new DialogInterface.OnClickListener() {
+                    AlertDialogs.AlertDialog(getActivity(), "Save and Restart?", "Save configuration file and restart PhoneSensor App?", R.drawable.ic_info_teal_48dp, "Yes", "Cancel", null, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {

@@ -53,7 +53,7 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
 
     public AmbientTemperature(Context context) {
         super(context, DataSourceType.AMBIENT_TEMPERATURE);
-        frequency = "1.0 Hz";
+        frequency = "1.0";
     }
 
     ArrayList<HashMap<String, String>> createDataDescriptors() {

@@ -72,7 +72,7 @@ public class CPU extends PhoneSensorDataSource {
 
     public CPU(Context context) {
         super(context, DataSourceType.CPU);
-        frequency = "1.0 Hz";
+        frequency = "1.0";
     }
 
     HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){

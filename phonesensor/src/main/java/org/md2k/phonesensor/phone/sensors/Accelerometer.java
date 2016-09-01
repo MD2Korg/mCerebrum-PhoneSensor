@@ -49,10 +49,10 @@ import java.util.HashMap;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Accelerometer extends PhoneSensorDataSource implements SensorEventListener {
-    private static final String SENSOR_DELAY_NORMAL = "SENSOR_DELAY_NORMAL";
-    private static final String SENSOR_DELAY_UI = "SENSOR_DELAY_UI";
-    private static final String SENSOR_DELAY_GAME = "SENSOR_DELAY_GAME";
-    private static final String SENSOR_DELAY_FASTEST = "SENSOR_DELAY_FASTEST";
+    private static final String SENSOR_DELAY_NORMAL = "6";
+    private static final String SENSOR_DELAY_UI = "16";
+    private static final String SENSOR_DELAY_GAME = "50";
+    private static final String SENSOR_DELAY_FASTEST = "100";
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     long lastSaved=DateTime.getDateTime();
     double FILTER_DATA_MIN_TIME;
@@ -66,9 +66,9 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
         HashMap<String, String> dataDescriptor = new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
-        dataDescriptor.put(METADATA.MIN_VALUE, "-20");
-        dataDescriptor.put(METADATA.MAX_VALUE, "20");
-        dataDescriptor.put(METADATA.UNIT, "meter/second^2");
+        dataDescriptor.put(METADATA.MIN_VALUE, "-5");
+        dataDescriptor.put(METADATA.MAX_VALUE, "+5");
+        dataDescriptor.put(METADATA.UNIT, "g");
         dataDescriptor.put(METADATA.FREQUENCY, frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, description);
         dataDescriptor.put(METADATA.DATA_TYPE, float.class.getName());
@@ -89,7 +89,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Accelerometer");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "meter/second^2");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "g");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures the acceleration applied to the device");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloatArray.class.getName());
         return dataSourceBuilder;
@@ -106,9 +106,9 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
             lastSaved = curTime;
             double[] samples = new double[3];
-            samples[0] = event.values[0];
-            samples[1] = event.values[1];
-            samples[2] = event.values[2];
+            samples[0] = event.values[0]/9.81;
+            samples[1] = event.values[1]/9.81;
+            samples[2] = event.values[2]/9.81;
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
