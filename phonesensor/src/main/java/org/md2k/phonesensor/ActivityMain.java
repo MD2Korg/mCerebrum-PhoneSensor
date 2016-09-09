@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -26,6 +27,7 @@ import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
+import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
@@ -33,6 +35,7 @@ import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.utilities.Apps;
 import org.md2k.utilities.UI.ActivityAbout;
 import org.md2k.utilities.UI.ActivityCopyright;
+import org.md2k.utilities.permission.PermissionInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,7 +101,6 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Set up Crashlytics, disabled for debug builds
         Crashlytics crashlyticsKit = new Crashlytics.Builder()
                 .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
@@ -108,20 +110,32 @@ public class ActivityMain extends AppCompatActivity {
         Fabric.with(this, crashlyticsKit, new Crashlytics());
         mHandler = new Handler();
 
-        setContentView(R.layout.activity_main);
-        final Button buttonService = (Button) findViewById(R.id.button_app_status);
-
-        buttonService.setOnClickListener(new View.OnClickListener() {
+        PermissionInfo permissionInfo = new PermissionInfo(getApplicationContext());
+        permissionInfo.getPermissions(new ResultCallback<Boolean>() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);
-                if (Apps.isServiceRunning(getBaseContext(), ServicePhoneSensor.class.getName())) {
-                    stopService(intent);
+            public void onResult(Boolean result) {
+                if (!result) {
+                    Toast.makeText(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
-                    startService(intent);
+                    setContentView(R.layout.activity_main);
+                    final Button buttonService = (Button) findViewById(R.id.button_app_status);
+
+                    buttonService.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);
+                            if (Apps.isServiceRunning(getBaseContext(), ServicePhoneSensor.class.getName())) {
+                                stopService(intent);
+                            } else {
+                                startService(intent);
+                            }
+                        }
+                    });
                 }
             }
         });
+
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
