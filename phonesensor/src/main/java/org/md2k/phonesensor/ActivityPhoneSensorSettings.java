@@ -40,8 +40,8 @@ public class ActivityPhoneSensorSettings extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PermissionInfo permissionInfo = new PermissionInfo(getApplicationContext());
-        permissionInfo.getPermissions(new ResultCallback<Boolean>() {
+        PermissionInfo permissionInfo = new PermissionInfo();
+        permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
             @Override
             public void onResult(Boolean result) {
                 if (!result) {

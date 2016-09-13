@@ -109,16 +109,15 @@ public class ActivityMain extends AppCompatActivity {
         // Initialize Fabric with the debug-disabled crashlytics.
         Fabric.with(this, crashlyticsKit, new Crashlytics());
         mHandler = new Handler();
-
-        PermissionInfo permissionInfo = new PermissionInfo(getApplicationContext());
-        permissionInfo.getPermissions(new ResultCallback<Boolean>() {
+        setContentView(R.layout.activity_main);
+        PermissionInfo permissionInfo = new PermissionInfo();
+        permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
             @Override
             public void onResult(Boolean result) {
                 if (!result) {
                     Toast.makeText(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    setContentView(R.layout.activity_main);
                     final Button buttonService = (Button) findViewById(R.id.button_app_status);
 
                     buttonService.setOnClickListener(new View.OnClickListener() {

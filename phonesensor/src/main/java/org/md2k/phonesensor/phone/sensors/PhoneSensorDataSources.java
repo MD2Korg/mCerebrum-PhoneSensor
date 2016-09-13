@@ -168,7 +168,8 @@ public class PhoneSensorDataSources {
     }
 
     public void unregister() {
-        wl.release();
+        if (wl != null && wl.isHeld())
+            wl.release();
         if (phoneSensorDataSources != null) {
             for (int i = 0; i < phoneSensorDataSources.size(); i++) {
                 if (!phoneSensorDataSources.get(i).isEnabled()) continue;

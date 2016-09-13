@@ -67,8 +67,8 @@ public class ServicePhoneSensor extends Service {
     public void onCreate() {
         super.onCreate();
         isStopping = false;
-        PermissionInfo permissionInfo = new PermissionInfo(getApplicationContext());
-        permissionInfo.getPermissions(new ResultCallback<Boolean>() {
+        PermissionInfo permissionInfo = new PermissionInfo();
+        permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
             @Override
             public void onResult(Boolean result) {
                 if (!result) {
