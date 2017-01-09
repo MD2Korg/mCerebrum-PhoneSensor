@@ -81,7 +81,6 @@ public class DetectedActivitiesIntentService extends IntentService {
         Log.i(TAG, "activities detected");
         for (DetectedActivity da: detectedActivities) {
             Log.i(TAG, Constants.getActivityString(
-                    getApplicationContext(),
                     da.getType()) + " " + da.getConfidence() + "%"
             );
         }

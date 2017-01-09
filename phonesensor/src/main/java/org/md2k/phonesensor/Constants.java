@@ -69,7 +69,7 @@ public class Constants {
             DetectedActivity.UNKNOWN
     };
 
-    public static String getActivityString(Context context, int detectedActivityType) {
+    public static String getActivityString(int detectedActivityType) {
         switch(detectedActivityType) {
             case DetectedActivity.IN_VEHICLE:
                 return "IN_VEHICLE";

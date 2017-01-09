@@ -87,7 +87,7 @@ public class ActivityMain extends AppCompatActivity {
                     ((Button) findViewById(R.id.button_app_status)).setText(DateTime.convertTimestampToTimeStr(time));
 
                 }
-                mHandler.postDelayed(this, 10000);
+                mHandler.postDelayed(this, 1000);
             }
         }
     };
