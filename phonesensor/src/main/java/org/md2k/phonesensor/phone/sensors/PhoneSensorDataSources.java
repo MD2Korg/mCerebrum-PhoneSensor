@@ -61,6 +61,7 @@ public class PhoneSensorDataSources {
         phoneSensorDataSources = new ArrayList<>();
         phoneSensorDataSources.add(new Battery(context));
         phoneSensorDataSources.add(new LocationFused(context));
+        phoneSensorDataSources.add(new ActivityType(context));
         phoneSensorDataSources.add(new Accelerometer(context));
         phoneSensorDataSources.add(new Gyroscope(context));
         phoneSensorDataSources.add(new Compass(context));

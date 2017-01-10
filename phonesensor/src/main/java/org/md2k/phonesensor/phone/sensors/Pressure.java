@@ -18,6 +18,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +93,7 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent event) {
         double[] sample = new double[1];
-        sample[0] = event.values[0];
+        sample[DataFormat.Pressure] = event.values[0];
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
         try {
             dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);

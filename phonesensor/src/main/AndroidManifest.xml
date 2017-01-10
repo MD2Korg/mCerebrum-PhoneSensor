@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.md2k.phonesensor"
-    >
+    package="org.md2k.phonesensor">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.READ_LOGS" />`
+    <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -31,6 +31,7 @@
             android:name=".ServicePhoneSensor"
             android:enabled="true"
             android:exported="true" />
+
         <activity
             android:name=".ActivityPhoneSensorSettings"
             android:enabled="true"
@@ -42,14 +43,14 @@
             </intent-filter>
             >
         </activity>
+        <service android:name=".phone.sensors.DetectedActivitiesIntentService"/>
 
         <activity
             android:name="org.md2k.utilities.permission.ActivityPermission"
             android:enabled="true"
             android:exported="true"
             android:label="Permission"
-            android:screenOrientation="portrait">
-            dd</activity>
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

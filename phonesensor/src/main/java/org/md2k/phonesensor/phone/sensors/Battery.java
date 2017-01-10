@@ -16,6 +16,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,9 +65,9 @@ public class Battery extends PhoneSensorDataSource {
                 percentage = ((float) level / (float) scale) * 100.0f;
             }
             double samples[] = new double[3];
-            samples[0] = percentage;
-            samples[1] = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
-            samples[2] = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
+            samples[DataFormat.Battery.Parcentage] = percentage;
+            samples[DataFormat.Battery.Voltage] = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
+            samples[DataFormat.Battery.Temperature] = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);

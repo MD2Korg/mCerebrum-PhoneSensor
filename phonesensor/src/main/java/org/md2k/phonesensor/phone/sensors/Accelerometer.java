@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -18,6 +17,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,7 +71,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         dataDescriptor.put(METADATA.UNIT, "g");
         dataDescriptor.put(METADATA.FREQUENCY, frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, description);
-        dataDescriptor.put(METADATA.DATA_TYPE, float.class.getName());
+        dataDescriptor.put(METADATA.DATA_TYPE, double.class.getName());
         return dataDescriptor;
     }
 
@@ -91,7 +91,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Accelerometer");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "g");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures the acceleration applied to the device");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloatArray.class.getName());
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDoubleArray.class.getName());
         return dataSourceBuilder;
     }
 
@@ -106,9 +106,9 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
             lastSaved = curTime;
             double[] samples = new double[3];
-            samples[0] = event.values[0]/9.81;
-            samples[1] = event.values[1]/9.81;
-            samples[2] = event.values[2]/9.81;
+            samples[DataFormat.Accelerometer.X] = event.values[0]/9.81;
+            samples[DataFormat.Accelerometer.Y] = event.values[1]/9.81;
+            samples[DataFormat.Accelerometer.Z] = event.values[2]/9.81;
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);

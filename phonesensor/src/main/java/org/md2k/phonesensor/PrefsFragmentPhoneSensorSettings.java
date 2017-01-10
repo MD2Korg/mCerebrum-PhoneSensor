@@ -185,9 +185,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
                 break;
             case DataSourceType.LOCATION:
                 return getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
-            case (DataSourceType.MEMORY):
-            case DataSourceType.CPU:
-            case DataSourceType.BATTERY:
+            default:
                 return true;
 
         }
