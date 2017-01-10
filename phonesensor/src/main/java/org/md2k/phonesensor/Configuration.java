@@ -36,15 +36,15 @@ import java.util.ArrayList;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 public class Configuration {
-    public static final String CONFIG_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/mCerebrum/org.md2k.phonesensor/";
-    public static final String DEFAULT_CONFIG_FILENAME = "default_config.json";
-    public static final String CONFIG_FILENAME = "config.json";
+    private static final String CONFIG_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/mCerebrum/org.md2k.phonesensor/";
+    private static final String DEFAULT_CONFIG_FILENAME = "default_config.json";
+    private static final String CONFIG_FILENAME = "config.json";
 
     public static ArrayList<DataSource> read() throws FileNotFoundException {
         return FileManager.readJSONArray(CONFIG_DIRECTORY, CONFIG_FILENAME, DataSource.class);
     }
 
-    public static ArrayList<DataSource> readDefault() throws FileNotFoundException {
+    static ArrayList<DataSource> readDefault() throws FileNotFoundException {
         return FileManager.readJSONArray(CONFIG_DIRECTORY, DEFAULT_CONFIG_FILENAME, DataSource.class);
     }
 
