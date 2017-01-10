@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -28,6 +27,8 @@ import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.Constants;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.data_format.DataFormat;
+import org.md2k.utilities.data_format.ResultType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -164,18 +165,26 @@ public class ActivityType extends PhoneSensorDataSource implements GoogleApiClie
         }
 
     }
+    private int getActivityType(int type){
+        switch (type){
+            case DetectedActivity.STILL: return ResultType.ActivityType.STILL;
+            case DetectedActivity.ON_FOOT: return ResultType.ActivityType.ON_FOOT;
+            case DetectedActivity.TILTING: return ResultType.ActivityType.TILTING;
+            case DetectedActivity.WALKING: return ResultType.ActivityType.WALKING;
+            case DetectedActivity.RUNNING: return ResultType.ActivityType.RUNNING;
+            case DetectedActivity.ON_BICYCLE: return ResultType.ActivityType.ON_BICYCLE;
+            case DetectedActivity.IN_VEHICLE: return ResultType.ActivityType.IN_VEHICLE;
+            default:return ResultType.ActivityType.UNKNOWN;
+        }
+    }
 
     public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ArrayList<DetectedActivity> updatedActivities =
-                    intent.getParcelableArrayListExtra(Constants.ACTIVITY_EXTRA);
-            double samples[] = new double[9];
-            for (int i = 0; i < updatedActivities.size(); i++) {
-                samples[updatedActivities.get(i).getType()] = updatedActivities.get(i).getConfidence();
-                Log.d(TAG,Constants.getActivityString(updatedActivities.get(i).getType())+" confidence="+updatedActivities.get(i).getConfidence());
-            }
-
+            double samples[] = new double[2];
+            DetectedActivity mostProbableActivity=intent.getParcelableExtra(Constants.ACTIVITY_EXTRA);
+            samples[DataFormat.ActivityType.Confidence]=mostProbableActivity.getConfidence();
+            samples[DataFormat.ActivityType.Type]=getActivityType(mostProbableActivity.getType());
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
             try {
                 dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);

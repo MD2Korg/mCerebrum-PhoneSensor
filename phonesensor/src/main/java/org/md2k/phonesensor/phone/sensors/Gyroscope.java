@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -18,6 +17,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
         dataDescriptor.put(METADATA.UNIT, "radians/second");
         dataDescriptor.put(METADATA.FREQUENCY, frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, description);
-        dataDescriptor.put(METADATA.DATA_TYPE, float.class.getSimpleName());
+        dataDescriptor.put(METADATA.DATA_TYPE, double.class.getSimpleName());
         return dataDescriptor;
     }
 
@@ -92,7 +92,7 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Gyroscope");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "radians/second");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measure the rate of rotation around the device's local X, Y and Z axis");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloatArray.class.getName());
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDoubleArray.class.getName());
         return dataSourceBuilder;
     }
 
@@ -108,9 +108,9 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
             lastSaved = curTime;
 
             double[] samples = new double[3];
-            samples[0] = event.values[0];
-            samples[1] = event.values[1];
-            samples[2] = event.values[2];
+            samples[DataFormat.Gyroscope.X] = event.values[0];
+            samples[DataFormat.Gyroscope.Y] = event.values[1];
+            samples[DataFormat.Gyroscope.Z] = event.values[2];
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);

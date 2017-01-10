@@ -8,8 +8,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.md2k.datakitapi.datatype.DataTypeDouble;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -18,6 +18,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +66,7 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
         dataDescriptor.put(METADATA.UNIT, "degree celsius");
         dataDescriptor.put(METADATA.FREQUENCY, frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, "ambient (room) temperature in degree Celsius");
-        dataDescriptor.put(METADATA.DATA_TYPE, float.class.getSimpleName());
+        dataDescriptor.put(METADATA.DATA_TYPE, double.class.getSimpleName());
 
         dataDescriptors.add(dataDescriptor);
         return dataDescriptors;
@@ -79,7 +80,7 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Ambient Temperature");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "degree celsius");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "ambient (room) temperature in degree Celsius");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDouble.class.getName());
         return dataSourceBuilder;
     }
 
@@ -92,7 +93,7 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
     @Override
     public void onSensorChanged(SensorEvent event) {
         double[] sample = new double[1];
-        sample[0] = event.values[0];
+        sample[DataFormat.AmbientTemperature] = event.values[0];
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
         try {
             dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);

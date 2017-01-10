@@ -8,8 +8,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.md2k.datakitapi.datatype.DataTypeDouble;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -18,6 +18,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         dataDescriptor.put(METADATA.UNIT, "lux");
         dataDescriptor.put(METADATA.FREQUENCY,frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, "Ambient light level in SI lux units");
-        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getSimpleName());
+        dataDescriptor.put(METADATA.DATA_TYPE,double.class.getSimpleName());
 
         dataDescriptors.add(dataDescriptor);
         return dataDescriptors;
@@ -87,7 +88,7 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "lux");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Ambient light level in SI lux units");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDouble.class.getName());
         return dataSourceBuilder;
     }
 
@@ -102,7 +103,7 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
             lastSaved = curTime;
             double[] sample = new double[1];
-            sample[0] = event.values[0];
+            sample[DataFormat.AmbientLight] = event.values[0];
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);

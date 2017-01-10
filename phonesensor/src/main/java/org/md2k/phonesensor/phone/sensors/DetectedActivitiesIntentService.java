@@ -75,18 +75,18 @@ public class DetectedActivitiesIntentService extends IntentService {
         // Get the list of the probable activities associated with the current state of the
         // device. Each activity is associated with a confidence level, which is an int between
         // 0 and 100.
-        ArrayList<DetectedActivity> detectedActivities = (ArrayList) result.getProbableActivities();
+//        ArrayList<DetectedActivity> detectedActivities = (ArrayList) result.getProbableActivities();
 
         // Log each activity.
-        Log.i(TAG, "activities detected");
-        for (DetectedActivity da: detectedActivities) {
-            Log.i(TAG, Constants.getActivityString(
-                    da.getType()) + " " + da.getConfidence() + "%"
-            );
-        }
+  //      Log.i(TAG, "activities detected");
+  //      for (DetectedActivity da: detectedActivities) {
+  //          Log.i(TAG, Constants.getActivityString(
+  //                  da.getType()) + " " + da.getConfidence() + "%"
+  //          );
+   //     }
 
         // Broadcast the list of detected activities.
-        localIntent.putExtra(Constants.ACTIVITY_EXTRA, detectedActivities);
+        localIntent.putExtra(Constants.ACTIVITY_EXTRA, result.getMostProbableActivity());
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 }

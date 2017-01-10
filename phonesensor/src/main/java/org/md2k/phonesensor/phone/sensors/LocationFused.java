@@ -27,6 +27,7 @@ import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.utilities.UI.AlertDialogs;
+import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,12 +119,12 @@ public class LocationFused extends PhoneSensorDataSource implements
     @Override
     public void onLocationChanged(android.location.Location location) {
         double samples[] = new double[6];
-        samples[0] = location.getLatitude();
-        samples[1] = location.getLongitude();
-        samples[2] = location.getAltitude();
-        samples[3] = location.getSpeed();
-        samples[4] = location.getBearing();
-        samples[5] = location.getAccuracy();
+        samples[DataFormat.Location.Latitude] = location.getLatitude();
+        samples[DataFormat.Location.Longitude] = location.getLongitude();
+        samples[DataFormat.Location.Altitude] = location.getAltitude();
+        samples[DataFormat.Location.Speed] = location.getSpeed();
+        samples[DataFormat.Location.Bearing] = location.getBearing();
+        samples[DataFormat.Location.Accuracy] = location.getAccuracy();
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
         try {
             dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);

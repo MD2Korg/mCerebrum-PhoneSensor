@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -18,6 +17,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ public class Proximity extends PhoneSensorDataSource implements SensorEventListe
         dataDescriptor.put(METADATA.UNIT, "centimeter");
         dataDescriptor.put(METADATA.FREQUENCY,frequency);
         dataDescriptor.put(METADATA.DESCRIPTION, "Proximity sensor distance measured in centimeters");
-        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getSimpleName());
+        dataDescriptor.put(METADATA.DATA_TYPE,double.class.getSimpleName());
 
         dataDescriptors.add(dataDescriptor);
         return dataDescriptors;
@@ -80,7 +80,7 @@ public class Proximity extends PhoneSensorDataSource implements SensorEventListe
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "centimeter");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Proximity sensor distance measured in centimeters");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDoubleArray.class.getName());
         return dataSourceBuilder;
     }
 
@@ -92,7 +92,7 @@ public class Proximity extends PhoneSensorDataSource implements SensorEventListe
     @Override
     public void onSensorChanged(SensorEvent event) {
         double[] sample = new double[1];
-        sample[0] = event.values[0];
+        sample[DataFormat.Proximity] = event.values[0];
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
         try {
             dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
