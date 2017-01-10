@@ -82,7 +82,7 @@ public class ActivityType extends PhoneSensorDataSource implements GoogleApiClie
 
     ArrayList<HashMap<String, String>> createDataDescriptors() {
         ArrayList<HashMap<String, String>> dataDescriptors = new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("Activity Type", frequency, "Represents types of activity (0=IN_VEHICLE, 1=ON_BICYCLE,  2=ON_FOOT, 3=STILL, 4=UNKNOWN, 5=TILTING, 7=WALKING, 8=RUNNING"));
+        dataDescriptors.add(createDataDescriptor("Activity Type", frequency, "Represents types of activity (0: STILL,1: ON_FOOT, 2:TILTING, 3: WALKING, 4: RUNNING, 5: ON_BICYCLE, 6: IN_VEHICLE, 7: UNKNOWN"));
         return dataDescriptors;
     }
 
@@ -92,7 +92,7 @@ public class ActivityType extends PhoneSensorDataSource implements GoogleApiClie
         dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Activity Type");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Represents types of activity (0=IN_VEHICLE, 1=ON_BICYCLE,  2=ON_FOOT, 3=STILL, 4=UNKNOWN, 5=TILTING, 7=WALKING, 8=RUNNING");
+        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Represents types of activity (0: STILL,1: ON_FOOT, 2:TILTING, 3: WALKING, 4: RUNNING, 5: ON_BICYCLE, 6: IN_VEHICLE, 7: UNKNOWN");
         dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDoubleArray.class.getName());
         return dataSourceBuilder;
     }

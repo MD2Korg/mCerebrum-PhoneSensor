@@ -84,6 +84,7 @@ android {
         versionCode buildVersionCode()
         versionName version
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
@@ -124,6 +125,7 @@ dependencies {
     // more stuff, e.g., Mockito
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support:support-annotations:25.1.0'
+    androidTestCompile 'com.android.support:support-annotations:25.0.1'
+    compile 'com.android.support:multidex:1.0.1'
 
 }
