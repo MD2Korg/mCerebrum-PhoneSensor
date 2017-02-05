@@ -59,19 +59,19 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class ActivityType extends PhoneSensorDataSource implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+class ActivityType extends PhoneSensorDataSource implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
     private static final String TAG = ActivityType.class.getSimpleName();
     private GoogleApiClient mGoogleApiClient;
-    protected ActivityDetectionBroadcastReceiver mBroadcastReceiver;
-    public static final int INTERVAL_MILLIS = 1000;
+    private ActivityDetectionBroadcastReceiver mBroadcastReceiver;
+    private static final int INTERVAL_MILLIS = 1000;
 
-    public ActivityType(Context context) {
+    ActivityType(Context context) {
         super(context, DataSourceType.ACTIVITY_TYPE);
         frequency = "1.0";
         mBroadcastReceiver = new ActivityDetectionBroadcastReceiver();
     }
 
-    HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
+    private HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
         HashMap<String, String> dataDescriptor = new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
         dataDescriptor.put(METADATA.FREQUENCY, frequency);
@@ -99,30 +99,34 @@ public class ActivityType extends PhoneSensorDataSource implements GoogleApiClie
 
     @Override
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
-        super.register(dataSourceBuilder, newCallBack);
-        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
-                new IntentFilter(Constants.BROADCAST_ACTION));
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
-    }
+        try {
+            super.register(dataSourceBuilder, newCallBack);
+            LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
+                    new IntentFilter(Constants.BROADCAST_ACTION));
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(ActivityRecognition.API)
+                    .build();
+            mGoogleApiClient.connect();
+        }catch (Exception e){
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(ActivityRecognition.API)
-                .build();
+        }
     }
 
     @Override
     public void unregister() {
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(mBroadcastReceiver);
-        com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(
-                mGoogleApiClient,
-                getActivityDetectionPendingIntent()
-        ).setResultCallback(this);
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
+        try {
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(mBroadcastReceiver);
+            if (mGoogleApiClient != null) {
+                com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(
+                        mGoogleApiClient,
+                        getActivityDetectionPendingIntent()
+                ).setResultCallback(this);
+                mGoogleApiClient.disconnect();
+            }
+        }catch (Exception e){
+
         }
     }
 
@@ -165,16 +169,25 @@ public class ActivityType extends PhoneSensorDataSource implements GoogleApiClie
         }
 
     }
-    private int getActivityType(int type){
-        switch (type){
-            case DetectedActivity.STILL: return ResultType.ActivityType.STILL;
-            case DetectedActivity.ON_FOOT: return ResultType.ActivityType.ON_FOOT;
-            case DetectedActivity.TILTING: return ResultType.ActivityType.TILTING;
-            case DetectedActivity.WALKING: return ResultType.ActivityType.WALKING;
-            case DetectedActivity.RUNNING: return ResultType.ActivityType.RUNNING;
-            case DetectedActivity.ON_BICYCLE: return ResultType.ActivityType.ON_BICYCLE;
-            case DetectedActivity.IN_VEHICLE: return ResultType.ActivityType.IN_VEHICLE;
-            default:return ResultType.ActivityType.UNKNOWN;
+
+    private int getActivityType(int type) {
+        switch (type) {
+            case DetectedActivity.STILL:
+                return ResultType.ActivityType.STILL;
+            case DetectedActivity.ON_FOOT:
+                return ResultType.ActivityType.ON_FOOT;
+            case DetectedActivity.TILTING:
+                return ResultType.ActivityType.TILTING;
+            case DetectedActivity.WALKING:
+                return ResultType.ActivityType.WALKING;
+            case DetectedActivity.RUNNING:
+                return ResultType.ActivityType.RUNNING;
+            case DetectedActivity.ON_BICYCLE:
+                return ResultType.ActivityType.ON_BICYCLE;
+            case DetectedActivity.IN_VEHICLE:
+                return ResultType.ActivityType.IN_VEHICLE;
+            default:
+                return ResultType.ActivityType.UNKNOWN;
         }
     }
 
@@ -182,9 +195,9 @@ public class ActivityType extends PhoneSensorDataSource implements GoogleApiClie
         @Override
         public void onReceive(Context context, Intent intent) {
             double samples[] = new double[2];
-            DetectedActivity mostProbableActivity=intent.getParcelableExtra(Constants.ACTIVITY_EXTRA);
-            samples[DataFormat.ActivityType.Confidence]=mostProbableActivity.getConfidence();
-            samples[DataFormat.ActivityType.Type]=getActivityType(mostProbableActivity.getType());
+            DetectedActivity mostProbableActivity = intent.getParcelableExtra(Constants.ACTIVITY_EXTRA);
+            samples[DataFormat.ActivityType.Confidence] = mostProbableActivity.getConfidence();
+            samples[DataFormat.ActivityType.Type] = getActivityType(mostProbableActivity.getType());
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
             try {
                 dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);
