@@ -1,22 +1,21 @@
 package org.md2k.phonesensor.phone.sensors;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.exception.DataKitException;
@@ -31,6 +30,13 @@ import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -58,24 +64,58 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class LocationFused extends PhoneSensorDataSource implements
-        LocationListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+class LocationFused extends PhoneSensorDataSource {
 
     private static final String TAG = LocationFused.class.getSimpleName();
-    private static final long INTERVAL = 1000L;
-    private static final long FASTEST_INTERVAL = 1000L;
-    private LocationRequest mLocationRequest;
-    private GoogleApiClient mGoogleApiClient;
+    private static final long INTERVAL = 5000L;
+    private ReactiveLocationProvider locationProvider;
+    private Subscription updatableLocationSubscription;
+    private Observable<Location> locationUpdatesObservable;
 
-    public LocationFused(Context context) {
+
+    LocationFused(final Context context) {
         super(context, DataSourceType.LOCATION);
-        frequency="1.0";
+        frequency = "1.0";
+        locationProvider = new ReactiveLocationProvider(context);
+        final LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(INTERVAL);
+        locationUpdatesObservable = locationProvider
+                .checkLocationSettings(
+                        new LocationSettingsRequest.Builder()
+                                .addLocationRequest(locationRequest)
+                                .setAlwaysShow(true)  //Refrence: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .build()
+                )
+                .doOnNext(new Action1<LocationSettingsResult>() {
+                    @Override
+                    public void call(LocationSettingsResult locationSettingsResult) {
+                        Status status = locationSettingsResult.getStatus();
+                        if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
+                        }
+                    }
+                })
+                .flatMap(new Func1<LocationSettingsResult, Observable<Location>>() {
+                    @Override
+                    public Observable<Location> call(LocationSettingsResult locationSettingsResult) {
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return null;
+                        }
+                        return locationProvider.getUpdatedLocation(locationRequest);
+                    }
+                });
 
     }
 
-    HashMap<String, String> createDataDescriptor(String name, String frequency, String description, int minValue, int maxValue, String unit) {
+    private HashMap<String, String> createDataDescriptor(String name, String frequency, String description, int minValue, int maxValue, String unit) {
         HashMap<String, String> dataDescriptor = new HashMap<>();
         dataDescriptor.put(METADATA.NAME, name);
         dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
@@ -109,15 +149,8 @@ public class LocationFused extends PhoneSensorDataSource implements
         return dataSourceBuilder;
     }
 
-    private void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
 
-    @Override
-    public void onLocationChanged(android.location.Location location) {
+    public void saveData(Location location) {
         double samples[] = new double[6];
         samples[DataFormat.Location.Latitude] = location.getLatitude();
         samples[DataFormat.Location.Longitude] = location.getLongitude();
@@ -138,7 +171,7 @@ public class LocationFused extends PhoneSensorDataSource implements
         final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            AlertDialogs.AlertDialog(context, "Error: GPS is off", "Please turn on GPS\n\n (* select Mode = High Accuracy)", org.md2k.utilities.R.drawable.ic_error_red_50dp, "Turn On", "Cancel", null,new DialogInterface.OnClickListener() {
+            AlertDialogs.AlertDialog(context, "Error: GPS is off", "Please turn on GPS\n\n (* select Mode = High Accuracy)", org.md2k.utilities.R.drawable.ic_error_red_50dp, "Turn On", "Cancel", null, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (which == DialogInterface.BUTTON_POSITIVE) {
@@ -157,67 +190,27 @@ public class LocationFused extends PhoneSensorDataSource implements
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         statusCheck();
-
-        if (!isGooglePlayServicesAvailable()) {
-            return;
-        }
-        createLocationRequest();
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-    private boolean isGooglePlayServicesAvailable() {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-        return ConnectionResult.SUCCESS == status;
-    }
-
-    @Override
-    public void unregister() {
-        if (mGoogleApiClient != null) {
-            stopLocationUpdates();
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        startLocationUpdates();
-    }
-
-    private void startLocationUpdates() {
-
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this).setResultCallback(new ResultCallback<Status>() {
+        updatableLocationSubscription = locationUpdatesObservable.subscribe(new Observer<Location>() {
             @Override
-            public void onResult(Status status) {
+            public void onCompleted() {
 
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Location location) {
+                saveData(location);
             }
         });
     }
 
-    private void stopLocationUpdates() {
-        try {
-            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-                LocationServices.FusedLocationApi.removeLocationUpdates(
-                        mGoogleApiClient, this);
-            }
-        }catch (Exception ignored){
-
-        }
-    }
-
     @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Connection failed: " + connectionResult.toString());
-
+    public void unregister() {
+        if(updatableLocationSubscription!=null && !updatableLocationSubscription.isUnsubscribed())
+            updatableLocationSubscription.unsubscribe();
     }
 }

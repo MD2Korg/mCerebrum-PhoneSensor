@@ -1,21 +1,11 @@
 package org.md2k.phonesensor.phone.sensors;
 
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.ActivityRecognition;
+import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
@@ -24,7 +14,6 @@ import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
-import org.md2k.phonesensor.Constants;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.utilities.data_format.DataFormat;
@@ -32,6 +21,10 @@ import org.md2k.utilities.data_format.ResultType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -59,16 +52,15 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-class ActivityType extends PhoneSensorDataSource implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+class ActivityType extends PhoneSensorDataSource {
     private static final String TAG = ActivityType.class.getSimpleName();
-    private GoogleApiClient mGoogleApiClient;
-    private ActivityDetectionBroadcastReceiver mBroadcastReceiver;
-    private static final int INTERVAL_MILLIS = 1000;
+    private ReactiveLocationProvider locationProvider;
+    private Subscription subscription;
 
     ActivityType(Context context) {
         super(context, DataSourceType.ACTIVITY_TYPE);
+        locationProvider = new ReactiveLocationProvider(context);
         frequency = "1.0";
-        mBroadcastReceiver = new ActivityDetectionBroadcastReceiver();
     }
 
     private HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
@@ -101,74 +93,28 @@ class ActivityType extends PhoneSensorDataSource implements GoogleApiClient.Conn
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         try {
             super.register(dataSourceBuilder, newCallBack);
-            LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
-                    new IntentFilter(Constants.BROADCAST_ACTION));
-            mGoogleApiClient = new GoogleApiClient.Builder(context)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(ActivityRecognition.API)
-                    .build();
-            mGoogleApiClient.connect();
+            subscription = locationProvider.getDetectedActivity(0)
+                    .subscribe(new Action1<ActivityRecognitionResult>() {
+                @Override
+                public void call(ActivityRecognitionResult detectedActivity) {
+                    saveData(detectedActivity.getMostProbableActivity());
+                }
+            });
         }catch (Exception e){
-
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
         }
     }
 
     @Override
     public void unregister() {
         try {
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(mBroadcastReceiver);
-            if (mGoogleApiClient != null) {
-                com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(
-                        mGoogleApiClient,
-                        getActivityDetectionPendingIntent()
-                ).setResultCallback(this);
-                mGoogleApiClient.disconnect();
-            }
-        }catch (Exception e){
+            if(subscription!=null && !subscription.isUnsubscribed())
+                subscription.unsubscribe();
+        }catch (Exception ignored){
 
         }
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        com.google.android.gms.location.ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-                mGoogleApiClient,
-                INTERVAL_MILLIS,
-                getActivityDetectionPendingIntent()
-        ).setResultCallback(ActivityType.this);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    /**
-     * Gets a PendingIntent to be sent for each activity detection.
-     */
-    private PendingIntent getActivityDetectionPendingIntent() {
-        Intent intent = new Intent(context, DetectedActivitiesIntentService.class);
-
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
-        // requestActivityUpdates() and removeActivityUpdates().
-        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    @Override
-    public void onResult(@NonNull Status status) {
-        if (status.isSuccess()) {
-            Log.d(TAG, "Success: " + status.getStatusMessage());
-        } else {
-            Log.e(TAG, "Error adding or removing activity detection: " + status.getStatusMessage());
-        }
-
-    }
 
     private int getActivityType(int type) {
         switch (type) {
@@ -190,21 +136,17 @@ class ActivityType extends PhoneSensorDataSource implements GoogleApiClient.Conn
                 return ResultType.ActivityType.UNKNOWN;
         }
     }
-
-    public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            double samples[] = new double[2];
-            DetectedActivity mostProbableActivity = intent.getParcelableExtra(Constants.ACTIVITY_EXTRA);
-            samples[DataFormat.ActivityType.Confidence] = mostProbableActivity.getConfidence();
-            samples[DataFormat.ActivityType.Type] = getActivityType(mostProbableActivity.getType());
-            DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
-            try {
-                dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);
-                callBack.onReceivedData(dataTypeDoubleArray);
-            } catch (DataKitException e) {
-                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
-            }
+    private void saveData(DetectedActivity mostProbableActivity){
+        double samples[] = new double[2];
+        samples[DataFormat.ActivityType.Confidence] = mostProbableActivity.getConfidence();
+        samples[DataFormat.ActivityType.Type] = getActivityType(mostProbableActivity.getType());
+        DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
+        try {
+            dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);
+            callBack.onReceivedData(dataTypeDoubleArray);
+        } catch (DataKitException e) {
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
         }
+
     }
 }

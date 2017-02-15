@@ -36,9 +36,6 @@ public class Constants {
 
     public static final String PACKAGE_NAME = "org.md2k.phonesensor";
 
-    public static final String BROADCAST_ACTION = PACKAGE_NAME + ".BROADCAST_ACTION";
-
-    public static final String ACTIVITY_EXTRA = PACKAGE_NAME + ".ACTIVITY_EXTRA";
 
     public static final String SHARED_PREFERENCES_NAME = PACKAGE_NAME + ".SHARED_PREFERENCES";
 

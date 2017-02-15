@@ -44,7 +44,6 @@
             </intent-filter>
             >
         </activity>
-        <service android:name=".phone.sensors.DetectedActivitiesIntentService"/>
 
         <activity
             android:name="org.md2k.utilities.permission.ActivityPermission"
