@@ -1,9 +1,9 @@
 package org.md2k.phonesensor.phone.sensors;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
@@ -16,6 +16,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.utilities.Report.Log;
 import org.md2k.utilities.data_format.DataFormat;
 import org.md2k.utilities.data_format.ResultType;
 
@@ -23,8 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
+import rx.Observer;
 import rx.Subscription;
-import rx.functions.Action1;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -94,12 +95,22 @@ class ActivityType extends PhoneSensorDataSource {
         try {
             super.register(dataSourceBuilder, newCallBack);
             subscription = locationProvider.getDetectedActivity(0)
-                    .subscribe(new Action1<ActivityRecognitionResult>() {
-                @Override
-                public void call(ActivityRecognitionResult detectedActivity) {
-                    saveData(detectedActivity.getMostProbableActivity());
-                }
-            });
+                    .subscribe(new Observer<ActivityRecognitionResult>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(context,"!!! Error: "+e.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onNext(ActivityRecognitionResult activityRecognitionResult) {
+                            saveData(activityRecognitionResult.getMostProbableActivity());
+                        }
+                    });
         }catch (Exception e){
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
         }
