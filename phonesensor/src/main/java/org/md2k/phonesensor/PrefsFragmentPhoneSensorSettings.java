@@ -1,5 +1,6 @@
 package org.md2k.phonesensor;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +19,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -84,6 +89,25 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         createPreferenceScreen();
         setBackButton();
         setSaveButton();
+        checkPlayServices();
+    }
+    private boolean checkPlayServices() {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(getActivity());
+        if(result != ConnectionResult.SUCCESS) {
+            if(googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(getActivity(), result,
+                        9000, new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                getActivity().finish();
+                            }
+                        }).show();
+            }
+            return false;
+        }
+
+        return true;
     }
 
     void readDefaultConfiguration() {
@@ -91,6 +115,18 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             defaultConfig = Configuration.readDefault();
         } catch (FileNotFoundException e) {
             defaultConfig = null;
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case 9000:
+                if (resultCode == Activity.RESULT_OK) {
+                }
+                break;
+
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

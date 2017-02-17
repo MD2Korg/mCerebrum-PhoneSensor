@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
@@ -103,6 +105,7 @@ class ActivityType extends PhoneSensorDataSource {
 
                         @Override
                         public void onError(Throwable e) {
+
                             Toast.makeText(context,"!!! Error: "+e.getMessage(),Toast.LENGTH_LONG).show();
                         }
 
