@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
@@ -19,6 +20,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
 import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
@@ -27,6 +29,7 @@ import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.utilities.UI.AlertDialogs;
 import org.md2k.utilities.data_format.DataFormat;
+import org.md2k.utilities.permission.PermissionInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +95,10 @@ class LocationFused extends PhoneSensorDataSource {
                     public void call(LocationSettingsResult locationSettingsResult) {
                         Status status = locationSettingsResult.getStatus();
                         if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                            Toast.makeText(context, "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
                             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
+                        } else {
+                            //                           LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
                         }
                     }
                 })
@@ -210,7 +216,7 @@ class LocationFused extends PhoneSensorDataSource {
 
     @Override
     public void unregister() {
-        if(updatableLocationSubscription!=null && !updatableLocationSubscription.isUnsubscribed())
+        if (updatableLocationSubscription != null && !updatableLocationSubscription.isUnsubscribed())
             updatableLocationSubscription.unsubscribe();
     }
 }
