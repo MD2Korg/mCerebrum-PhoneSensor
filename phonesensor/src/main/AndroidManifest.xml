@@ -6,17 +6,16 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name="android.support.multidex.MultiDexApplication"
         android:theme="@style/app_theme_teal_light"
         tools:replace="android:theme">
         <activity
@@ -36,7 +35,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".ActivityPhoneSensorSettings"
+            android:name=".ActivitySettings"
             android:enabled="true"
             android:exported="true"
             android:label="Settings: Phone Sensor"
@@ -47,18 +46,27 @@
             >
         </activity>
 
-        <activity
-            android:name="org.md2k.utilities.permission.ActivityPermission"
-            android:enabled="true"
-            android:exported="true"
-            android:label="Permission"
-            android:screenOrientation="portrait"/>
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="1cad146ed866fa3d49c3bc8376ff52af7d9970da" />
+
+        <service
+            android:name=".ServiceMCerebrum"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".plot.ActivityPlot"
+            android:enabled="true"
+            android:exported="true" />
+        <activity
+            android:name=".plot.ActivityPlotChoice"
+            android:enabled="true"
+            android:exported="true" />
+        <activity android:name=".ActivityPermission" />
     </application>
+
 </manifest>

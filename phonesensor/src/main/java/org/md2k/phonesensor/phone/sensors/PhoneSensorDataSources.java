@@ -14,7 +14,6 @@ import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.Configuration;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.Report.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -71,6 +70,7 @@ public class PhoneSensorDataSources {
         phoneSensorDataSources.add(new Proximity(context));
         phoneSensorDataSources.add(new CPU(context));
         phoneSensorDataSources.add(new Memory(context));
+        phoneSensorDataSources.add(new StepCount(context));
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
         try {
@@ -85,7 +85,7 @@ public class PhoneSensorDataSources {
     }
 
     private void readDataSourceFromFile() throws FileNotFoundException {
-        ArrayList<DataSource> dataSources = Configuration.read();
+        ArrayList<DataSource> dataSources = Configuration.read(context);
         assert dataSources != null;
         for (int i = 0; i < dataSources.size(); i++) {
             PhoneSensorDataSource phoneSensorDataSource = find(dataSources.get(i).getType());
@@ -116,15 +116,13 @@ public class PhoneSensorDataSources {
         ArrayList<DataSource> dataSources = new ArrayList<>();
         if (phoneSensorDataSources == null) throw new NullPointerException();
         if (phoneSensorDataSources.size() == 0) throw new EmptyStackException();
-        Log.d(TAG, "countEnabled=" + phoneSensorDataSources.size());
-
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
             if (!phoneSensorDataSources.get(i).isEnabled()) continue;
             DataSource dataSource = phoneSensorDataSources.get(i).createDataSourceBuilder().build();
             if (dataSource == null) continue;
             dataSources.add(dataSource);
         }
-        Configuration.write(dataSources);
+        Configuration.write(context, dataSources);
     }
 
     public void register() {

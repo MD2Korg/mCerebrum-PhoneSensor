@@ -31,6 +31,7 @@ import android.content.Context;
 import com.google.android.gms.location.DetectedActivity;
 
 public class Constants {
+    public static final String FILENAME_ASSET_METADATA = "meta_data.json";
     private Constants() {
     }
 

@@ -17,7 +17,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.data_format.DataFormat;
+import org.md2k.mcerebrum.core.data_format.DataFormat;;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,37 +64,6 @@ public class Gyroscope extends PhoneSensorDataSource implements SensorEventListe
 
     }
 
-    HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
-        HashMap<String, String> dataDescriptor = new HashMap<>();
-        dataDescriptor.put(METADATA.NAME, name);
-        dataDescriptor.put(METADATA.MIN_VALUE, "-5");
-        dataDescriptor.put(METADATA.MAX_VALUE, "5");
-        dataDescriptor.put(METADATA.UNIT, "radians/second");
-        dataDescriptor.put(METADATA.FREQUENCY, frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION, description);
-        dataDescriptor.put(METADATA.DATA_TYPE, double.class.getSimpleName());
-        return dataDescriptor;
-    }
-
-    ArrayList<HashMap<String, String>> createDataDescriptors() {
-        ArrayList<HashMap<String, String>> dataDescriptors = new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("Gyroscope X", frequency, "Angular speed around the x-axis"));
-        dataDescriptors.add(createDataDescriptor("Gyroscope Y", frequency, "Angular speed around the y-axis"));
-        dataDescriptors.add(createDataDescriptor("Gyroscope Z", frequency, "Angular speed around the z-axis"));
-        return dataDescriptors;
-    }
-
-    public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
-        if (dataSourceBuilder == null) return null;
-        dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Gyroscope");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "radians/second");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measure the rate of rotation around the device's local X, Y and Z axis");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDoubleArray.class.getName());
-        return dataSourceBuilder;
-    }
 
     public void updateDataSource(DataSource dataSource) {
         super.updateDataSource(dataSource);

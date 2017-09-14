@@ -74,36 +74,6 @@ public class CPU extends PhoneSensorDataSource {
         super(context, DataSourceType.CPU);
         frequency = "1.0";
     }
-
-    HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
-        HashMap<String,String> dataDescriptor=new HashMap<>();
-        dataDescriptor.put(METADATA.NAME, name);
-        dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
-        dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
-        dataDescriptor.put(METADATA.UNIT, unit);
-        dataDescriptor.put(METADATA.FREQUENCY,frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION,description);
-        dataDescriptor.put(METADATA.DATA_TYPE,float.class.getName());
-        return dataDescriptor;
-    }
-
-    ArrayList<HashMap<String,String>> createDataDescriptors(){
-        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("CPU usage",frequency,"CPU usage from the last record",0,1,""));
-        return dataDescriptors;
-    }
-
-    public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
-        if (dataSourceBuilder == null) return null;
-        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "CPU");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures CPU usage from the last entry");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloat.class.getName());
-        return dataSourceBuilder;
-    }
-
     public void unregister() {
         if (scheduler != null) {
             scheduler.removeCallbacks(statusCPU);

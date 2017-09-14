@@ -1,7 +1,7 @@
-package org.md2k.phonesensor.phone.sensors;
-
+package org.md2k.phonesensor;
 /*
  * Copyright (c) 2016, The University of Memphis, MD2K Center
+ * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,42 +26,6 @@ package org.md2k.phonesensor.phone.sensors;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import android.content.Context;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.md2k.datakitapi.source.METADATA;
-import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
-import org.md2k.phonesensor.ActivityMain;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-@RunWith(AndroidJUnit4.class)
-public class AccelerometerTest {
-
-    @Rule
-    public ActivityTestRule<ActivityMain> mActivityRule = new ActivityTestRule<>(ActivityMain.class);
-
-
-    Context context;
-
-    @Before
-    public void setUp() throws Exception {
-        context = mActivityRule.getActivity().getBaseContext();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
-
+public interface ResponseCallback {
+    public void onResponse(boolean result);
 }

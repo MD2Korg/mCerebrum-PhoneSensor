@@ -1,51 +1,40 @@
 package org.md2k.phonesensor;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
+import org.md2k.mcerebrum.commons.dialog.Dialog;
+import org.md2k.mcerebrum.commons.dialog.DialogCallback;
 import org.md2k.phonesensor.phone.sensors.Accelerometer;
 import org.md2k.phonesensor.phone.sensors.AmbientLight;
 import org.md2k.phonesensor.phone.sensors.Compass;
 import org.md2k.phonesensor.phone.sensors.Gyroscope;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
-import org.md2k.utilities.Apps;
-import org.md2k.utilities.Report.Log;
-import org.md2k.utilities.UI.AlertDialogs;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -55,8 +44,6 @@ import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -84,15 +71,19 @@ import rx.functions.Func1;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
-    private static final String TAG = PrefsFragmentPhoneSensorSettings.class.getSimpleName();
+public class PrefsFragmentSettings extends PreferenceFragment {
     public static final int REQUEST_CHECK_SETTINGS = 1000;
     PhoneSensorDataSources phoneSensorDataSources;
     ArrayList<DataSource> defaultConfig;
     Preference.OnPreferenceChangeListener onPreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-            phoneSensorDataSources.find(preference.getKey()).setEnabled((Boolean) newValue);
+            boolean value = (Boolean) newValue;
+            if(preference.getKey().equals(DataSourceType.LOCATION) && value==true){
+                enableGPS();
+            }
+            phoneSensorDataSources.find(preference.getKey()).setEnabled(value);
+            saveConfigurationFile();
             updatePreferenceScreen();
             return false;
         }
@@ -103,41 +94,26 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         readConfiguration();
         readDefaultConfiguration();
+        enableGPS();
         addPreferencesFromResource(R.xml.pref_phonesensor_platform);
         createPreferenceScreen();
-        setBackButton();
-        setSaveButton();
-        checkPlayServices();
-    }
-
-    private boolean checkPlayServices() {
-        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-        int result = googleAPI.isGooglePlayServicesAvailable(getActivity());
-        if (result != ConnectionResult.SUCCESS) {
-            if (googleAPI.isUserResolvableError(result)) {
-                googleAPI.getErrorDialog(getActivity(), result,
-                        9000, new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                getActivity().finish();
-                            }
-                        }).show();
-            }
-            return false;
-        } else{
-            register();
-        }
-
-
-        return true;
     }
 
     private static final long INTERVAL = 5000L;
     private Subscription updatableLocationSubscription;
-    private Observable<LocationSettingsResult> locationUpdatesObservable;
 
-    void register() {
-        locationPermission();
+    void enableGPS() {
+        ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getActivity());
+        final LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(INTERVAL);
+        Observable<LocationSettingsResult> locationUpdatesObservable = locationProvider
+                .checkLocationSettings(
+                        new LocationSettingsRequest.Builder()
+                                .addLocationRequest(locationRequest)
+                                .setAlwaysShow(true)  //Reference: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .build()
+                );
         updatableLocationSubscription = locationUpdatesObservable.subscribe(new Observer<LocationSettingsResult>() {
             @Override
             public void onCompleted() {
@@ -161,9 +137,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
                             unregister();
                             break;
                         default:
-                            Toast.makeText(getActivity(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
                             unregister();
-                            getActivity().finish();
                             break;
                     }
                 }catch (Exception e){
@@ -182,23 +156,11 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             updatableLocationSubscription.unsubscribe();
     }
 
-    void locationPermission() {
-        ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getActivity());
-        final LocationRequest locationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(INTERVAL);
-        locationUpdatesObservable = locationProvider
-                .checkLocationSettings(
-                        new LocationSettingsRequest.Builder()
-                                .addLocationRequest(locationRequest)
-                                .setAlwaysShow(true)  //Refrence: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
-                                .build()
-                );
-    }
+
 
     void readDefaultConfiguration() {
         try {
-            defaultConfig = Configuration.readDefault();
+            defaultConfig = Configuration.readDefault(getActivity());
         } catch (FileNotFoundException e) {
             defaultConfig = null;
         }
@@ -207,11 +169,6 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case 9000:
-                if (resultCode == Activity.RESULT_OK) {
-                    register();
-                }
-                break;
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
@@ -268,11 +225,11 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     boolean checked = ((CheckBoxPreference) preference).isChecked();
-                    Log.d(TAG, "checked=" + checked);
                     if (checked) {
                         PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("dataSourceType");
                         preferenceCategory.setEnabled(false);
                         updateDefaultConfig();
+                        saveConfigurationFile();
                         updatePreferenceScreen();
 
                     } else {
@@ -297,7 +254,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
 
     boolean isSensorSupported(String dataSourceType) {
         SensorManager mSensorManager;
-        Sensor mSensor = null;
+        Sensor mSensor;
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         switch (dataSourceType) {
             case DataSourceType.ACCELEROMETER:
@@ -341,7 +298,6 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         switchPreference.setEnabled(isSensorSupported(dataSourceType));
         switch (dataSourceType) {
             case (DataSourceType.ACCELEROMETER):
-
                 switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Accelerometer.frequencyOptions));
                 break;
             case (DataSourceType.GYROSCOPE):
@@ -373,7 +329,6 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(final Preference preference) {
                 SwitchPreference switchPreference = (SwitchPreference) preference;
-                Log.d(TAG, "preferencekey=" + preference.getKey());
                 phoneSensorDataSources.find(preference.getKey()).setEnabled(switchPreference.isChecked());
                 if (switchPreference.isChecked()) {
                     int curSelected = 0;
@@ -386,17 +341,28 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
                             }
                     }
                     try {
+                        Dialog.singleChoice(getActivity(), "Select Frequency", frequencies, curSelected, new DialogCallback() {
+                            @Override
+                            public void onSelected(String value) {
+                                String freq[] = value.split(" ");
+                                phoneSensorDataSources.find(preference.getKey()).setFrequency(freq[0]);
+                                saveConfigurationFile();
+                                updatePreferenceScreen();
+
+                            }
+                        }).show();
+/*
                         AlertDialogs.AlertDialogSingleChoice(getActivity(), "Select Frequency", frequencies, curSelected, "Select", "Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which >= 0) {
-                                    Log.d(TAG, "preferencekey=" + preference.getKey() + " which=" + which);
                                     String freq[] = frequencies[which].split(" ");
                                     phoneSensorDataSources.find(preference.getKey()).setFrequency(freq[0]);
                                     updatePreferenceScreen();
                                 }
                             }
                         });
+*/
                     } catch (Exception ignored) {
 
                     }
@@ -428,7 +394,6 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
                 switchPreference.setSummary("Not Supported");
             else {
                 try {
-                    Double.parseDouble(phoneSensorDataSource.getFrequency());
                     switchPreference.setSummary(phoneSensorDataSource.getFrequency() + " Hz");
                 } catch (NumberFormatException nfe) {
                     switchPreference.setSummary(phoneSensorDataSource.getFrequency());
@@ -437,16 +402,7 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         }
     }
 
-    private void setBackButton() {
-        final Button button = (Button) getActivity().findViewById(R.id.button_2);
-        button.setText(R.string.button_close);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                getActivity().finish();
-            }
-        });
-    }
-
+/*
     private void setSaveButton() {
         final Button button = (Button) getActivity().findViewById(R.id.button_1);
         button.setText("Save");
@@ -481,10 +437,11 @@ public class PrefsFragmentPhoneSensorSettings extends PreferenceFragment {
         });
     }
 
+*/
     void saveConfigurationFile() {
         try {
             phoneSensorDataSources.writeDataSourceToFile();
-            Toast.makeText(getActivity(), "Configuration file is saved.", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(), "Configuration file is saved.", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             Toast.makeText(getActivity(), "!!!Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();

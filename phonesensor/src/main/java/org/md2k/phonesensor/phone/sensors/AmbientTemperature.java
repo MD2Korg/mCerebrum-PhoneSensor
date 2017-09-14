@@ -18,7 +18,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.data_format.DataFormat;
+import org.md2k.mcerebrum.core.data_format.DataFormat;;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,33 +55,6 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
     public AmbientTemperature(Context context) {
         super(context, DataSourceType.AMBIENT_TEMPERATURE);
         frequency = "1.0";
-    }
-
-    ArrayList<HashMap<String, String>> createDataDescriptors() {
-        ArrayList<HashMap<String, String>> dataDescriptors = new ArrayList<>();
-        HashMap<String, String> dataDescriptor = new HashMap<>();
-        dataDescriptor.put(METADATA.NAME, "Ambient Temperature");
-        dataDescriptor.put(METADATA.MIN_VALUE, "-50");
-        dataDescriptor.put(METADATA.MAX_VALUE, "100");
-        dataDescriptor.put(METADATA.UNIT, "degree celsius");
-        dataDescriptor.put(METADATA.FREQUENCY, frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION, "ambient (room) temperature in degree Celsius");
-        dataDescriptor.put(METADATA.DATA_TYPE, double.class.getSimpleName());
-
-        dataDescriptors.add(dataDescriptor);
-        return dataDescriptors;
-    }
-
-    public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
-        if (dataSourceBuilder == null) return null;
-        dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Ambient Temperature");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "degree celsius");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "ambient (room) temperature in degree Celsius");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDouble.class.getName());
-        return dataSourceBuilder;
     }
 
     public void updateDataSource(DataSource dataSource) {

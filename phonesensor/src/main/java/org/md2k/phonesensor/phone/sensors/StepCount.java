@@ -7,37 +7,38 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.datatype.DataTypeFloat;
+import org.md2k.datakitapi.datatype.DataTypeIntArray;
 import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
+import org.md2k.mcerebrum.core.data_format.DataFormat;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.mcerebrum.core.data_format.DataFormat;;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
+/*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- *
+ * 
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -49,13 +50,21 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-public class Pressure extends PhoneSensorDataSource implements SensorEventListener {
+public class StepCount extends PhoneSensorDataSource implements SensorEventListener {
+    private static final String SENSOR_DELAY_NORMAL = "6";
+    private static final String SENSOR_DELAY_UI = "16";
+    private static final String SENSOR_DELAY_GAME = "50";
+    private static final String SENSOR_DELAY_FASTEST = "100";
+    public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
+    private final static long MICROSECONDS_IN_ONE_MINUTE = 60000000;
     private SensorManager mSensorManager;
+    private int initialStep=0;
 
-    public Pressure(Context context) {
-        super(context, DataSourceType.PRESSURE);
-        frequency = "6.0";
+    public StepCount(Context context) {
+        super(context, DataSourceType.STEP_COUNT);
+        frequency = SENSOR_DELAY_UI;
     }
+
     public void updateDataSource(DataSource dataSource) {
         super.updateDataSource(dataSource);
         frequency = dataSource.getMetadata().get(METADATA.FREQUENCY);
@@ -63,11 +72,22 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        double[] sample = new double[1];
-        sample[DataFormat.Pressure] = event.values[0];
-        DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), sample);
+        int totalSteps = (int) event.values[0];
+        int steps=0;
+        if(initialStep==0){
+            initialStep=totalSteps;
+            return;
+        }else{
+            steps = totalSteps-initialStep;
+        }
+        Log.d("abc", "steps=" + steps);
+        long curTime = DateTime.getDateTime();
+        double[] samples = new double[]{steps};
+        DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
+
         try {
             dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+            dataKitAPI.setSummary(dataSourceClient, new DataTypeIntArray(curTime, new int[]{steps}));
             callBack.onReceivedData(dataTypeDoubleArray);
         } catch (DataKitException e) {
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
@@ -87,8 +107,30 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
+
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+
+        switch (frequency) {
+            case SENSOR_DELAY_UI:
+                mSensorManager.registerListener(this, mSensor,
+                        SensorManager.SENSOR_DELAY_UI, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+                break;
+            case SENSOR_DELAY_GAME:
+                mSensorManager.registerListener(this, mSensor,
+                        SensorManager.SENSOR_DELAY_GAME, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+
+                break;
+            case SENSOR_DELAY_FASTEST:
+                mSensorManager.registerListener(this, mSensor,
+                        SensorManager.SENSOR_DELAY_FASTEST, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+
+                break;
+            case SENSOR_DELAY_NORMAL:
+                mSensorManager.registerListener(this, mSensor,
+                        SensorManager.SENSOR_DELAY_NORMAL, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+                break;
+        }
     }
 }

@@ -22,18 +22,18 @@ repositories {
 }
 
 def store_file = "keystore_missing"
-if ( hasProperty('MD2K_RELEASE_STORE_FILE') ) {
+if (hasProperty('MD2K_RELEASE_STORE_FILE')) {
     store_file = MD2K_RELEASE_STORE_FILE
-} else if ( System.getenv('MD2K_RELEASE_STORE_FILE') ){
+} else if (System.getenv('MD2K_RELEASE_STORE_FILE')) {
     store_file = System.getenv('MD2K_RELEASE_STORE_FILE')
 } else {
     println "ERROR: " + store_file
 }
 
 def store_password = "keystore_password_missing"
-if ( hasProperty('MD2K_RELEASE_STORE_PASSWORD') ) {
+if (hasProperty('MD2K_RELEASE_STORE_PASSWORD')) {
     store_password = MD2K_RELEASE_STORE_PASSWORD
-} else if ( System.getenv('MD2K_RELEASE_STORE_PASSWORD') ){
+} else if (System.getenv('MD2K_RELEASE_STORE_PASSWORD')) {
     store_password = System.getenv('MD2K_RELEASE_STORE_PASSWORD')
 } else {
     println "ERROR: " + store_password
@@ -41,18 +41,18 @@ if ( hasProperty('MD2K_RELEASE_STORE_PASSWORD') ) {
 
 
 def key_alias = "release_key_alias_missing"
-if ( hasProperty('MD2K_RELEASE_KEY_ALIAS') ) {
+if (hasProperty('MD2K_RELEASE_KEY_ALIAS')) {
     key_alias = MD2K_RELEASE_KEY_ALIAS
-} else if ( System.getenv('MD2K_RELEASE_KEY_ALIAS') ){
+} else if (System.getenv('MD2K_RELEASE_KEY_ALIAS')) {
     key_alias = System.getenv('MD2K_RELEASE_KEY_ALIAS')
 } else {
     println "ERROR: " + key_alias
 }
 
 def key_password = "release_key_password_missing"
-if ( hasProperty('MD2K_RELEASE_KEY_PASSWORD') ) {
+if (hasProperty('MD2K_RELEASE_KEY_PASSWORD')) {
     key_password = MD2K_RELEASE_KEY_PASSWORD
-} else if ( System.getenv('MD2K_RELEASE_KEY_PASSWORD') ){
+} else if (System.getenv('MD2K_RELEASE_KEY_PASSWORD')) {
     key_password = System.getenv('MD2K_RELEASE_KEY_PASSWORD')
 } else {
     println "ERROR: " + key_password
@@ -76,7 +76,7 @@ android {
         }
     }
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
     defaultConfig {
         applicationId "org.md2k.phonesensor"
         minSdkVersion 19
@@ -110,24 +110,32 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':datakitapi')
-    compile project(':utilities')
+//    compile project(':utilities')
+    compile project(':commons')
+    compile project(':core')
     compile('com.crashlytics.sdk.android:crashlytics:2.6.1@aar') {
         transitive = true;
     }
     // Required -- JUnit 4 framework
-    testCompile 'junit:junit:4.12'
     // Unit testing dependencies
-    androidTestCompile 'junit:junit:4.12'
     // Set this dependency if you want to use the Hamcrest matcher library
-    androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
     // more stuff, e.g., Mockito
+
+    //you can use newer GMS version if you need
+
+    //you can override RxJava version if you need
+
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'pl.charmas.android:android-reactive-location:0.10@aar'
+    compile 'com.google.android.gms:play-services-location:10.0.1'
+    compile 'com.google.android.gms:play-services-places:10.0.1'
+    compile 'io.reactivex:rxjava:1.2.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support:support-annotations:25.1.1'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'pl.charmas.android:android-reactive-location:0.10@aar'
-    compile 'com.google.android.gms:play-services-location:10.0.1' //you can use newer GMS version if you need
-    compile 'com.google.android.gms:play-services-places:10.0.1'
-    compile 'io.reactivex:rxjava:1.2.0' //you can override RxJava version if you need
-
+    androidTestCompile 'com.android.support:support-annotations:25.3.1'
 }

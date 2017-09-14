@@ -4,15 +4,18 @@ import android.content.Context;
 
 import org.md2k.datakitapi.DataKitAPI;
 import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.application.Application;
 import org.md2k.datakitapi.source.application.ApplicationBuilder;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceClient;
 import org.md2k.datakitapi.source.platform.Platform;
+import org.md2k.phonesensor.Configuration;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.phonesensor.phone.PhoneSensorPlatform;
-import org.md2k.utilities.Report.Log;
+
+import java.util.ArrayList;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -53,7 +56,6 @@ public abstract class PhoneSensorDataSource {
     String frequency="SENSOR_DELAY_UI";
     DataKitAPI dataKitAPI;
     private boolean enabled;
-    private DataSourceBuilder dataSourceBuilder;
 
     PhoneSensorDataSource(Context context, String dataSourceType) {
         this.context = context;
@@ -70,7 +72,6 @@ public abstract class PhoneSensorDataSource {
     }
 
     public void setEnabled(boolean enabled) {
-        Log.d(TAG,"type="+dataSourceType+" enabled="+enabled);
         this.enabled = enabled;
     }
 
@@ -84,20 +85,15 @@ public abstract class PhoneSensorDataSource {
         this.frequency = frequency;
     }
 
-    public DataSourceBuilder createDataSourceBuilder() {
+    DataSourceBuilder createDataSourceBuilder() {
         if (!enabled) return null;
-        Platform platform = PhoneSensorPlatform.getInstance(context).getPlatform();
-        ApplicationBuilder applicationBuilder=new ApplicationBuilder();
-        applicationBuilder.setId(context.getApplicationInfo().packageName);
-        applicationBuilder.setType(context.getApplicationInfo().name);
-        Application application=applicationBuilder.build();
-        return new DataSourceBuilder().setId(null).setType(dataSourceType).setPlatform(platform).setApplication(application);
+        DataSource dataSource  = Configuration.getMetaData(dataSourceType);
+        return new DataSourceBuilder(dataSource).setId(null).setType(dataSourceType).setMetadata(METADATA.FREQUENCY, frequency);
     }
 
 
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         dataKitAPI = DataKitAPI.getInstance(context);
-        this.dataSourceBuilder = dataSourceBuilder;
         dataSourceClient = dataKitAPI.register(dataSourceBuilder);
         callBack = newCallBack;
     }
