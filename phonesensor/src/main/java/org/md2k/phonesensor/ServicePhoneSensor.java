@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -18,6 +19,7 @@ import org.md2k.mcerebrum.commons.permission.Permission;
 import org.md2k.mcerebrum.commons.debug.LogStorage;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 
+import br.com.goncalves.pugnotification.notification.PugNotification;
 import es.dmoral.toasty.Toasty;
 
 /**
@@ -52,23 +54,26 @@ public class ServicePhoneSensor extends Service {
     private static final String TAG = ServicePhoneSensor.class.getSimpleName();
     PhoneSensorDataSources phoneSensorDataSources = null;
     DataKitAPI dataKitAPI;
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",broadcast_receiver_stop_service");
-            disconnectDataKit();
-            stopSelf();
-        }
-    };
 
     public void onCreate() {
         super.onCreate();
         if (!Permission.hasPermission(this)) {
             Toast.makeText(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
+            showNotification();
             stopSelf();
         } else {
+            removeNotification();
             load();
         }
+    }
+    private void showNotification() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ActivityMain.OPERATION, ActivityMain.OPERATION_START_BACKGROUND);
+        PugNotification.with(this).load().identifier(13).title("Permission required").largeIcon(R.mipmap.ic_launcher)
+                .message("PhoneSensor app can't continue. (Please click to grant permission)").autoCancel(true).click(ActivityMain.class, bundle).simple().build();
+    }
+    private void removeNotification() {
+        PugNotification.with(this).cancel(13);
     }
 
     void load() {
@@ -131,4 +136,13 @@ public class ServicePhoneSensor extends Service {
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",broadcast_receiver_stop_service");
+            disconnectDataKit();
+            stopSelf();
+        }
+    };
+
 }

@@ -76,7 +76,7 @@ public class PhoneSensorDataSources {
         try {
             readDataSourceFromFile();
         } catch (FileNotFoundException e) {
-            Toast.makeText(context, "PhoneSensor Configuration file is not available.", Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, "PhoneSensor Configuration file is not available.", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -81,7 +81,7 @@ public class ActivityPlot extends RealtimeLineChartActivity {
                 sample[i]= (float) samples[i];
             }
         }
-        addEntry(sample, legends);
+        addEntry(sample, legends,600);
     }
 
 }

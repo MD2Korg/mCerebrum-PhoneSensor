@@ -310,10 +310,6 @@ public class ActivityMain extends AppCompatActivity {
         }
     };
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 
     void checkRequirement() {
         Intent intent = new Intent(this, ActivityPermission.class);
@@ -386,7 +382,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
     void readIntent() {
-        operation = getIntent().getIntExtra(OPERATION, 0);
+        if(getIntent().getExtras()!=null)
+        operation = getIntent().getExtras().getInt(OPERATION, 0);
+        else operation=0;
     }
 
     void initializeVariable() {

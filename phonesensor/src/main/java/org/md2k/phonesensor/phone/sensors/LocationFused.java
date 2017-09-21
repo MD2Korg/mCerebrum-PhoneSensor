@@ -159,8 +159,8 @@ class LocationFused extends PhoneSensorDataSource {
     }
 
     private void showNotification() {
-        PugNotification.with(context).load().identifier(12).title("Location").smallIcon(R.mipmap.ic_launcher)
-                .message("Please turn on GPS").autoCancel(true).click(ActivityPermission.class).simple().build();
+        PugNotification.with(context).load().identifier(12).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
+                .message("Location data can't be recorded. (Please click to turn on GPS)").autoCancel(true).click(ActivityPermission.class).simple().build();
     }
     private void removeNotification() {
         PugNotification.with(context).cancel(12);

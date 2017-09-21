@@ -17,12 +17,8 @@ import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
-import org.md2k.mcerebrum.core.data_format.DataFormat;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /*
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -56,13 +52,13 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     private static final String SENSOR_DELAY_GAME = "50";
     private static final String SENSOR_DELAY_FASTEST = "100";
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
-    private final static long MICROSECONDS_IN_ONE_MINUTE = 60000000;
+    private final static long MICROSECONDS_IN_ONE_SECOND = 1000*1000*1;
     private SensorManager mSensorManager;
-    private int initialStep=0;
+    private int prevTotalStep =0;
 
     public StepCount(Context context) {
         super(context, DataSourceType.STEP_COUNT);
-        frequency = SENSOR_DELAY_UI;
+        frequency = SENSOR_DELAY_NORMAL;
     }
 
     public void updateDataSource(DataSource dataSource) {
@@ -72,22 +68,23 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        int totalSteps = (int) event.values[0];
-        int steps=0;
-        if(initialStep==0){
-            initialStep=totalSteps;
+        int curTotalSteps = (int) event.values[0];
+        int curSteps=0;
+        if(prevTotalStep ==0){
+            prevTotalStep =curTotalSteps;
             return;
         }else{
-            steps = totalSteps-initialStep;
+            curSteps = curTotalSteps- prevTotalStep;
+            prevTotalStep =curTotalSteps;
         }
-        Log.d("abc", "steps=" + steps);
+        Log.d("abc", "total steps = "+ curTotalSteps+ "  steps=" + curSteps);
         long curTime = DateTime.getDateTime();
-        double[] samples = new double[]{steps};
+        double[] samples = new double[]{curSteps};
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
 
         try {
             dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
-            dataKitAPI.setSummary(dataSourceClient, new DataTypeIntArray(curTime, new int[]{steps}));
+            dataKitAPI.setSummary(dataSourceClient, new DataTypeIntArray(curTime, new int[]{curSteps}));
             callBack.onReceivedData(dataTypeDoubleArray);
         } catch (DataKitException e) {
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
@@ -115,21 +112,21 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
         switch (frequency) {
             case SENSOR_DELAY_UI:
                 mSensorManager.registerListener(this, mSensor,
-                        SensorManager.SENSOR_DELAY_UI, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+                        SensorManager.SENSOR_DELAY_NORMAL, (int) (MICROSECONDS_IN_ONE_SECOND));
                 break;
             case SENSOR_DELAY_GAME:
                 mSensorManager.registerListener(this, mSensor,
-                        SensorManager.SENSOR_DELAY_GAME, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+                        SensorManager.SENSOR_DELAY_NORMAL, (int) (MICROSECONDS_IN_ONE_SECOND));
 
                 break;
             case SENSOR_DELAY_FASTEST:
                 mSensorManager.registerListener(this, mSensor,
-                        SensorManager.SENSOR_DELAY_FASTEST, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+                        SensorManager.SENSOR_DELAY_NORMAL, (int) (MICROSECONDS_IN_ONE_SECOND));
 
                 break;
             case SENSOR_DELAY_NORMAL:
                 mSensorManager.registerListener(this, mSensor,
-                        SensorManager.SENSOR_DELAY_NORMAL, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+                        SensorManager.SENSOR_DELAY_NORMAL, (int) (MICROSECONDS_IN_ONE_SECOND));
                 break;
         }
     }
