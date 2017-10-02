@@ -38,21 +38,6 @@ public class Constants {
     public static final String PACKAGE_NAME = "org.md2k.phonesensor";
 
 
-    public static final String SHARED_PREFERENCES_NAME = PACKAGE_NAME + ".SHARED_PREFERENCES";
-
-    public static final String ACTIVITY_UPDATES_REQUESTED_KEY = PACKAGE_NAME +
-            ".ACTIVITY_UPDATES_REQUESTED";
-
-    public static final String DETECTED_ACTIVITIES = PACKAGE_NAME + ".DETECTED_ACTIVITIES";
-
-    /**
-     * The desired time between activity detections. Larger values result in fewer activity
-     * detections while improving battery life. A value of 0 results in activity detections at the
-     * fastest possible rate. Getting frequent updates negatively impact battery life and a real
-     * app may prefer to request less frequent updates.
-     */
-    public static final long DETECTION_INTERVAL_IN_MILLISECONDS = 0;
-
     /**
      * List of DetectedActivity types that we monitor in this sample.
      */

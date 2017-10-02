@@ -1,6 +1,7 @@
 package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.md2k.datakitapi.DataKitAPI;
 import org.md2k.datakitapi.exception.DataKitException;
@@ -88,7 +89,7 @@ public abstract class PhoneSensorDataSource {
     DataSourceBuilder createDataSourceBuilder() {
         if (!enabled) return null;
         DataSource dataSource  = Configuration.getMetaData(dataSourceType);
-        return new DataSourceBuilder(dataSource).setId(null).setType(dataSourceType).setMetadata(METADATA.FREQUENCY, frequency);
+        return new DataSourceBuilder(dataSource).setType(dataSourceType).setMetadata(METADATA.FREQUENCY, frequency);
     }
 
 

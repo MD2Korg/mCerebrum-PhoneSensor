@@ -30,6 +30,7 @@ import org.md2k.phonesensor.phone.CallBack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import br.com.goncalves.pugnotification.notification.PugNotification;
 import es.dmoral.toasty.Toasty;
@@ -72,14 +73,14 @@ import static android.content.Context.LOCATION_SERVICE;
 class LocationFused extends PhoneSensorDataSource {
 
     private static final String TAG = LocationFused.class.getSimpleName();
-    private static final long INTERVAL = 5000L;
+    private static final long INTERVAL = 1000L*60;
     private ReactiveLocationProvider locationProvider;
     private Subscription updatableLocationSubscription;
     private Observable<Location> locationUpdatesObservable;
 
     LocationFused(final Context context) {
         super(context, DataSourceType.LOCATION);
-        frequency = "1.0";
+        frequency = String.format(Locale.getDefault(), "%.2f",(1.0/(INTERVAL/1000.0)));
     }
 
     public void saveData(Location location) {
@@ -153,7 +154,7 @@ class LocationFused extends PhoneSensorDataSource {
 
     @Override
     public void unregister() {
-        context.unregisterReceiver(br);
+        try {context.unregisterReceiver(br);}catch (Exception ignored){}
         if (updatableLocationSubscription != null && !updatableLocationSubscription.isUnsubscribed())
             updatableLocationSubscription.unsubscribe();
     }
@@ -165,10 +166,11 @@ class LocationFused extends PhoneSensorDataSource {
     private void removeNotification() {
         PugNotification.with(context).cancel(12);
     }
-    void prepareObservable(){
+    private void prepareObservable(){
         locationProvider = new ReactiveLocationProvider(context);
         final LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setSmallestDisplacement(10)
                 .setInterval(INTERVAL);
         locationUpdatesObservable = locationProvider
                 .checkLocationSettings(

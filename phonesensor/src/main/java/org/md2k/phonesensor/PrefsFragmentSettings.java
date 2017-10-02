@@ -1,6 +1,7 @@
 package org.md2k.phonesensor;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -27,6 +29,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
+import org.md2k.mcerebrum.commons.app_info.AppInfo;
 import org.md2k.mcerebrum.commons.dialog.Dialog;
 import org.md2k.mcerebrum.commons.dialog.DialogCallback;
 import org.md2k.phonesensor.phone.sensors.Accelerometer;
@@ -440,7 +443,12 @@ public class PrefsFragmentSettings extends PreferenceFragment {
 */
     void saveConfigurationFile() {
         try {
+            boolean flag = AppInfo.isServiceRunning(getActivity(), ServicePhoneSensor.class.getName());
+            if(flag) getActivity().stopService(new Intent(getActivity(), ServicePhoneSensor.class));
+
             phoneSensorDataSources.writeDataSourceToFile();
+            if(flag) getActivity().startService(new Intent(getActivity(), ServicePhoneSensor.class));
+
 //            Toast.makeText(getActivity(), "Configuration file is saved.", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             Toast.makeText(getActivity(), "!!!Error:" + e.getMessage(), Toast.LENGTH_LONG).show();

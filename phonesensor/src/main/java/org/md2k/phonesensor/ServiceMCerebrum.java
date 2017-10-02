@@ -5,11 +5,12 @@ import android.os.Bundle;
 
 import org.md2k.mcerebrum.commons.app_info.AppInfo;
 import org.md2k.mcerebrum.core.access.AbstractServiceMCerebrum;
+import org.md2k.phonesensor.phone.sensors.geofence.GeoFenceData;
 
 public class ServiceMCerebrum extends AbstractServiceMCerebrum {
     @Override
     protected boolean hasClear() {
-        return false;
+        return true;
     }
 
     @Override
@@ -57,7 +58,10 @@ public class ServiceMCerebrum extends AbstractServiceMCerebrum {
     }
     @Override
     public void clear(Bundle bundle) {
-
+        Intent intent = new Intent(this, ActivitySettingsGeofence.class);
+        bundle.putString("operation","clear");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override

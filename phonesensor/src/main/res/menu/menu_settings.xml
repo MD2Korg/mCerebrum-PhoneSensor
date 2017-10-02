@@ -13,4 +13,10 @@
         android:icon="@drawable/ic_plot"
         serviceApp:showAsAction="ifRoom"
         android:title="Plot" />
+    <item
+        android:id="@+id/action_location"
+        android:icon="@drawable/ic_location"
+        serviceApp:showAsAction="ifRoom"
+        android:title="Location" />
+
 </menu>

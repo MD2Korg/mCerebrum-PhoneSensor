@@ -52,7 +52,7 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     private static final String SENSOR_DELAY_GAME = "50";
     private static final String SENSOR_DELAY_FASTEST = "100";
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
-    private final static long MICROSECONDS_IN_ONE_SECOND = 1000*1000*1;
+    private final static long MICROSECONDS_IN_ONE_SECOND = 1000*1000*60L;
     private SensorManager mSensorManager;
     private int prevTotalStep =0;
 

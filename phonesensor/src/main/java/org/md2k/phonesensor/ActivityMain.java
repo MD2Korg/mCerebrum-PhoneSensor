@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -154,6 +155,10 @@ public class ActivityMain extends AppCompatActivity {
                 intent = new Intent(this, ActivityPlotChoice.class);
                 startActivity(intent);
                 break;
+            case R.id.action_location:
+                intent = new Intent(this, ActivitySettingsGeofence.class);
+                startActivity(intent);
+                break;
 
         }
         return super.onOptionsItemSelected(item);
@@ -185,40 +190,44 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     void prepareTable() {
-        ArrayList<PhoneSensorDataSource> phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext()).getPhoneSensorDataSources();
-        TableLayout ll = (TableLayout) findViewById(R.id.tableLayout);
-        ll.removeAllViews();
-        ll.addView(createDefaultRow());
-        for (int i = 0; i < phoneSensorDataSources.size(); i++) {
-            if (phoneSensorDataSources.get(i).isEnabled()) {
-                String dataSourceType = phoneSensorDataSources.get(i).getDataSourceType();
-                TableRow row = new TableRow(this);
-                TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
-                row.setLayoutParams(lp);
-                TextView tvSensor = new TextView(this);
-                tvSensor.setPadding(10, 0, 0, 0);
-                try {
-                    tvSensor.setText(dataSourceType.toLowerCase() + " (" + phoneSensorDataSources.get(i).getFrequency() + " Hz)");
-                } catch (NumberFormatException nfe) {
-                    tvSensor.setText(dataSourceType.toLowerCase() + " (" + phoneSensorDataSources.get(i).getFrequency() + ")");
-                }
+        try {
+            ArrayList<PhoneSensorDataSource> phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext()).getPhoneSensorDataSources();
+            TableLayout ll = (TableLayout) findViewById(R.id.tableLayout);
+            ll.removeAllViews();
+            ll.addView(createDefaultRow());
+            for (int i = 0; i < phoneSensorDataSources.size(); i++) {
+                if (phoneSensorDataSources.get(i).isEnabled()) {
+                    String dataSourceType = phoneSensorDataSources.get(i).getDataSourceType();
+                    TableRow row = new TableRow(this);
+                    TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
+                    row.setLayoutParams(lp);
+                    TextView tvSensor = new TextView(this);
+                    tvSensor.setPadding(10, 0, 0, 0);
+                    try {
+                        tvSensor.setText(dataSourceType.toLowerCase() + " (" + phoneSensorDataSources.get(i).getFrequency() + " Hz)");
+                    } catch (NumberFormatException nfe) {
+                        tvSensor.setText(dataSourceType.toLowerCase() + " (" + phoneSensorDataSources.get(i).getFrequency() + ")");
+                    }
 
-                TextView tvCount = new TextView(this);
-                tvCount.setText("0");
-                hashMapData.put(dataSourceType + "_count", tvCount);
-                TextView tvFreq = new TextView(this);
-                tvFreq.setText("0");
-                hashMapData.put(dataSourceType + "_freq", tvFreq);
-                TextView tvSample = new TextView(this);
-                tvSample.setText("0");
-                hashMapData.put(dataSourceType + "_sample", tvSample);
-                row.addView(tvSensor);
-                row.addView(tvCount);
-                row.addView(tvFreq);
-                row.addView(tvSample);
-                row.setBackgroundResource(R.drawable.border);
-                ll.addView(row);
+                    TextView tvCount = new TextView(this);
+                    tvCount.setText("0");
+                    hashMapData.put(dataSourceType + "_count", tvCount);
+                    TextView tvFreq = new TextView(this);
+                    tvFreq.setText("0");
+                    hashMapData.put(dataSourceType + "_freq", tvFreq);
+                    TextView tvSample = new TextView(this);
+                    tvSample.setText("0");
+                    hashMapData.put(dataSourceType + "_sample", tvSample);
+                    row.addView(tvSensor);
+                    row.addView(tvCount);
+                    row.addView(tvFreq);
+                    row.addView(tvSample);
+                    row.setBackgroundResource(R.drawable.border);
+                    ll.addView(row);
+                }
             }
+        }catch (Exception e){
+
         }
     }
 
@@ -257,20 +266,28 @@ public class ActivityMain extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        if (isEverythingOk) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                    new IntentFilter("phonesensor"));
-            prepareTable();
-            mHandler.post(runnable);
+        try {
+            if (isEverythingOk) {
+                LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                        new IntentFilter("phonesensor"));
+                prepareTable();
+                mHandler.post(runnable);
+            }
+        }catch (Exception e){
+
         }
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        if (isEverythingOk) {
-            mHandler.removeCallbacks(runnable);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        try {
+            if (isEverythingOk) {
+                mHandler.removeCallbacks(runnable);
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+            }
+        }catch (Exception ignored){
+
         }
         super.onPause();
     }

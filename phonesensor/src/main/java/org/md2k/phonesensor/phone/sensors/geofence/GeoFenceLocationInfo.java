@@ -1,30 +1,19 @@
-package org.md2k.phonesensor.plot;
-
-
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-import org.md2k.mcerebrum.commons.permission.Permission;
-import org.md2k.mcerebrum.commons.permission.PermissionCallback;
-import org.md2k.phonesensor.R;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
+package org.md2k.phonesensor.phone.sensors.geofence;
+/*
+ * Copyright (c) 2016, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- * <p>
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * <p>
+ *
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- * <p>
+ *
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * <p>
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -37,27 +26,26 @@ import org.md2k.phonesensor.R;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class ActivityPlotChoice extends AppCompatActivity {
+public class GeoFenceLocationInfo {
+    private String location;
+    private double latitude;
+    private double longitude;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plot_choice);
-        getFragmentManager().beginTransaction().replace(R.id.layout_preference_fragment,
-                new PrefsFragmentPlot()).commit();
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+    public GeoFenceLocationInfo(String location, double latitude, double longitude) {
+        this.location=location;
+        this.latitude=latitude;
+        this.longitude=longitude;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public String getLocation() {
+        return location;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 }

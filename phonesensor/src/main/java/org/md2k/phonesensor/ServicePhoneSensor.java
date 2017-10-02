@@ -17,6 +17,8 @@ import org.md2k.datakitapi.messagehandler.OnConnectionListener;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.mcerebrum.commons.permission.Permission;
 import org.md2k.mcerebrum.commons.debug.LogStorage;
+import org.md2k.mcerebrum.commons.permission.PermissionInfo;
+import org.md2k.mcerebrum.commons.permission.ResultCallback;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 
 import br.com.goncalves.pugnotification.notification.PugNotification;
@@ -57,19 +59,25 @@ public class ServicePhoneSensor extends Service {
 
     public void onCreate() {
         super.onCreate();
-        if (!Permission.hasPermission(this)) {
-            Toast.makeText(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
-            showNotification();
-            stopSelf();
-        } else {
-            removeNotification();
-            load();
-        }
+        PermissionInfo permissionInfo = new PermissionInfo();
+        permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
+            @Override
+            public void onResult(Boolean result) {
+                if (!result) {
+                    Toast.makeText(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
+                    showNotification();
+                    stopSelf();
+                } else {
+                    removeNotification();
+                    load();
+                }
+            }
+        });
     }
     private void showNotification() {
         Bundle bundle = new Bundle();
         bundle.putInt(ActivityMain.OPERATION, ActivityMain.OPERATION_START_BACKGROUND);
-        PugNotification.with(this).load().identifier(13).title("Permission required").largeIcon(R.mipmap.ic_launcher)
+        PugNotification.with(this).load().identifier(13).title("Permission required").smallIcon(R.mipmap.ic_launcher)
                 .message("PhoneSensor app can't continue. (Please click to grant permission)").autoCancel(true).click(ActivityMain.class, bundle).simple().build();
     }
     private void removeNotification() {

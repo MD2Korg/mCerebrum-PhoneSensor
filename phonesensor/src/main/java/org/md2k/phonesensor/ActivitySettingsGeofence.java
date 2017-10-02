@@ -1,14 +1,10 @@
-package org.md2k.phonesensor.plot;
-
+package org.md2k.phonesensor;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import org.md2k.mcerebrum.commons.permission.Permission;
-import org.md2k.mcerebrum.commons.permission.PermissionCallback;
-import org.md2k.phonesensor.R;
+import org.md2k.phonesensor.phone.sensors.geofence.GeoFenceData;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
@@ -37,17 +33,21 @@ import org.md2k.phonesensor.R;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class ActivityPlotChoice extends AppCompatActivity {
+public class ActivitySettingsGeofence extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plot_choice);
-        getFragmentManager().beginTransaction().replace(R.id.layout_preference_fragment,
-                new PrefsFragmentPlot()).commit();
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(getIntent().getStringExtra("operation")!=null && getIntent().getStringExtra("operation").equalsIgnoreCase("clear")){
+            GeoFenceData.clearData(this);
+        }else{
+            setContentView(R.layout.activity_settings_geofence);
+            getFragmentManager().beginTransaction().replace(R.id.layout_preference_fragment,
+                    new PrefsFragmentSettingsGeofence()).commit();
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 

@@ -574,5 +574,88 @@
       "UNIT": "number"
     },
     "type": "STEP_COUNT"
+  },
+  {
+    "application": {
+      "id": "org.md2k.phonesensor",
+      "metadata": {
+        "NAME": "PhoneSensor",
+        "DESCRIPTION": "Collects data from the phone sensors."
+      }
+    },
+    "dataDescriptors": [
+      {
+        "DATA_TYPE": "String",
+        "NAME": "Location Name",
+        "DESCRIPTION": "Name of the location",
+        "UNIT": "string"
+      },
+      {
+        "DATA_TYPE": "String",
+        "NAME": "Location Latitude",
+        "DESCRIPTION": "Latitude of the location",
+        "UNIT": "string"
+      },
+      {
+        "DATA_TYPE": "String",
+        "NAME": "Location Longitude",
+        "DESCRIPTION": "Longitude of the location",
+        "UNIT": "string"
+      }
+    ],
+    "persistent": true,
+    "platform": {
+      "metadata": {
+        "NAME": "Phone"
+      },
+      "type": "PHONE"
+    },
+    "metadata": {
+      "DATA_TYPE": "org.md2k.datakitapi.datatype.DataTypeStringArray",
+      "NAME": "Geofence",
+      "DESCRIPTION": "Location information of the user",
+      "FREQUENCY": "1.0",
+      "UNIT": "number"
+    },
+    "type": "GEOFENCE",
+    "id": "LIST"
+  },
+  {
+    "application": {
+      "id": "org.md2k.phonesensor",
+      "metadata": {
+        "NAME": "PhoneSensor",
+        "DESCRIPTION": "Collects data from the phone sensors."
+      }
+    },
+    "dataDescriptors": [
+      {
+        "DATA_TYPE": "String",
+        "NAME": "Screen Touch",
+        "DESCRIPTION": "Timestamp of when user touches screen",
+        "UNIT": "timestamp"
+      },
+      {
+        "DATA_TYPE": "DoubleArray",
+        "NAME": "Touch Screen",
+        "DESCRIPTION": "Timestamp of when user touches screen",
+        "UNIT": "timestamp"
+      }
+    ],
+    "persistent": true,
+    "platform": {
+      "metadata": {
+        "NAME": "Phone"
+      },
+      "type": "PHONE"
+    },
+    "metadata": {
+      "DATA_TYPE": "org.md2k.datakitapi.datatype.DataTypeDoubleArray",
+      "NAME": "Touch Screen",
+      "DESCRIPTION": "Timestamp of when user touches screen",
+      "UNIT": "timestamp",
+      "FREQUENCY": "ON_CHANGE"
+    },
+    "type": "TOUCH_SCREEN"
   }
 ]
