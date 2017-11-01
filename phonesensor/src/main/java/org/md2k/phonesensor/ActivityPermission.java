@@ -22,6 +22,7 @@ import org.md2k.mcerebrum.commons.permission.Permission;
 import org.md2k.mcerebrum.commons.permission.PermissionCallback;
 import org.md2k.mcerebrum.commons.permission.PermissionInfo;
 import org.md2k.mcerebrum.commons.permission.ResultCallback;
+import org.md2k.mcerebrum.core.access.MCerebrum;
 
 import es.dmoral.toasty.Toasty;
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
@@ -40,6 +41,7 @@ public class ActivityPermission extends AppCompatActivity {
             @Override
             public void onResult(Boolean result) {
                 if (!result) {
+                    MCerebrum.setPermission(ActivityPermission.this, false);
                     Toast.makeText(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
                     Intent resultIntent = new Intent();
                     setResult(Activity.RESULT_CANCELED, resultIntent);
@@ -93,11 +95,13 @@ public class ActivityPermission extends AppCompatActivity {
         } else if (requestCode == REQUEST_CHECK_SETTINGS) {
             if (resultCode == Activity.RESULT_OK) {
                 // All required changes were successfully made
+                MCerebrum.setPermission(this, true);
                 Intent resultIntent = new Intent();
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             } else {
                 Toast.makeText(this, "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
+                MCerebrum.setPermission(this, false);
                 Intent resultIntent = new Intent();
                 setResult(Activity.RESULT_CANCELED, resultIntent);
                 finish();
@@ -136,11 +140,13 @@ public class ActivityPermission extends AppCompatActivity {
                             if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
                                 status.startResolutionForResult(ActivityPermission.this, REQUEST_CHECK_SETTINGS);
                             } else {
+                                MCerebrum.setPermission(ActivityPermission.this, true);
                                 Intent resultIntent = new Intent();
                                 setResult(Activity.RESULT_OK, resultIntent);
                                 finish();
                             }
                         } catch (Exception e) {
+                            MCerebrum.setPermission(ActivityPermission.this, false);
                             Toast.makeText(getBaseContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
                             Intent resultIntent = new Intent();
                             setResult(Activity.RESULT_CANCELED, resultIntent);

@@ -2,11 +2,9 @@ package org.md2k.phonesensor;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -19,12 +17,9 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.md2k.datakitapi.datatype.DataType;
 import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
@@ -32,9 +27,7 @@ import org.md2k.datakitapi.datatype.DataTypeFloat;
 import org.md2k.datakitapi.datatype.DataTypeFloatArray;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.time.DateTime;
-import org.md2k.mcerebrum.commons.app_info.AppInfo;
-import org.md2k.mcerebrum.commons.permission.Permission;
-import org.md2k.mcerebrum.commons.permission.PermissionCallback;
+import org.md2k.mcerebrum.core.access.appinfo.AppInfo;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import org.md2k.phonesensor.plot.ActivityPlotChoice;
@@ -43,7 +36,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
-import es.dmoral.toasty.Toasty;
 import io.fabric.sdk.android.Fabric;
 
 /**

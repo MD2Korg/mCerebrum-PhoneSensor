@@ -60,11 +60,6 @@
             android:name="io.fabric.ApiKey"
             android:value="1cad146ed866fa3d49c3bc8376ff52af7d9970da" />
 
-        <service
-            android:name=".ServiceMCerebrum"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity
             android:name=".plot.ActivityPlot"
             android:enabled="true"

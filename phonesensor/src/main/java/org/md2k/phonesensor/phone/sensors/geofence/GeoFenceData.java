@@ -32,9 +32,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import org.md2k.mcerebrum.commons.app_info.AppInfo;
 import org.md2k.mcerebrum.commons.dialog.Dialog;
 import org.md2k.mcerebrum.commons.dialog.DialogCallback;
+import org.md2k.mcerebrum.core.access.appinfo.AppInfo;
 import org.md2k.phonesensor.R;
 import org.md2k.phonesensor.ServicePhoneSensor;
 

@@ -2,6 +2,7 @@ package org.md2k.phonesensor;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import org.md2k.datakitapi.source.AbstractObject;
 import org.md2k.datakitapi.source.datasource.DataSource;
@@ -97,8 +98,9 @@ public class Configuration {
         }
         if (dataSources.size() != dataSourcesDefault.size()) return false;
         for (int i = 0; i < dataSources.size(); i++) {
-            if (!isDataSourceMatch(dataSources.get(i), dataSourcesDefault))
+            if (!isDataSourceMatch(dataSources.get(i), dataSourcesDefault)) {
                 return false;
+            }
         }
         return true;
     }

@@ -1,13 +1,4 @@
 package org.md2k.phonesensor;
-
-import android.app.Application;
-import android.content.Context;
-
-import com.blankj.utilcode.util.Utils;
-
-import org.md2k.mcerebrum.core.access.MCerebrum;
-
-
 /*
  * Copyright (c) 2016, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
@@ -35,16 +26,29 @@ import org.md2k.mcerebrum.core.access.MCerebrum;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public class MyApplication extends Application {
-    static Context context;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+import org.md2k.mcerebrum.commons.permission.PermissionInfo;
+import org.md2k.mcerebrum.commons.permission.ResultCallback;
+import org.md2k.mcerebrum.core.access.MCerebrum;
+import org.md2k.mcerebrum.core.access.MCerebrumInfo;
+import org.md2k.phonesensor.plot.ActivityPlotChoice;
+
+public class MyMCerebrumInit extends MCerebrumInfo {
     @Override
-    public void onCreate() {
-        super.onCreate();
-        context=getApplicationContext();
-        Utils.init(this);
-        MCerebrum.init(getApplicationContext(), MyMCerebrumInit.class);
-    }
-    public static Context getContext(){
-        return context;
+    public void update(final Context context){
+        MCerebrum.setReportActivity(context, ActivityPlotChoice.class);
+        MCerebrum.setBackgroundService(context, ServicePhoneSensor.class);
+        MCerebrum.setConfigureActivity(context, ActivitySettings.class);
+        MCerebrum.setPermissionActivity(context, ActivityPermission.class);
+        MCerebrum.setConfigured(context, Configuration.isConfigured());
+        MCerebrum.setConfigureExact(context, Configuration.isEqualDefault(MyApplication.getContext()));
+        if(!MCerebrum.getPermission(context)) {
+            Intent intent = new Intent(context, ActivityPermission.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
     }
 }

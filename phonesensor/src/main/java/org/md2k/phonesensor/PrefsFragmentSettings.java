@@ -29,9 +29,9 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import org.md2k.datakitapi.source.METADATA;
 import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
-import org.md2k.mcerebrum.commons.app_info.AppInfo;
 import org.md2k.mcerebrum.commons.dialog.Dialog;
 import org.md2k.mcerebrum.commons.dialog.DialogCallback;
+import org.md2k.mcerebrum.core.access.appinfo.AppInfo;
 import org.md2k.phonesensor.phone.sensors.Accelerometer;
 import org.md2k.phonesensor.phone.sensors.AmbientLight;
 import org.md2k.phonesensor.phone.sensors.Compass;
@@ -82,7 +82,7 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             boolean value = (Boolean) newValue;
-            if(preference.getKey().equals(DataSourceType.LOCATION) && value==true){
+            if(preference.getKey().equals(DataSourceType.LOCATION) && value){
                 enableGPS();
             }
             phoneSensorDataSources.find(preference.getKey()).setEnabled(value);
