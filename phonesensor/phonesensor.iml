@@ -121,8 +121,8 @@
     <orderEntry type="library" exported="" name="support-compat-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="iconics-core-2.9.1" level="project" />
     <orderEntry type="library" exported="" name="constraint-layout-1.0.2" level="project" />
+    <orderEntry type="library" exported="" name="fancybuttons-1.8.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-tasks-10.0.1" level="project" />
-    <orderEntry type="library" exported="" name="fancybuttons-1.8" level="project" />
     <orderEntry type="library" exported="" name="design-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-10.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-core-ui-25.3.1" level="project" />

@@ -36,6 +36,13 @@ public class ActivityPermission extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                myIntent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(myIntent, 101);
+            }
+        }
         PermissionInfo permissionInfo = new PermissionInfo();
         permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
             @Override

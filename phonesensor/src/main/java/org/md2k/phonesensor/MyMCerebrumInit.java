@@ -28,6 +28,9 @@ package org.md2k.phonesensor;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import org.md2k.mcerebrum.commons.permission.PermissionInfo;
@@ -45,6 +48,14 @@ public class MyMCerebrumInit extends MCerebrumInfo {
         MCerebrum.setPermissionActivity(context, ActivityPermission.class);
         MCerebrum.setConfigured(context, Configuration.isConfigured());
         MCerebrum.setConfigureExact(context, Configuration.isEqualDefault(MyApplication.getContext()));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(context)) {
+                Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                myIntent.setData(Uri.parse("package:" + context.getPackageName()));
+                context.startActivity(myIntent);
+            }
+        }
         if(!MCerebrum.getPermission(context)) {
             Intent intent = new Intent(context, ActivityPermission.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
