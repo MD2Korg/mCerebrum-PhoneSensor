@@ -14,7 +14,6 @@ import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.Configuration;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.Report.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -55,7 +54,7 @@ public class PhoneSensorDataSources {
     ArrayList<PhoneSensorDataSource> phoneSensorDataSources;
     HashMap<String, Integer> hm = new HashMap<>();
     long starttimestamp = 0;
-    PowerManager.WakeLock wl;
+//    PowerManager.WakeLock wl;
     public PhoneSensorDataSources(Context context) {
         this.context = context;
         phoneSensorDataSources = new ArrayList<>();
@@ -71,12 +70,15 @@ public class PhoneSensorDataSources {
         phoneSensorDataSources.add(new Proximity(context));
         phoneSensorDataSources.add(new CPU(context));
         phoneSensorDataSources.add(new Memory(context));
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
+        phoneSensorDataSources.add(new StepCount(context));
+        phoneSensorDataSources.add(new GeoFence(context));
+        phoneSensorDataSources.add(new TouchScreen(context));
+//        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+//        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
         try {
             readDataSourceFromFile();
         } catch (FileNotFoundException e) {
-            Toast.makeText(context, "PhoneSensor Configuration file is not available.", Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, "PhoneSensor Configuration file is not available.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -85,7 +87,7 @@ public class PhoneSensorDataSources {
     }
 
     private void readDataSourceFromFile() throws FileNotFoundException {
-        ArrayList<DataSource> dataSources = Configuration.read();
+        ArrayList<DataSource> dataSources = Configuration.read(context);
         assert dataSources != null;
         for (int i = 0; i < dataSources.size(); i++) {
             PhoneSensorDataSource phoneSensorDataSource = find(dataSources.get(i).getType());
@@ -116,19 +118,17 @@ public class PhoneSensorDataSources {
         ArrayList<DataSource> dataSources = new ArrayList<>();
         if (phoneSensorDataSources == null) throw new NullPointerException();
         if (phoneSensorDataSources.size() == 0) throw new EmptyStackException();
-        Log.d(TAG, "countEnabled=" + phoneSensorDataSources.size());
-
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
             if (!phoneSensorDataSources.get(i).isEnabled()) continue;
             DataSource dataSource = phoneSensorDataSources.get(i).createDataSourceBuilder().build();
             if (dataSource == null) continue;
             dataSources.add(dataSource);
         }
-        Configuration.write(dataSources);
+        Configuration.write(context, dataSources);
     }
 
     public void register() {
-        wl.acquire();
+//        wl.acquire();
         hm.clear();
         starttimestamp = DateTime.getDateTime();
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
@@ -169,8 +169,10 @@ public class PhoneSensorDataSources {
     }
 
     public void unregister() {
+/*
         if (wl != null && wl.isHeld())
             wl.release();
+*/
         if (phoneSensorDataSources != null) {
             for (int i = 0; i < phoneSensorDataSources.size(); i++) {
                 if (!phoneSensorDataSources.get(i).isEnabled()) continue;

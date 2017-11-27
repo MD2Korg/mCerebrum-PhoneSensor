@@ -63,59 +63,5 @@ public class AccelerometerTest {
 
     }
 
-    @Test
-    public void createDataDescriptorShouldContainKeys() throws Exception {
-        Accelerometer accel = new Accelerometer(context);
-        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120", "Test Description");
-
-        //Check for mandatory fields
-        Assert.assertTrue(dataDescriptor.containsKey(METADATA.NAME));
-        Assert.assertTrue(dataDescriptor.containsKey(METADATA.MIN_VALUE));
-        Assert.assertTrue(dataDescriptor.containsKey(METADATA.MAX_VALUE));
-        Assert.assertTrue(dataDescriptor.containsKey(METADATA.UNIT));
-        Assert.assertTrue(dataDescriptor.containsKey(METADATA.FREQUENCY));
-        Assert.assertTrue(dataDescriptor.containsKey(METADATA.DESCRIPTION));
-        Assert.assertTrue(dataDescriptor.containsKey(METADATA.DATA_TYPE));
-
-    }
-
-    @Test
-    public void createDataDescriptorShouldMatchValues() throws Exception {
-        Accelerometer accel = new Accelerometer(context);
-        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120", "Test Description");
-
-        Assert.assertSame("Names are equal", "Test Accel", dataDescriptor.get(METADATA.NAME));
-        Assert.assertSame("Frequency matches", "120", dataDescriptor.get(METADATA.FREQUENCY));
-        Assert.assertSame("Description matches", "Test Description", dataDescriptor.get(METADATA.DESCRIPTION));
-    }
-
-    @Test
-    public void createDataDescriptorShouldMatchAccelerometerUnit() throws Exception {
-        Accelerometer accel = new Accelerometer(context);
-        HashMap<String, String> dataDescriptor = accel.createDataDescriptor("Test Accel", "120", "Test Description");
-
-        Assert.assertSame("Names are equal", "meter/second^2", dataDescriptor.get(METADATA.UNIT));
-        Assert.assertNotSame("Names are different", "m/s^2", dataDescriptor.get(METADATA.UNIT));
-
-    }
-
-    @Test
-    public void createDataDescriptorsShouldContainThreeKeys() throws Exception {
-        Accelerometer accel = new Accelerometer(context);
-        ArrayList<HashMap<String, String>> dataDescriptors = accel.createDataDescriptors();
-
-        Assert.assertEquals("Array size is 3", 3, dataDescriptors.size());
-    }
-
-    @Ignore("Need to figure out how to test DataKit connections")
-    @Test
-    public void createDataSourceBuilderShouldExist() throws Exception {
-        Accelerometer accel = new Accelerometer(context);
-        DataSourceBuilder dataSourceBuilder = accel.createDataSourceBuilder();
-
-        Assert.assertNotNull(dataSourceBuilder);
-
-    }
-
 
 }

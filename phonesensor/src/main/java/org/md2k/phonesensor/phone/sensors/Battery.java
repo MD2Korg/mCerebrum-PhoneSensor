@@ -16,7 +16,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.data_format.DataFormat;
+import org.md2k.mcerebrum.core.data_format.DataFormat;;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,36 +84,6 @@ public class Battery extends PhoneSensorDataSource {
         frequency = "1.0";
     }
 
-    HashMap<String, String> createDataDescriptor(String name, String frequency, String description, int minValue, int maxValue, String unit) {
-        HashMap<String, String> dataDescriptor = new HashMap<>();
-        dataDescriptor.put(METADATA.NAME, name);
-        dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
-        dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
-        dataDescriptor.put(METADATA.UNIT, unit);
-        dataDescriptor.put(METADATA.FREQUENCY, frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION, description);
-        dataDescriptor.put(METADATA.DATA_TYPE, float.class.getName());
-        return dataDescriptor;
-    }
-
-    ArrayList<HashMap<String, String>> createDataDescriptors() {
-        ArrayList<HashMap<String, String>> dataDescriptors = new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("Level", frequency, "current battery charge", 0, 100, "percentage"));
-        dataDescriptors.add(createDataDescriptor("Voltage", frequency, "current battery voltage level", 0, 5000, "voltage"));
-        dataDescriptors.add(createDataDescriptor("Temperature", frequency, "current battery temperature", -50, 100, "celsius"));
-        return dataDescriptors;
-    }
-
-    public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
-        if (dataSourceBuilder == null) return null;
-        dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Battery");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures the current status of the battery");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloatArray.class.getName());
-        return dataSourceBuilder;
-    }
 
     public void unregister() {
         if (scheduler != null) {

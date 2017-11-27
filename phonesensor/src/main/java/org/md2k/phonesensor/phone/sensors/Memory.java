@@ -68,35 +68,6 @@ public class Memory extends PhoneSensorDataSource {
         frequency = "1.0";
     }
 
-    HashMap<String,String> createDataDescriptor(String name, String frequency, String description, int minValue,int maxValue,String unit){
-        HashMap<String,String> dataDescriptor=new HashMap<>();
-        dataDescriptor.put(METADATA.NAME, name);
-        dataDescriptor.put(METADATA.MIN_VALUE, String.valueOf(minValue));
-        dataDescriptor.put(METADATA.MAX_VALUE, String.valueOf(maxValue));
-        dataDescriptor.put(METADATA.UNIT, unit);
-        dataDescriptor.put(METADATA.FREQUENCY,frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION, description);
-        dataDescriptor.put(METADATA.DATA_TYPE, float.class.getName());
-        return dataDescriptor;
-    }
-
-    ArrayList<HashMap<String,String>> createDataDescriptors(){
-        ArrayList<HashMap<String,String>> dataDescriptors= new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("Size",frequency,"Size of the memory",0,2048,"megabyte"));
-        dataDescriptors.add(createDataDescriptor("Available",frequency,"Available memory",0,2048, "megabyte"));
-        return dataDescriptors;
-    }
-
-    public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
-        if (dataSourceBuilder == null) return null;
-        dataSourceBuilder=dataSourceBuilder.setDataDescriptors(createDataDescriptors());
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Memory");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures usage of memory");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeFloatArray.class.getName());
-        return dataSourceBuilder;
-    }
 
     public void unregister() {
         if (scheduler != null) {

@@ -1,42 +1,44 @@
 package org.md2k.phonesensor;
 
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.md2k.datakitapi.DataKitAPI;
 import org.md2k.datakitapi.exception.DataKitException;
 import org.md2k.datakitapi.messagehandler.OnConnectionListener;
-import org.md2k.datakitapi.messagehandler.ResultCallback;
 import org.md2k.datakitapi.time.DateTime;
+import org.md2k.mcerebrum.commons.permission.Permission;
+import org.md2k.mcerebrum.commons.debug.LogStorage;
+import org.md2k.mcerebrum.commons.permission.PermissionInfo;
+import org.md2k.mcerebrum.commons.permission.ResultCallback;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
-import org.md2k.utilities.Report.Log;
-import org.md2k.utilities.Report.LogStorage;
-import org.md2k.utilities.UI.AlertDialogs;
-import org.md2k.utilities.permission.PermissionInfo;
+
+import br.com.goncalves.pugnotification.notification.PugNotification;
+import es.dmoral.toasty.Toasty;
 
 /**
  * Copyright (c) 2015, The University of Memphis, MD2K Center
  * - Syed Monowar Hossain <monowar.hossain@gmail.com>
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * <p>
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- *
+ * <p>
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -54,70 +56,51 @@ public class ServicePhoneSensor extends Service {
     private static final String TAG = ServicePhoneSensor.class.getSimpleName();
     PhoneSensorDataSources phoneSensorDataSources = null;
     DataKitAPI dataKitAPI;
-    private boolean isStopping;
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",broadcast_receiver_stop_service");
-            disconnectDataKit();
-            stopSelf();
-        }
-    };
 
     public void onCreate() {
         super.onCreate();
-        isStopping = false;
         PermissionInfo permissionInfo = new PermissionInfo();
         permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
             @Override
             public void onResult(Boolean result) {
                 if (!result) {
                     Toast.makeText(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
+                    showNotification();
                     stopSelf();
                 } else {
+                    removeNotification();
                     load();
                 }
             }
         });
     }
+    private void showNotification() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(ActivityMain.OPERATION, ActivityMain.OPERATION_START_BACKGROUND);
+        PugNotification.with(this).load().identifier(13).title("Permission required").smallIcon(R.mipmap.ic_launcher)
+                .message("PhoneSensor app can't continue. (Please click to grant permission)").autoCancel(true).click(ActivityMain.class, bundle).simple().build();
+    }
+    private void removeNotification() {
+        PugNotification.with(this).cancel(13);
+    }
 
     void load() {
         LogStorage.startLogFileStorageProcess(getApplicationContext().getPackageName());
         Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",service_start");
-        Log.d(TAG, "onCreate()");
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(INTENT_STOP));
         if (!readSettings()) {
-            showAlertDialogConfiguration(this);
+            Toasty.error(this, "Error: not configured yet", Toast.LENGTH_SHORT).show();
             stopSelf();
         } else connectDataKit();
     }
 
-    void showAlertDialogConfiguration(final Context context){
-        try {
-            AlertDialogs.AlertDialog(this, "Error: Phone Sensor Settings", "Please configure the phone sensor", R.drawable.ic_error_red_50dp, "Settings", "Cancel", null, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (which == AlertDialog.BUTTON_POSITIVE) {
-                        Intent intent = new Intent(context, ActivityPhoneSensorSettings.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-                    }
-                }
-            });
-        } catch (Exception ignored) {
-        }
-    }
-
     private void connectDataKit() {
-        Log.d(TAG, "connectDataKit()...");
         dataKitAPI = DataKitAPI.getInstance(getApplicationContext());
         try {
             dataKitAPI.connect(new OnConnectionListener() {
                 @Override
                 public void onConnected() {
-                    Log.d(TAG, "onConnected()...");
                     try {
-//                    Toast.makeText(ServicePhoneSensor.this, "PhoneSensor Started successfully", Toast.LENGTH_LONG).show();
                         phoneSensorDataSources.register();
                     } catch (Exception e) {
                         LocalBroadcastManager.getInstance(ServicePhoneSensor.this).sendBroadcast(new Intent(INTENT_STOP));
@@ -126,7 +109,7 @@ public class ServicePhoneSensor extends Service {
             });
         } catch (DataKitException e) {
             android.util.Log.d(TAG, "onException...");
-            Toast.makeText(ServicePhoneSensor.this, "DataKit unavailable", Toast.LENGTH_LONG).show();
+            Toasty.error(ServicePhoneSensor.this, "Error: DataKit is unavailable", Toast.LENGTH_LONG).show();
             disconnectDataKit();
             stopSelf();
         }
@@ -135,8 +118,6 @@ public class ServicePhoneSensor extends Service {
     private synchronized void disconnectDataKit() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
                 mMessageReceiver);
-        if (isStopping) return;
-        isStopping = true;
         if (phoneSensorDataSources != null) {
             phoneSensorDataSources.unregister();
             phoneSensorDataSources = null;
@@ -154,8 +135,7 @@ public class ServicePhoneSensor extends Service {
     @Override
     public void onDestroy() {
         Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",service_stop");
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(
-                mMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         disconnectDataKit();
         super.onDestroy();
     }
@@ -164,4 +144,13 @@ public class ServicePhoneSensor extends Service {
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",broadcast_receiver_stop_service");
+            disconnectDataKit();
+            stopSelf();
+        }
+    };
+
 }

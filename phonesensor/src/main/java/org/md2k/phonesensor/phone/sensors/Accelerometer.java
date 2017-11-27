@@ -15,9 +15,9 @@ import org.md2k.datakitapi.source.datasource.DataSource;
 import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
 import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
+import org.md2k.mcerebrum.core.data_format.DataFormat;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.data_format.DataFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,38 +61,6 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     public Accelerometer(Context context) {
         super(context, DataSourceType.ACCELEROMETER);
         frequency = SENSOR_DELAY_UI;
-    }
-
-    HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
-        HashMap<String, String> dataDescriptor = new HashMap<>();
-        dataDescriptor.put(METADATA.NAME, name);
-        dataDescriptor.put(METADATA.MIN_VALUE, "-5");
-        dataDescriptor.put(METADATA.MAX_VALUE, "+5");
-        dataDescriptor.put(METADATA.UNIT, "g");
-        dataDescriptor.put(METADATA.FREQUENCY, frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION, description);
-        dataDescriptor.put(METADATA.DATA_TYPE, double.class.getName());
-        return dataDescriptor;
-    }
-
-    ArrayList<HashMap<String, String>> createDataDescriptors() {
-        ArrayList<HashMap<String, String>> dataDescriptors = new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("Accelerometer X", frequency, "Acceleration minus Gx on the x-axis"));
-        dataDescriptors.add(createDataDescriptor("Accelerometer Y", frequency, "Acceleration minus Gy on the y-axis"));
-        dataDescriptors.add(createDataDescriptor("Accelerometer Z", frequency, "Acceleration minus Gz on the z-axis"));
-        return dataDescriptors;
-    }
-
-    public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
-        if (dataSourceBuilder == null) return null;
-        dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Accelerometer");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.UNIT, "g");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "measures the acceleration applied to the device");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDoubleArray.class.getName());
-        return dataSourceBuilder;
     }
 
     public void updateDataSource(DataSource dataSource) {

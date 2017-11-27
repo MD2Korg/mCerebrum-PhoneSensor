@@ -18,9 +18,8 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.utilities.Report.Log;
-import org.md2k.utilities.data_format.DataFormat;
-import org.md2k.utilities.data_format.ResultType;
+import org.md2k.mcerebrum.core.data_format.DataFormat;
+import org.md2k.mcerebrum.core.data_format.ResultType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,33 +64,6 @@ class ActivityType extends PhoneSensorDataSource {
         locationProvider = new ReactiveLocationProvider(context);
         frequency = "1.0";
     }
-
-    private HashMap<String, String> createDataDescriptor(String name, String frequency, String description) {
-        HashMap<String, String> dataDescriptor = new HashMap<>();
-        dataDescriptor.put(METADATA.NAME, name);
-        dataDescriptor.put(METADATA.FREQUENCY, frequency);
-        dataDescriptor.put(METADATA.DESCRIPTION, description);
-        dataDescriptor.put(METADATA.DATA_TYPE, double.class.getName());
-        return dataDescriptor;
-    }
-
-    ArrayList<HashMap<String, String>> createDataDescriptors() {
-        ArrayList<HashMap<String, String>> dataDescriptors = new ArrayList<>();
-        dataDescriptors.add(createDataDescriptor("Activity Type", frequency, "Represents types of activity (0: STILL,1: ON_FOOT, 2:TILTING, 3: WALKING, 4: RUNNING, 5: ON_BICYCLE, 6: IN_VEHICLE, 7: UNKNOWN"));
-        return dataDescriptors;
-    }
-
-    public DataSourceBuilder createDataSourceBuilder() {
-        DataSourceBuilder dataSourceBuilder = super.createDataSourceBuilder();
-        if (dataSourceBuilder == null) return null;
-        dataSourceBuilder = dataSourceBuilder.setDataDescriptors(createDataDescriptors());
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.FREQUENCY, frequency);
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.NAME, "Activity Type");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DESCRIPTION, "Represents types of activity (0: STILL,1: ON_FOOT, 2:TILTING, 3: WALKING, 4: RUNNING, 5: ON_BICYCLE, 6: IN_VEHICLE, 7: UNKNOWN");
-        dataSourceBuilder = dataSourceBuilder.setMetadata(METADATA.DATA_TYPE, DataTypeDoubleArray.class.getName());
-        return dataSourceBuilder;
-    }
-
     @Override
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         try {

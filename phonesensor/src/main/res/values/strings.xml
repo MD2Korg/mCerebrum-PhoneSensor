@@ -5,4 +5,8 @@
     <string name="url_sourcecode">https://github.com/MD2Korg/mCerebrum-PhoneSensor/</string>
     <string name="action_settings">Settings</string>
     <string name="button_close">Close</string>
+    <string name="table_sensor_id">sensor</string>
+    <string name="table_header_count">count</string>
+    <string name="table_header_freq">freq.</string>
+    <string name="table_header_samples">samples</string>
 </resources>
