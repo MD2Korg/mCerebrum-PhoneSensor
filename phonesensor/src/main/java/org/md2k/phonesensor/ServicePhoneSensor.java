@@ -51,12 +51,23 @@ import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 import br.com.goncalves.pugnotification.notification.PugNotification;
 import es.dmoral.toasty.Toasty;
 
+/**
+ * ServicePhoneSensor
+ *
+ * Allows the device to run sensors in the background
+ */
 public class ServicePhoneSensor extends Service {
     public static final String INTENT_STOP = "intent_stop";
     private static final String TAG = ServicePhoneSensor.class.getSimpleName();
     PhoneSensorDataSources phoneSensorDataSources = null;
     DataKitAPI dataKitAPI;
 
+
+    /**
+     * onCreate
+     *
+     * Checks for the appropriate permissions and displays an error if they are denied
+     */
     public void onCreate() {
         super.onCreate();
         PermissionInfo permissionInfo = new PermissionInfo();
@@ -74,6 +85,10 @@ public class ServicePhoneSensor extends Service {
             }
         });
     }
+
+    /**
+     *
+     */
     private void showNotification() {
         Bundle bundle = new Bundle();
         bundle.putInt(ActivityMain.OPERATION, ActivityMain.OPERATION_START_BACKGROUND);
