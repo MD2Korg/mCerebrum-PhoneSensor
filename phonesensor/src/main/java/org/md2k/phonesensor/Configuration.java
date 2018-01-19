@@ -41,18 +41,35 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Configuration
+ *
+ *
+ */
 public class Configuration {
     private static final String CONFIG_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/mCerebrum/org.md2k.phonesensor/";
     private static final String DEFAULT_CONFIG_FILENAME = "default_config.json";
     private static final String CONFIG_FILENAME = "config.json";
 
+    /**
+     * Reads a configuration file from the package folder in internal storage
+     *
+     * @param context
+     * @return an arrayList of DataSource objects
+     * @throws FileNotFoundException
+     */
     public static ArrayList<DataSource> read(Context context) throws FileNotFoundException {
         String root=Storage.getRootDirectory(context, StorageType.SDCARD_INTERNAL);
         if(root==null) throw new FileNotFoundException();
         String filePath=root+"/mCerebrum/"+context.getPackageName()+"/"+CONFIG_FILENAME;
         return Storage.readJsonArrayList(filePath, DataSource.class);
-//        return FileManager.readJSONArray(CONFIG_DIRECTORY, CONFIG_FILENAME, DataSource.class);
     }
+
+    /**
+     * Reads metadata into an arrayList
+     *
+     * @return an arrayList of metadata DataSource objects
+     */
     private static ArrayList<DataSource> readMetaData(){
         try {
             return Storage.readJsonArrayFromAsset(MyApplication.getContext(), Constants.FILENAME_ASSET_METADATA, DataSource.class);
@@ -60,6 +77,13 @@ public class Configuration {
             return null;
         }
     }
+
+    /**
+     * Returns all metadata of a given type
+     *
+     * @param dataSourceType String designating the type of data to return
+     * @return the appropriate DataSource objects
+     */
     public static DataSource getMetaData(String dataSourceType){
         ArrayList<DataSource> dataSources = readMetaData();
         if(dataSources==null || dataSources.size()==0) return null;
@@ -69,21 +93,40 @@ public class Configuration {
         return null;
     }
 
+    /**
+     * Reads the default configuration file from internal storage
+     *
+     * @param context
+     * @return an arrayList of DataSource objects
+     * @throws FileNotFoundException
+     */
     static ArrayList<DataSource> readDefault(Context context) throws FileNotFoundException {
         String root=Storage.getRootDirectory(context, StorageType.SDCARD_INTERNAL);
         if(root==null) throw new FileNotFoundException();
         String filePath=root+"/mCerebrum/"+context.getPackageName()+"/"+DEFAULT_CONFIG_FILENAME;
         return Storage.readJsonArrayList(filePath, DataSource.class);
-//        return FileManager.readJSONArray(CONFIG_DIRECTORY, DEFAULT_CONFIG_FILENAME, DataSource.class);
     }
 
+    /**
+     * Writes a new configuration file using the objects in dataSources
+     *
+     * @param context
+     * @param dataSources an arrayList of DataSource objects
+     * @throws IOException
+     */
     public static void write(Context context, ArrayList<DataSource> dataSources) throws IOException {
         String root=Storage.getRootDirectory(context, StorageType.SDCARD_INTERNAL);
         if(root==null) throw new FileNotFoundException();
         String filePath=root+"/mCerebrum/"+context.getPackageName()+"/"+CONFIG_FILENAME;
         Storage.writeJsonArray(filePath, dataSources);
-//        Storage.(CONFIG_DIRECTORY, CONFIG_FILENAME, dataSources);
     }
+
+    /**
+     * Compares the size of the configuration file to the default
+     *
+     * @param context
+     * @return if the configuration files are the same size
+     */
     public static boolean isEqualDefault(Context context) {
         ArrayList<DataSource> dataSources;
         ArrayList<DataSource> dataSourcesDefault;
@@ -105,6 +148,15 @@ public class Configuration {
         }
         return true;
     }
+
+    /**
+     * Wrapper method for isEqualDataSource
+     * Checks a given DataSource against a default
+     *
+     * @param dataSource
+     * @param dataSourcesDefault
+     * @return the result of isEqualDataSource
+     */
     private static boolean isDataSourceMatch(DataSource dataSource, ArrayList<DataSource> dataSourcesDefault){
         for(int i=0;i<dataSourcesDefault.size();i++){
             DataSource dataSourceDefault=dataSourcesDefault.get(i);
@@ -112,6 +164,14 @@ public class Configuration {
         }
         return false;
     }
+
+    /**
+     * Checks a given DataSource against a default
+     *
+     * @param dataSource
+     * @param dataSourceDefault
+     * @return if the source is the same as default
+     */
     private static boolean isEqualDataSource(DataSource dataSource, DataSource dataSourceDefault){
         if(!isFieldMatch(dataSource.getId(), dataSourceDefault.getId())) return false;
         if(!isFieldMatch(dataSource.getType(), dataSourceDefault.getType())) return false;
@@ -121,6 +181,14 @@ public class Configuration {
         if(!isObjectMatch(dataSource.getApplication(), dataSourceDefault.getApplication())) return false;
         return true;
     }
+
+    /**
+     * Checks that the id and type of a given AbstractObject is the same as a default
+     *
+     * @param object
+     * @param objectDefault
+     * @return if the objects are the same
+     */
     private static boolean isObjectMatch(AbstractObject object, AbstractObject objectDefault){
         if(objectDefault==null) return true;
         if(object==null) return false;
@@ -128,12 +196,28 @@ public class Configuration {
         if(!isFieldMatch(object.getType(), objectDefault.getType())) return false;
         return true;
     }
+
+    /**
+     * Checks the field strings of two objects
+     *
+     * @param value
+     * @param valueDefault
+     * @return if the strings are equal
+     */
     private static boolean isFieldMatch(String value, String valueDefault){
         if(valueDefault==null) return true;
         if(value==null) return false;
         if(value.equals(valueDefault)) return true;
         return false;
     }
+
+    /**
+     * Checks that the metadata matches the default
+     *
+     * @param metadata hashMap<String, String>
+     * @param metadataDefault hashMap<String, String>
+     * @return if the metadata matches
+     */
     private static boolean isMetaDataMatch(HashMap<String, String> metadata, HashMap<String, String> metadataDefault){
         String valueDefault, value;
         if(metadataDefault==null) return true;
@@ -146,6 +230,12 @@ public class Configuration {
         }
         return true;
     }
+
+    /**
+     * Checks to see if a configuration file exists
+     *
+     * @return if the file exists
+     */
     public static boolean isConfigured(){
         ArrayList<DataSource> dataSources;
         try {

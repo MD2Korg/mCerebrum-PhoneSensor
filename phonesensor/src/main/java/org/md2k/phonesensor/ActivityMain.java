@@ -65,6 +65,13 @@ import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 
+import static android.app.Activity.RESULT_OK;
+
+/**
+ * ActivityMain
+ *
+ *
+ */
 public class ActivityMain extends AppCompatActivity {
     HashMap<String, TextView> hashMapData = new HashMap<>();
     boolean isEverythingOk = false;
@@ -78,6 +85,9 @@ public class ActivityMain extends AppCompatActivity {
     public static final int OPERATION_STOP_BACKGROUND=4;
     public static final String OPERATION = "operation";
 
+    /**
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +97,9 @@ public class ActivityMain extends AppCompatActivity {
         checkRequirement();
     }
 
+    /**
+     *
+     */
     void load() {
         isEverythingOk = true;
         Intent intent;
@@ -121,6 +134,10 @@ public class ActivityMain extends AppCompatActivity {
         }
     }
 
+    /**
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -128,6 +145,10 @@ public class ActivityMain extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -181,6 +202,9 @@ public class ActivityMain extends AppCompatActivity {
         return row;
     }
 
+    /**
+     *
+     */
     void prepareTable() {
         try {
             ArrayList<PhoneSensorDataSource> phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext()).getPhoneSensorDataSources();
@@ -223,6 +247,9 @@ public class ActivityMain extends AppCompatActivity {
         }
     }
 
+    /**
+     * @param intent
+     */
     void updateTable(Intent intent) {
         String sampleStr = "";
         String dataSourceType = ((DataSource) intent.getParcelableExtra("datasource")).getType();
@@ -256,6 +283,9 @@ public class ActivityMain extends AppCompatActivity {
         hashMapData.get(dataSourceType + "_sample").setText(sampleStr);
     }
 
+    /**
+     *
+     */
     @Override
     public void onResume() {
         try {
@@ -271,6 +301,9 @@ public class ActivityMain extends AppCompatActivity {
         super.onResume();
     }
 
+    /**
+     *
+     */
     @Override
     public void onPause() {
         try {
@@ -320,58 +353,13 @@ public class ActivityMain extends AppCompatActivity {
     };
 
 
+    /**
+     *
+     */
     void checkRequirement() {
         Intent intent = new Intent(this, ActivityPermission.class);
         startActivityForResult(intent, 1111);
-/*
-        Permission.requestPermission(this, new PermissionCallback() {
-            @Override
-            public void OnResponse(boolean isGranted) {
-                if (!isGranted) {
-                    Toasty.error(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
-                    status.onResponse(false);
-                } else {
-                    GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-                    int result = googleAPI.isGooglePlayServicesAvailable(ActivityMain.this);
-                    if (result != ConnectionResult.SUCCESS) {
-                        if (googleAPI.isUserResolvableError(result)) {
-                            googleAPI.getErrorDialog(ActivityMain.this, result,
-                                    9000, new DialogInterface.OnCancelListener() {
-                                        @Override
-                                        public void onCancel(DialogInterface dialog) {
-                                            Toasty.error(getApplicationContext(), "Google play service is disabled/not updated", Toast.LENGTH_SHORT).show();
-                                            status.onResponse(false);
-                                        }
-                                    }).show();
-                        } else {
-                            Toasty.error(getApplicationContext(), "Google play service is DISABLED/NOT UPDATED", Toast.LENGTH_SHORT).show();
-                            status.onResponse(false);
-                        }
-                    } else {
-                        status.onResponse(true);
-                    }
-                }
 
-            }
-        });
-*/
-    }
-
-/*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 9000) {
-            GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-            int result = googleAPI.isGooglePlayServicesAvailable(ActivityMain.this);
-            if (result != ConnectionResult.SUCCESS) {
-                Toasty.error(getApplicationContext(), "Google play service is disabled/not updated", Toast.LENGTH_SHORT).show();
-                status.onResponse(false);
-            } else {
-                status.onResponse(true);
-            }
-        }
-    }
-*/
 @Override
 public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == 1111) {
@@ -383,6 +371,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 }
 
+/**
+*
+*/
     void loadCrashlytics() {
         Crashlytics crashlyticsKit = new Crashlytics.Builder()
                 .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
@@ -390,17 +381,26 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Fabric.with(this, crashlyticsKit, new Crashlytics());
     }
 
+    /**
+     *
+     */
     void readIntent() {
         if(getIntent().getExtras()!=null)
         operation = getIntent().getExtras().getInt(OPERATION, 0);
         else operation=0;
     }
 
+    /**
+     *
+     */
     void initializeVariable() {
         isEverythingOk = false;
         mHandler = new Handler();
     }
 
+    /**
+     *
+     */
     void initializeUI() {
         setContentView(R.layout.activity_main);
         if (getSupportActionBar() != null)
