@@ -44,7 +44,7 @@ import java.util.HashMap;
 /**
  * Configuration
  *
- *
+ * Checks for, loads, and error checks config.json or default_config.json
  */
 public class Configuration {
     private static final String CONFIG_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/mCerebrum/org.md2k.phonesensor/";
