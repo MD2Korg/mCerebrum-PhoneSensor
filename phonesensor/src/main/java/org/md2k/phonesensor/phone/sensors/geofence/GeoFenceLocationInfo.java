@@ -27,11 +27,25 @@
 
 package org.md2k.phonesensor.phone.sensors.geofence;
 
+/**
+ * GeoFenceLocationInfo
+ *
+ * This class creates GeoFenceLocationInfo objects
+ */
 public class GeoFenceLocationInfo {
     private String location;
     private double latitude;
     private double longitude;
 
+    /**
+     * GeoFenceLocationInfo
+     *
+     * Constructor
+     *
+     * @param location String
+     * @param latitude  double
+     * @param longitude double
+     */
     public GeoFenceLocationInfo(String location, double latitude, double longitude) {
         this.location=location;
         this.latitude=latitude;
