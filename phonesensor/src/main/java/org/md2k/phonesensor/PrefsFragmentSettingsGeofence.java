@@ -62,11 +62,23 @@ import rx.Observer;
 import rx.Subscription;
 import rx.functions.Action1;
 
+/**
+ * PrefsFragmentSettingsGeofence
+ *
+ *
+ */
 public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
     public static final int REQUEST_CHECK_SETTINGS = 1000;
     GeoFenceData geoFenceData;
     Subscription subscription;
     MaterialDialog materialDialog;
+
+    /**
+     * onCreate
+     *
+     * Creates a new GeoFenceData object, enables GPS
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,11 +92,19 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
     private Subscription updatableLocationSubscription;
 
 
+    /**
+     *
+     */
     public void unregister() {
         if (updatableLocationSubscription != null && !updatableLocationSubscription.isUnsubscribed())
             updatableLocationSubscription.unsubscribe();
     }
 
+    /**
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -108,6 +128,12 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -118,11 +144,17 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
         return v;
     }
 
+    /**
+     *
+     */
     void createPreferenceScreen() {
         setConfiguredLocation();
         addLocation();
     }
 
+    /**
+     *
+     */
     void addLocation() {
         Preference p = findPreference("key_add");
         p.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -154,6 +186,9 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
 
     }
 
+    /**
+     *
+     */
     void setConfiguredLocation() {
         PreferenceCategory pc = (PreferenceCategory) findPreference("key_configured_location");
         pc.removeAll();
@@ -164,8 +199,12 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
             String la = String.valueOf(geoFenceData.getGeoFenceLocationInfos().get(i).getLatitude());
             p.setKey(l);
             p.setTitle(l);
-            p.setSummary("(Latitude: " + la + ", Longitude: " + lo+")");
+            p.setSummary("(Latitude: " + la + ", Longitude: " + lo +")");
             p.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                /**
+                 * @param preference
+                 * @return
+                 */
                 @Override
                 public boolean onPreferenceClick(final Preference preference) {
                     Dialog.simple(getActivity(), "Delete Location", "Delete location = " + preference.getKey() + "?", "Yes", "Cancel", new DialogCallback() {
@@ -185,6 +224,11 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
     }
 
 
+    /**
+     * enableGPS
+     *
+     *
+     */
     void enableGPS() {
         ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getActivity());
         final LocationRequest locationRequest = LocationRequest.create()
@@ -198,16 +242,33 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
                                 .build()
                 );
         updatableLocationSubscription = locationUpdatesObservable.subscribe(new Observer<LocationSettingsResult>() {
+            /**
+             * onCompleted
+             *
+             *
+             */
             @Override
             public void onCompleted() {
 
             }
 
+            /**
+             * onError
+             *
+             *
+             * @param e Throwable exception object
+             */
             @Override
             public void onError(Throwable e) {
 
             }
 
+            /**
+             * onNext
+             *
+             *
+             * @param locationSettingsResult
+             */
             @Override
             public void onNext(LocationSettingsResult locationSettingsResult) {
                 try {
@@ -262,19 +323,14 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
                 materialDialog.dismiss();
             }
         });
-/*
-        locationProvider.getLastKnownLocation()
-                .subscribe(new Action1<Location>() {
-                    @Override
-                    public void call(Location location) {
-                        GeoFenceLocationInfo g=new GeoFenceLocationInfo(l, location.getLatitude(), location.getLongitude());
-                        geoFenceData.add(g);
-                        updateLocation();
 
-                    }
-                });
-*/
     }
+
+    /**
+     * onDestroy
+     *
+     * Dismisses any dialogs, unsubscribes
+     */
     @Override
     public void onDestroy(){
         if(materialDialog!=null && materialDialog.isShowing()) materialDialog.dismiss();
