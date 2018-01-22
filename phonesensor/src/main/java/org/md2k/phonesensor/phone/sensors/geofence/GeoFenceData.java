@@ -43,21 +43,45 @@ import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
+/**
+ * GeoFenceData
+ *
+ *
+ */
 public class GeoFenceData {
     private Context context;
     private SharedPreferences sharedPref;
     private ArrayList<GeoFenceLocationInfo> geoFenceLocationInfos;
 
+    /**
+     * GeoFenceData
+     *
+     * Constructor for GeoFenceData object
+     * @param context
+     */
     public GeoFenceData(Context context) {
         this.context = context;
         sharedPref = context.getSharedPreferences(
                 "geofence", Context.MODE_PRIVATE);
         read();
     }
+
+    /**
+     * getGeoFenceString
+     *
+     *
+     * @return String object
+     */
     public String getGeoFenceString(){
         return sharedPref.getString("data", null);
     }
 
+    /**
+     * read
+     *
+     * Takes data string from sharedPref and processes it into a GeoFenceLocationInfo object which
+     * is then stored in the geoFenceLocationInfos ArrayList
+     */
     private void read() {
         geoFenceLocationInfos = new ArrayList<>();
         String data = getGeoFenceString();
@@ -71,6 +95,14 @@ public class GeoFenceData {
             geoFenceLocationInfos.add(new GeoFenceLocationInfo(location, latitude, longitude));
         }
     }
+
+    /**
+     * clearData
+     *
+     * Edits sharedPref to remove "data"
+     *
+     * @param context
+     */
     public static void clearData(final Activity context){
         final SharedPreferences sharedPref = context.getSharedPreferences(
                 "geofence", Context.MODE_PRIVATE);
@@ -91,10 +123,26 @@ public class GeoFenceData {
         }
     }
 
+    /**
+     * add
+     *
+     * Adds a new node to the geoFenceLocationInfos ArrayList
+     *
+     * @param g GeoFenceLocationInfo object
+     */
     public void add(GeoFenceLocationInfo g) {
         geoFenceLocationInfos.add(g);
         write();
     }
+
+    /**
+     * isExist
+     *
+     * Searches geoFenceLocationInfos for a given location
+     *
+     * @param location String
+     * @return boolean
+     */
     public boolean isExist(String location){
         for (int i = 0; i < geoFenceLocationInfos.size(); i++)
             if (geoFenceLocationInfos.get(i).getLocation().equalsIgnoreCase(location)) {
@@ -103,6 +151,13 @@ public class GeoFenceData {
             return false;
     }
 
+    /**
+     * delete
+     *
+     * Search geoFenceLocationInfos for a given location and remove it from the ArrayList
+     *
+     * @param location String
+     */
     public void delete(String location) {
         for (int i = 0; i < geoFenceLocationInfos.size(); i++)
             if (geoFenceLocationInfos.get(i).getLocation().equalsIgnoreCase(location)) {
@@ -112,6 +167,12 @@ public class GeoFenceData {
         write();
     }
 
+    /**
+     * write
+     *
+     * Checks to see if the service is running. If it is, the service gets stopped, geoFenceLocationInfos
+     * gets edited and then the service is started again.
+     */
     private void write() {
         boolean flag = AppInfo.isServiceRunning(context, ServicePhoneSensor.class.getName());
         if(flag) context.stopService(new Intent(context, ServicePhoneSensor.class));
@@ -134,6 +195,11 @@ public class GeoFenceData {
 
     }
 
+    /**
+     * getGeoFenceLocaationInfos
+     *
+     * @return ArrayList of GeoFenceLocationInfo objects
+     */
     public ArrayList<GeoFenceLocationInfo> getGeoFenceLocationInfos() {
         return geoFenceLocationInfos;
     }
