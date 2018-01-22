@@ -72,6 +72,14 @@ public class ServicePhoneSensor extends Service {
         super.onCreate();
         PermissionInfo permissionInfo = new PermissionInfo();
         permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
+            /**
+             * onResult
+             *
+             * takes permission result and loads the service if permission is granted
+             * otherwise it stops
+             *
+             * @param result boolean value of ResultCallback
+             */
             @Override
             public void onResult(Boolean result) {
                 if (!result) {
@@ -87,7 +95,9 @@ public class ServicePhoneSensor extends Service {
     }
 
     /**
+     * showNotification
      *
+     * Shows the notification that asks for permissions
      */
     private void showNotification() {
         Bundle bundle = new Bundle();
@@ -95,10 +105,22 @@ public class ServicePhoneSensor extends Service {
         PugNotification.with(this).load().identifier(13).title("Permission required").smallIcon(R.mipmap.ic_launcher)
                 .message("PhoneSensor app can't continue. (Please click to grant permission)").autoCancel(true).click(ActivityMain.class, bundle).simple().build();
     }
+
+    /**
+     * removeNotification
+     *
+     * Cancels the notification
+     */
     private void removeNotification() {
         PugNotification.with(this).cancel(13);
     }
 
+    /**
+     * load
+     *
+     * Logs the timestamp of service_start and calls connectDataKit if sufficient data sources have
+     * been initialized
+     */
     void load() {
         LogStorage.startLogFileStorageProcess(getApplicationContext().getPackageName());
         Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",service_start");
@@ -109,10 +131,22 @@ public class ServicePhoneSensor extends Service {
         } else connectDataKit();
     }
 
+    /**
+     * connectDataKit
+     *
+     * Connects the phone sensors to the dataKitAPI
+     * Throws a DataKitException if dataKitAPI is unable to connect
+     * This exception then disconnects dataKitAPI and stops execution
+     */
     private void connectDataKit() {
         dataKitAPI = DataKitAPI.getInstance(getApplicationContext());
         try {
             dataKitAPI.connect(new OnConnectionListener() {
+                /**
+                 * onConnected
+                 *
+                 * registers all availble data sources
+                 */
                 @Override
                 public void onConnected() {
                     try {
@@ -130,6 +164,11 @@ public class ServicePhoneSensor extends Service {
         }
     }
 
+    /**
+     * disconnectDataKit
+     *
+     * unregisters the receiver and data source, then ensures dataKitAPI is disconnected
+     */
     private synchronized void disconnectDataKit() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
                 mMessageReceiver);
@@ -142,11 +181,21 @@ public class ServicePhoneSensor extends Service {
         }
     }
 
+    /**
+     * readSettings
+     *
+     * @return returns whether there are data sources available
+     */
     private boolean readSettings() {
         phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext());
         return phoneSensorDataSources.countEnabled() != 0;
     }
 
+    /**
+     * onDestroy
+     *
+     * Logs service_stop, unregisters receiver, disconnects dataKit
+     */
     @Override
     public void onDestroy() {
         Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",service_stop");
@@ -155,11 +204,26 @@ public class ServicePhoneSensor extends Service {
         super.onDestroy();
     }
 
+    /**
+     * onBind
+     *
+     * Not yet implemented
+     *
+     * @param intent
+     * @return
+     */
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        /**
+         * onReceive
+         *
+         * Logs broadcast_receiver_stop_service, disconnects dataKit, and stops service
+         * @param context
+         * @param intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",broadcast_receiver_stop_service");
