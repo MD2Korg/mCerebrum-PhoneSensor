@@ -71,7 +71,9 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     }
 
     /**
-     * @param dataSource
+     * Changes the frequency field to match the frequency field in the metadata of the new source
+     *
+     * @param dataSource dataSource that should be updated
      */
     public void updateDataSource(DataSource dataSource) {
         super.updateDataSource(dataSource);
@@ -79,7 +81,13 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     }
 
     /**
-     * @param event
+     * Called when there is a new sensor event. This can be a data change or a timestamp change.
+     * <p>
+     *     The data is put into
+     *     an array and sent to dataKitAPI to be saved.
+     * </p>
+     *
+     * @param event event that triggered the method call
      */
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -107,8 +115,10 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     }
 
     /**
-     * @param sensor Sensor object
-     * @param accuracy integer
+     * Called when the accuracy of this sensor changes.
+     *
+     * @param sensor sensor object for this sensor
+     * @param accuracy Accuracy of the sensor reading
      */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -116,7 +126,7 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     }
 
     /**
-     * Calls unregisterListener if mSensorManager is not null
+     * Unregisters the listener for this sensor
      */
     public void unregister() {
         if (mSensorManager != null) {
@@ -125,8 +135,14 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     }
 
     /**
-     * @param dataSourceBuilder DataSourceBuilder object
-     * @param newCallBack CallBack object
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then registers this sensor with Android's SensorManager
+     *
+     * This method also sets a minimum amount of time between data saves based upon the frequency
+     * field of this object.
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
      * @throws DataKitException
      */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {

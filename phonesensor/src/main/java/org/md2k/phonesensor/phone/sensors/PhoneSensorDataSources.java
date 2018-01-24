@@ -167,7 +167,9 @@ public class PhoneSensorDataSources {
             }
         }
     }
-
+    /**
+     * Unregisters the listener for all sensors
+     */
     public void unregister() {
 /*
         if (wl != null && wl.isHeld())

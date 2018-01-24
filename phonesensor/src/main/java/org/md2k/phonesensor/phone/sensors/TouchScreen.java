@@ -107,7 +107,7 @@ public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchLi
     }
 
     /**
-     * unregister
+     * Unregisters the listener for this sensor
      */
     public void unregister() {
         if (mWindowManager != null) {

@@ -47,10 +47,18 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ *
+ */
 public class CPU extends PhoneSensorDataSource {
     private Handler scheduler;
     private long[] curValues = new long[2];
     private final Runnable statusCPU = new Runnable() {
+
+        /**
+         * When a statusCPU thread is created, this <code>run</code> method puts the CPU
+         * data into an array and sends it to dataKitAPI.
+         */
         @Override
         public void run() {
             long values[] = new long[2];
@@ -71,10 +79,19 @@ public class CPU extends PhoneSensorDataSource {
         }
     };
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     public CPU(Context context) {
         super(context, DataSourceType.CPU);
         frequency = "1.0";
     }
+
+    /**
+     * Unregisters the listener for this sensor
+     */
     public void unregister() {
         if (scheduler != null) {
             scheduler.removeCallbacks(statusCPU);
@@ -82,12 +99,23 @@ public class CPU extends PhoneSensorDataSource {
         }
     }
 
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then schedules the statusCPU thread
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         scheduler=new Handler();
         scheduler.post(statusCPU);
     }
 
+    /**
+     * @param values
+     */
     private void readUsage(long[] values) {
         try {
             RandomAccessFile reader = new RandomAccessFile("/proc/stat", "r");

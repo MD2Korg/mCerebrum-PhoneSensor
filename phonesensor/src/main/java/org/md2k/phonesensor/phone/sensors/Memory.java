@@ -70,6 +70,9 @@ public class Memory extends PhoneSensorDataSource {
     }
 
 
+    /**
+     * Unregisters the listener for this sensor
+     */
     public void unregister() {
         if (scheduler != null) {
             scheduler.removeCallbacks(statusMemory);

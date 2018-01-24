@@ -133,7 +133,7 @@ public abstract class PhoneSensorDataSource {
 
 
     /**
-     * Creates a dataSourceClient object constructed from the sensor data source
+     * Registers the given dataSourceBuilder object with dataKitAPI
      *
      * @param dataSourceBuilder data source to be registered with dataKitAPI
      * @param newCallBack CallBack object
@@ -145,5 +145,8 @@ public abstract class PhoneSensorDataSource {
         callBack = newCallBack;
     }
 
+    /**
+     * Unregisters the listener for this sensor
+     */
     public abstract void unregister();
 }

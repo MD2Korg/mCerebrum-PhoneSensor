@@ -79,6 +79,9 @@ import rx.functions.Func1;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+/**
+ *
+ */
 class GeoFence extends PhoneSensorDataSource {
 
     private static final float RADIUS = 100;
@@ -89,6 +92,11 @@ class GeoFence extends PhoneSensorDataSource {
     private HashMap<String, DataSourceClient> currentList;
     private GeofenceBroadcastReceiver gbr;
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     GeoFence(final Context context) {
         super(context, DataSourceType.GEOFENCE);
         frequency = "1.0";
@@ -96,6 +104,9 @@ class GeoFence extends PhoneSensorDataSource {
         gbr = new GeofenceBroadcastReceiver();
     }
 
+    /**
+     *
+     */
     public void saveData() {
         subscriptionMinute = Observable.interval(0, 1, TimeUnit.MINUTES).map(new Func1<Long, Boolean>() {
             @Override
@@ -214,6 +225,9 @@ class GeoFence extends PhoneSensorDataSource {
                 });
     }
 
+    /**
+     * Unregisters the listener for this sensor
+     */
     @Override
     public void unregister() {
         try {

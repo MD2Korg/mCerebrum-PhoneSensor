@@ -133,6 +133,9 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
      * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
      * and then registers this sensor with Android's SensorManager
      *
+     * This method also sets a minimum amount of time between data saves based upon the frequency
+     * field of this object.
+     *
      * @param dataSourceBuilder data source to be registered with dataKitAPI
      * @param newCallBack       CallBack object
      * @throws DataKitException

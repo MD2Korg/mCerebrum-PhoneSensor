@@ -151,6 +151,9 @@ class LocationFused extends PhoneSensorDataSource {
         });
     }
 
+    /**
+     * Unregisters the listener for this sensor
+     */
     @Override
     public void unregister() {
         try {context.unregisterReceiver(br);}catch (Exception ignored){}
