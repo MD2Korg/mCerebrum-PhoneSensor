@@ -1,16 +1,6 @@
-package org.md2k.phonesensor;
-
-import android.app.Application;
-import android.content.Context;
-
-import com.blankj.utilcode.util.Utils;
-
-import org.md2k.mcerebrum.core.access.MCerebrum;
-
-
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +24,15 @@ import org.md2k.mcerebrum.core.access.MCerebrum;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.phonesensor;
+
+import android.app.Application;
+import android.content.Context;
+
+import com.blankj.utilcode.util.Utils;
+
+import org.md2k.mcerebrum.core.access.MCerebrum;
 
 public class MyApplication extends Application {
     static Context context;

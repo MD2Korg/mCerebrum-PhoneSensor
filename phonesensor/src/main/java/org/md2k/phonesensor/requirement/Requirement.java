@@ -37,7 +37,7 @@ import org.md2k.mcerebrum.commons.permission.Permission;
 import org.md2k.mcerebrum.commons.permission.PermissionCallback;
 
 /**
- * 
+ *
  */
 public class Requirement {
 }

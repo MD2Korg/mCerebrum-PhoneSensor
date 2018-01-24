@@ -1,22 +1,6 @@
-package org.md2k.phonesensor;
-
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
-
-import org.md2k.datakitapi.source.AbstractObject;
-import org.md2k.datakitapi.source.datasource.DataSource;
-import org.md2k.mcerebrum.commons.storage.Storage;
-import org.md2k.mcerebrum.commons.storage.StorageType;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /*
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +24,23 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.phonesensor;
+
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+
+import org.md2k.datakitapi.source.AbstractObject;
+import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.mcerebrum.commons.storage.Storage;
+import org.md2k.mcerebrum.commons.storage.StorageType;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Configuration {
     private static final String CONFIG_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/mCerebrum/org.md2k.phonesensor/";
     private static final String DEFAULT_CONFIG_FILENAME = "default_config.json";
