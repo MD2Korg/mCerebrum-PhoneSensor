@@ -48,10 +48,17 @@ import org.md2k.mcerebrum.core.data_format.DataFormat;;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ *
+ */
 public class Battery extends PhoneSensorDataSource {
     private Handler scheduler;
     private final Runnable batteryStatus = new Runnable() {
 
+        /**
+         * When a batteryStatus thread is created, this <code>run</code> method puts the battery
+         * data into an array and sends it to dataKitAPI.
+         */
         @Override
         public void run() {
             IntentFilter iFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -80,12 +87,20 @@ public class Battery extends PhoneSensorDataSource {
         }
     };
 
+    /**
+     * Constructor
+     * Default frequency is "1.0"
+     *
+     * @param context
+     */
     public Battery(Context context) {
         super(context, DataSourceType.BATTERY);
         frequency = "1.0";
     }
 
-
+    /**
+     * Unregisters the listener for this sensor
+     */
     public void unregister() {
         if (scheduler != null) {
             scheduler.removeCallbacks(batteryStatus);
@@ -93,6 +108,14 @@ public class Battery extends PhoneSensorDataSource {
         }
     }
 
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then schedules the batteryStatus thread
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         scheduler = new Handler();
