@@ -1,26 +1,6 @@
-package org.md2k.phonesensor.phone.sensors;
-
-import android.content.Context;
-import android.util.Log;
-
-import org.md2k.datakitapi.DataKitAPI;
-import org.md2k.datakitapi.exception.DataKitException;
-import org.md2k.datakitapi.source.METADATA;
-import org.md2k.datakitapi.source.application.Application;
-import org.md2k.datakitapi.source.application.ApplicationBuilder;
-import org.md2k.datakitapi.source.datasource.DataSource;
-import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
-import org.md2k.datakitapi.source.datasource.DataSourceClient;
-import org.md2k.datakitapi.source.platform.Platform;
-import org.md2k.phonesensor.Configuration;
-import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.phonesensor.phone.PhoneSensorPlatform;
-
-import java.util.ArrayList;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +24,31 @@ import java.util.ArrayList;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.phonesensor.phone.sensors;
+
+import android.content.Context;
+import android.util.Log;
+
+import org.md2k.datakitapi.DataKitAPI;
+import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.source.METADATA;
+import org.md2k.datakitapi.source.application.Application;
+import org.md2k.datakitapi.source.application.ApplicationBuilder;
+import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
+import org.md2k.datakitapi.source.datasource.DataSourceClient;
+import org.md2k.datakitapi.source.platform.Platform;
+import org.md2k.phonesensor.Configuration;
+import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.phonesensor.phone.PhoneSensorPlatform;
+
+import java.util.ArrayList;
+
+/**
+ *
+ *
+ */
 public abstract class PhoneSensorDataSource {
     public static final double EPSILON_NORMAL = 2.0;
     public static final double EPSILON_UI = 5.0;
@@ -58,34 +63,68 @@ public abstract class PhoneSensorDataSource {
     DataKitAPI dataKitAPI;
     private boolean enabled;
 
+    /**
+     *
+     * Constructor
+     *
+     * @param context Context object
+     * @param dataSourceType String
+     */
     PhoneSensorDataSource(Context context, String dataSourceType) {
         this.context = context;
         this.dataSourceType = dataSourceType;
         this.enabled = false;
     }
 
+    /**
+     * @return the dataSourceType field
+     */
     public String getDataSourceType() {
         return dataSourceType;
     }
 
+    /**
+     * @return whether or not this data source is enabled
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Sets the enabled field to the desired boolean state
+     *
+     * @param enabled whether the data source should be enabled or not
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    /**
+     * Sets enabled field to true when passed a DataSource object
+     *
+     * @param dataSource dataSource that should be updated
+     */
     public void updateDataSource(DataSource dataSource){
         enabled=true;
     }
+
+    /**
+     * @return the frequency field value
+     */
     public String getFrequency(){
         return frequency;
     }
+
+    /**
+     * @param frequency the frequency this object should be set to
+     */
     public void setFrequency(String frequency) {
         this.frequency = frequency;
     }
 
+    /**
+     * @return null if not enabled and a new DataSourceBuilder object otherwise
+     */
     DataSourceBuilder createDataSourceBuilder() {
         if (!enabled) return null;
         DataSource dataSource  = Configuration.getMetaData(dataSourceType);
@@ -93,6 +132,13 @@ public abstract class PhoneSensorDataSource {
     }
 
 
+    /**
+     * Creates a dataSourceClient object constructed from the sensor data source
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack CallBack object
+     * @throws DataKitException ----> When does this get thrown??
+     */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         dataKitAPI = DataKitAPI.getInstance(context);
         dataSourceClient = dataKitAPI.register(dataSourceBuilder);

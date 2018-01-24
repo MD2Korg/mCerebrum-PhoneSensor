@@ -1,29 +1,6 @@
-package org.md2k.phonesensor.phone.sensors;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Parcelable;
-import android.os.PowerManager;
-import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
-
-import org.md2k.datakitapi.datatype.DataType;
-import org.md2k.datakitapi.exception.DataKitException;
-import org.md2k.datakitapi.source.datasource.DataSource;
-import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
-import org.md2k.datakitapi.time.DateTime;
-import org.md2k.phonesensor.Configuration;
-import org.md2k.phonesensor.phone.CallBack;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,6 +24,29 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.phonesensor.phone.sensors;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
+import android.os.PowerManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
+
+import org.md2k.datakitapi.datatype.DataType;
+import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
+import org.md2k.datakitapi.time.DateTime;
+import org.md2k.phonesensor.Configuration;
+import org.md2k.phonesensor.phone.CallBack;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.HashMap;
 
 public class PhoneSensorDataSources {
     private static final String TAG = PhoneSensorDataSources.class.getSimpleName();

@@ -1,28 +1,6 @@
-package org.md2k.phonesensor.phone.sensors;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
-
-import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.datatype.DataTypeFloat;
-import org.md2k.datakitapi.exception.DataKitException;
-import org.md2k.datakitapi.source.METADATA;
-import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
-import org.md2k.datakitapi.source.datasource.DataSourceType;
-import org.md2k.datakitapi.time.DateTime;
-import org.md2k.phonesensor.ServicePhoneSensor;
-import org.md2k.phonesensor.phone.CallBack;
-
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,6 +24,29 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.phonesensor.phone.sensors;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
+
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.datatype.DataTypeFloat;
+import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.source.METADATA;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
+import org.md2k.datakitapi.source.datasource.DataSourceType;
+import org.md2k.datakitapi.time.DateTime;
+import org.md2k.phonesensor.ServicePhoneSensor;
+import org.md2k.phonesensor.phone.CallBack;
+
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class CPU extends PhoneSensorDataSource {
     private Handler scheduler;
     private long[] curValues = new long[2];
