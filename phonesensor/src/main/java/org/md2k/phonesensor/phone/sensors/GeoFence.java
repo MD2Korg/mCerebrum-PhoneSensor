@@ -142,6 +142,12 @@ class GeoFence extends PhoneSensorDataSource {
         });
     }
 
+    /**
+     *
+     *
+     * @return
+     * @throws DataKitException
+     */
     private String getLastListFromDataKit() throws DataKitException {
         ArrayList<DataType> dataTypes = dataKitAPI.query(dataSourceClient, 1);
         if (dataTypes.size() == 0) return null;
@@ -189,6 +195,10 @@ class GeoFence extends PhoneSensorDataSource {
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+
+    /**
+     *
+     */
     private void addGeofence() {
         final GeofencingRequest geofencingRequest = createGeofencingRequest();
 

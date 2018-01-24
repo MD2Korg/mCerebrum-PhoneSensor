@@ -34,37 +34,65 @@ import org.md2k.datakitapi.source.platform.Platform;
 import org.md2k.datakitapi.source.platform.PlatformBuilder;
 import org.md2k.datakitapi.source.platform.PlatformType;
 
+/**
+ *
+ */
 public class PhoneSensorPlatform {
     private static PhoneSensorPlatform instance=null;
     Context context;
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     private PhoneSensorPlatform(Context context) {
         this.context = context;
     }
 
+    /**
+     * Creates a new instance if one does not exist
+     *
+     * @param context
+     * @return The instance, whether pre-existing or just created.
+     */
     public static PhoneSensorPlatform getInstance(Context context){
         if(instance==null)
             instance=new PhoneSensorPlatform(context);
         return instance;
-
     }
 
+    /**
+     * @return Always returns null.
+     */
     public String getId() {
         return null;
     }
 
+    /**
+     * @return Build version
+     */
     public String getOS(){
         return Build.VERSION.RELEASE;
     }
 
+    /**
+     * @return The <code>PlatformType</code> as indicated by <code>dataKitAPI</code>
+     */
     public String getType(){
         return PlatformType.PHONE;
     }
 
+    /**
+     * @return Manufacturer of the device
+     */
     public String getManufacturer(){
         return Build.MANUFACTURER;
     }
 
+    /**
+     * @return Model name of the device
+     */
     public String getName(){
         return android.os.Build.MODEL;
     }

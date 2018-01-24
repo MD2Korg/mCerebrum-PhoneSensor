@@ -114,6 +114,8 @@ public class CPU extends PhoneSensorDataSource {
     }
 
     /**
+     * Reads the CPU usage data from <code>/proc/stat</code> and stores it in an array.
+     *
      * @param values
      */
     private void readUsage(long[] values) {
