@@ -55,16 +55,33 @@ import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Observer;
 import rx.Subscription;
 
+/**
+ *
+ */
 class ActivityType extends PhoneSensorDataSource {
     private static final String TAG = ActivityType.class.getSimpleName();
     private ReactiveLocationProvider locationProvider;
     private Subscription subscription;
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     ActivityType(Context context) {
         super(context, DataSourceType.ACTIVITY_TYPE);
         locationProvider = new ReactiveLocationProvider(context);
         frequency = "1.0";
     }
+
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then registers this sensor with Android's SensorManager
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     @Override
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         try {
@@ -92,6 +109,9 @@ class ActivityType extends PhoneSensorDataSource {
         }
     }
 
+    /**
+     * Unregisters the listener for this sensor
+     */
     @Override
     public void unregister() {
         try {
@@ -103,6 +123,10 @@ class ActivityType extends PhoneSensorDataSource {
     }
 
 
+    /**
+     * @param type
+     * @return 
+     */
     private int getActivityType(int type) {
         switch (type) {
             case DetectedActivity.STILL:
@@ -123,6 +147,12 @@ class ActivityType extends PhoneSensorDataSource {
                 return ResultType.ActivityType.UNKNOWN;
         }
     }
+
+    /**
+     * Puts data about mostProbableActivity into an array and pushes it out to dataKitAPI
+     *
+     * @param mostProbableActivity Most likely activity based on possible DetectedActivity objects
+     */
     private void saveData(DetectedActivity mostProbableActivity){
         double samples[] = new double[2];
         samples[DataFormat.ActivityType.Confidence] = mostProbableActivity.getConfidence();
