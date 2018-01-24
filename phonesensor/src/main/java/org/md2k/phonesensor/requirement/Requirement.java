@@ -1,7 +1,6 @@
-package org.md2k.phonesensor.requirement;
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +25,8 @@ package org.md2k.phonesensor.requirement;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor.requirement;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 
@@ -35,5 +36,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.md2k.mcerebrum.commons.permission.Permission;
 import org.md2k.mcerebrum.commons.permission.PermissionCallback;
 
+/**
+ * 
+ */
 public class Requirement {
 }
