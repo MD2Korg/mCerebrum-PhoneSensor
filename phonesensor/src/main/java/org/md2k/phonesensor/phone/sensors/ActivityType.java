@@ -125,7 +125,7 @@ class ActivityType extends PhoneSensorDataSource {
 
     /**
      * @param type
-     * @return 
+     * @return
      */
     private int getActivityType(int type) {
         switch (type) {

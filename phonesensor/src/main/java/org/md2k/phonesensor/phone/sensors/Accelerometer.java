@@ -65,7 +65,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
 
     /**
      * Constructor
-     *
+     * Default frequency = SENSOR_DELAY_UI = "16"
      * @param context
      */
     public Accelerometer(Context context) {
@@ -84,7 +84,11 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     }
 
     /**
-     * Called when there is a new sensor event. This can be a data change or a timestamp change
+     * Called when there is a new sensor event. This can be a data change or a timestamp change.
+     * <p>
+     *     If the time since the last data save is larger than the minimum time, the data put into
+     *     an array and sent to dataKitAPI to be saved
+     * </p>
      *
      * @param event event that triggered the method call
      */
