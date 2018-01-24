@@ -74,7 +74,7 @@ public class Memory extends PhoneSensorDataSource {
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     public Memory(Context context) {
         super(context, DataSourceType.MEMORY);

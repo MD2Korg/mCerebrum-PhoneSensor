@@ -89,9 +89,8 @@ public class Battery extends PhoneSensorDataSource {
 
     /**
      * Constructor
-     * Default frequency is "1.0"
      *
-     * @param context
+     * @param context Android context
      */
     public Battery(Context context) {
         super(context, DataSourceType.BATTERY);

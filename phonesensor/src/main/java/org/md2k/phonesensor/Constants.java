@@ -31,6 +31,9 @@ import android.content.Context;
 
 import com.google.android.gms.location.DetectedActivity;
 
+/**
+ * This class provides a list of constants for monitored activies
+ */
 public class Constants {
     public static final String FILENAME_ASSET_METADATA = "meta_data.json";
     private Constants() {
@@ -53,6 +56,10 @@ public class Constants {
             DetectedActivity.UNKNOWN
     };
 
+    /**
+     * @param detectedActivityType An integer value associated with a detected activity
+     * @return The detected activity type as a string
+     */
     public static String getActivityString(int detectedActivityType) {
         switch(detectedActivityType) {
             case DetectedActivity.IN_VEHICLE:

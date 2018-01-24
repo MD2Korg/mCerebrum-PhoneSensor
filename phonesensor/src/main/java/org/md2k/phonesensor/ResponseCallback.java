@@ -27,6 +27,9 @@
 
 package org.md2k.phonesensor;
 
+/**
+ *
+ */
 public interface ResponseCallback {
     public void onResponse(boolean result);
 }

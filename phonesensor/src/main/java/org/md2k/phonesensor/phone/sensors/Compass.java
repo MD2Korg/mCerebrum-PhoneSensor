@@ -57,6 +57,15 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
     private static final String SENSOR_DELAY_UI = "16";
     private static final String SENSOR_DELAY_GAME = "50";
     private static final String SENSOR_DELAY_FASTEST = "100";
+
+    /** Array of sampling rates for the sensor
+     * <ul>
+     *     <li><code>SENSOR_DELAY_NORMAL</code> is 6 hertz</li>
+     *     <li><code>SENSOR_DELAY_UI</code> is 16 hertz</li>
+     *     <li><code>SENSOR_DELAY_GAME</code> is 50 hertz</li>
+     *     <li><code>SENSOR_DELAY_FASTEST</code> is 100 hertz</li>
+     * </ul>
+     */
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     private SensorManager mSensorManager;
     double FILTER_DATA_MIN_TIME;
@@ -65,7 +74,7 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     public Compass(Context context) {
         super(context, DataSourceType.COMPASS);
@@ -84,10 +93,9 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
 
     /**
      * Called when there is a new sensor event. This can be a data change or a timestamp change.
-     * <p>
-     *     If the time since the last data save is larger than the minimum time, the data put into
-     *     an array and sent to dataKitAPI to be saved
-     * </p>
+     *
+     * If the time since the last data save is larger than the minimum time, the data put into
+     * an array and sent to dataKitAPI to be saved
      *
      * @param event event that triggered the method call
      */

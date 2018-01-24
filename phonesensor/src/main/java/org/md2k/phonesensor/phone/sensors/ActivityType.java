@@ -66,7 +66,7 @@ class ActivityType extends PhoneSensorDataSource {
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     ActivityType(Context context) {
         super(context, DataSourceType.ACTIVITY_TYPE);

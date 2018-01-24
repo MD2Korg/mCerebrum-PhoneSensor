@@ -46,27 +46,34 @@ import org.md2k.mcerebrum.core.data_format.DataFormat;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  * Implementing SensorEventListener allows certain methods in this class to be triggered when a
  * sensor is triggered or it's data changes.
  */
 public class Accelerometer extends PhoneSensorDataSource implements SensorEventListener {
+
     private static final String SENSOR_DELAY_NORMAL = "6";
     private static final String SENSOR_DELAY_UI = "16";
     private static final String SENSOR_DELAY_GAME = "50";
     private static final String SENSOR_DELAY_FASTEST = "100";
+
+    /** Array of sampling rates for the sensor
+     * <ul>
+     *     <li><code>SENSOR_DELAY_NORMAL</code> is 6 hertz</li>
+     *     <li><code>SENSOR_DELAY_UI</code> is 16 hertz</li>
+     *     <li><code>SENSOR_DELAY_GAME</code> is 50 hertz</li>
+     *     <li><code>SENSOR_DELAY_FASTEST</code> is 100 hertz</li>
+     * </ul>
+     */
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     long lastSaved=DateTime.getDateTime();
-    double FILTER_DATA_MIN_TIME;
+    double filterDataMinTime;
     private SensorManager mSensorManager;
 
     /**
      * Constructor
-     * Default frequency = SENSOR_DELAY_UI = "16"
-     * @param context
+     *
+     * @param context Android context
      */
     public Accelerometer(Context context) {
         super(context, DataSourceType.ACCELEROMETER);
@@ -95,7 +102,7 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     @Override
     public void onSensorChanged(SensorEvent event) {
         long curTime = DateTime.getDateTime();
-        if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
+        if ((double)(curTime - lastSaved) > filterDataMinTime) {
             lastSaved = curTime;
             double[] samples = new double[3];
             samples[DataFormat.Accelerometer.X] = event.values[0]/9.81;
@@ -145,21 +152,21 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         switch (frequency) {
             case SENSOR_DELAY_UI:
-                FILTER_DATA_MIN_TIME = 1000.0 / (16.0 + EPSILON_UI);
+                filterDataMinTime = 1000.0 / (16.0 + EPSILON_UI);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
             case SENSOR_DELAY_GAME:
-                FILTER_DATA_MIN_TIME = 1000.0 / (50.0 + EPSILON_GAME);
+                filterDataMinTime = 1000.0 / (50.0 + EPSILON_GAME);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
 
                 break;
             case SENSOR_DELAY_FASTEST:
-                FILTER_DATA_MIN_TIME = 1000.0 / (100.0 + EPSILON_FASTEST);
+                filterDataMinTime = 1000.0 / (100.0 + EPSILON_FASTEST);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
 
                 break;
             case SENSOR_DELAY_NORMAL:
-                FILTER_DATA_MIN_TIME = 1000.0 / (6.0 + EPSILON_NORMAL);
+                filterDataMinTime = 1000.0 / (6.0 + EPSILON_NORMAL);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

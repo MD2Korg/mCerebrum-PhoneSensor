@@ -50,6 +50,8 @@ import java.util.ArrayList;
  *
  */
 public abstract class PhoneSensorDataSource {
+
+    // TODO document epsilons
     public static final double EPSILON_NORMAL = 2.0;
     public static final double EPSILON_UI = 5.0;
     public static final double EPSILON_GAME = 10.0;
@@ -67,7 +69,7 @@ public abstract class PhoneSensorDataSource {
      *
      * Constructor
      *
-     * @param context Context object
+     * @param context Android context
      * @param dataSourceType String
      */
     PhoneSensorDataSource(Context context, String dataSourceType) {
@@ -137,7 +139,7 @@ public abstract class PhoneSensorDataSource {
      *
      * @param dataSourceBuilder data source to be registered with dataKitAPI
      * @param newCallBack CallBack object
-     * @throws DataKitException ----> When does this get thrown??
+     * @throws DataKitException
      */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         dataKitAPI = DataKitAPI.getInstance(context);

@@ -83,7 +83,7 @@ class LocationFused extends PhoneSensorDataSource {
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     LocationFused(final Context context) {
         super(context, DataSourceType.LOCATION);

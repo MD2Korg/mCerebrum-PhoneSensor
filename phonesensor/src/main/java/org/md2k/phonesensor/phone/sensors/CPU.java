@@ -51,6 +51,7 @@ import java.util.HashMap;
  *
  */
 public class CPU extends PhoneSensorDataSource {
+    private static final int DELAY_MILLIS = 1000;
     private Handler scheduler;
     private long[] curValues = new long[2];
     private final Runnable statusCPU = new Runnable() {
@@ -58,6 +59,9 @@ public class CPU extends PhoneSensorDataSource {
         /**
          * When a statusCPU thread is created, this <code>run</code> method puts the CPU
          * data into an array and sends it to dataKitAPI.
+         *
+         * This method posts a delayed statusCPU action to the handler. The delay is set
+         * by a constant <code>DELAY_MILLIS</code>
          */
         @Override
         public void run() {
@@ -72,7 +76,7 @@ public class CPU extends PhoneSensorDataSource {
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDouble);
                 callBack.onReceivedData(dataTypeDouble);
-                scheduler.postDelayed(statusCPU, 1000);
+                scheduler.postDelayed(statusCPU, DELAY_MILLIS);
             } catch (DataKitException e) {
                 LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
             }
@@ -82,7 +86,7 @@ public class CPU extends PhoneSensorDataSource {
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     public CPU(Context context) {
         super(context, DataSourceType.CPU);

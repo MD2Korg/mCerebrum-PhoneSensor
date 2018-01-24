@@ -55,6 +55,15 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     private static final String SENSOR_DELAY_UI = "16";
     private static final String SENSOR_DELAY_GAME = "50";
     private static final String SENSOR_DELAY_FASTEST = "100";
+
+    /** Array of sampling rates for the sensor
+     * <ul>
+     *     <li><code>SENSOR_DELAY_NORMAL</code> is 6 hertz</li>
+     *     <li><code>SENSOR_DELAY_UI</code> is 16 hertz</li>
+     *     <li><code>SENSOR_DELAY_GAME</code> is 50 hertz</li>
+     *     <li><code>SENSOR_DELAY_FASTEST</code> is 100 hertz</li>
+     * </ul>
+     */
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     private final static long MICROSECONDS_IN_ONE_SECOND = 1000*1000*60L;
     private SensorManager mSensorManager;
@@ -63,7 +72,7 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     public StepCount(Context context) {
         super(context, DataSourceType.STEP_COUNT);

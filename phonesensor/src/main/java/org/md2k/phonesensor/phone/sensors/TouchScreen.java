@@ -54,7 +54,7 @@ import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 
 /**
- * TouchScreen
+ *
  */
 public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchListener{
     // window manager
@@ -63,11 +63,9 @@ public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchLi
     private LinearLayout touchLayout;
 
     /**
-     * TouchScreen
-     *
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     public TouchScreen(Context context) {
         super(context, DataSourceType.TOUCH_SCREEN);
@@ -75,7 +73,6 @@ public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchLi
     }
 
     /**
-     * updateDataSource
      *
      * @param dataSource
      */

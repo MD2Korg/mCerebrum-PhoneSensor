@@ -95,7 +95,7 @@ class GeoFence extends PhoneSensorDataSource {
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     GeoFence(final Context context) {
         super(context, DataSourceType.GEOFENCE);

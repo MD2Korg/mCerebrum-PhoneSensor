@@ -60,8 +60,10 @@ public class PhoneSensorDataSources {
 
     /**
      * Constructor
+     *
      * Makes a new ArrayList and adds new sensor objects to it.
-     * @param context
+     *
+     * @param context Android context
      */
     public PhoneSensorDataSources(Context context) {
         this.context = context;

@@ -58,9 +58,8 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
 
     /**
      * Constructor
-     * Default frequency is "1.0"
      *
-     * @param context
+     * @param context Android context
      */
     public AmbientTemperature(Context context) {
         super(context, DataSourceType.AMBIENT_TEMPERATURE);
@@ -80,10 +79,10 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
 
     /**
      * Called when there is a new sensor event. This can be a data change or a timestamp change.
-     * <p>
-     *     If the time since the last data save is larger than the minimum time, the data put into
-     *     an array and sent to dataKitAPI to be saved
-     * </p>
+     *
+     * If the time since the last data save is larger than the minimum time, the data put into
+     * an array and sent to dataKitAPI to be saved
+     *
      *
      * @param event event that triggered the method call
      */
@@ -102,6 +101,8 @@ public class AmbientTemperature extends PhoneSensorDataSource implements SensorE
 
     /**
      * Called when the accuracy of this sensor changes.
+     *
+     * Does nothing for this sensor
      *
      * @param sensor sensor object for this sensor
      * @param accuracy Accuracy of the sensor reading
