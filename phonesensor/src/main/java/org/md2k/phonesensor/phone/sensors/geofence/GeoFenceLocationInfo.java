@@ -1,7 +1,6 @@
-package org.md2k.phonesensor.phone.sensors.geofence;
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,25 +25,46 @@ package org.md2k.phonesensor.phone.sensors.geofence;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor.phone.sensors.geofence;
+
+/**
+ *
+ */
 public class GeoFenceLocationInfo {
     private String location;
     private double latitude;
     private double longitude;
 
+    /**
+     * Constructor
+     *
+     * @param location Name of the location
+     * @param latitude Latitude, or North-South position, of the location
+     * @param longitude Longitude, or East-West position, of the location
+     */
     public GeoFenceLocationInfo(String location, double latitude, double longitude) {
         this.location=location;
         this.latitude=latitude;
         this.longitude=longitude;
     }
 
+    /**
+     * @return Name of the location
+     */
     public String getLocation() {
         return location;
     }
 
+    /**
+     * @return Latitude, or North-South position, of the location
+     */
     public double getLatitude() {
         return latitude;
     }
 
+    /**
+     * @return Longitude, or East-West position, of the location
+     */
     public double getLongitude() {
         return longitude;
     }

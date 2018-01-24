@@ -1,7 +1,6 @@
-package org.md2k.phonesensor.phone.sensors.geofence;
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +25,8 @@ package org.md2k.phonesensor.phone.sensors.geofence;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor.phone.sensors.geofence;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -42,21 +43,37 @@ import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
+/**
+ *
+ */
 public class GeoFenceData {
     private Context context;
     private SharedPreferences sharedPref;
     private ArrayList<GeoFenceLocationInfo> geoFenceLocationInfos;
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     public GeoFenceData(Context context) {
         this.context = context;
         sharedPref = context.getSharedPreferences(
                 "geofence", Context.MODE_PRIVATE);
         read();
     }
+
+    /**
+     * @return
+     */
     public String getGeoFenceString(){
         return sharedPref.getString("data", null);
     }
 
+    /**
+     * Takes data string from sharedPref and processes it into a GeoFenceLocationInfo object which
+     * is then stored in the geoFenceLocationInfos ArrayList
+     */
     private void read() {
         geoFenceLocationInfos = new ArrayList<>();
         String data = getGeoFenceString();
@@ -70,6 +87,12 @@ public class GeoFenceData {
             geoFenceLocationInfos.add(new GeoFenceLocationInfo(location, latitude, longitude));
         }
     }
+
+    /**
+     * Clears the location data from the ArrayList
+     *
+     * @param context
+     */
     public static void clearData(final Activity context){
         final SharedPreferences sharedPref = context.getSharedPreferences(
                 "geofence", Context.MODE_PRIVATE);
@@ -90,10 +113,22 @@ public class GeoFenceData {
         }
     }
 
+    /**
+     * Adds the given object to the ArrayList
+     *
+     * @param g GeoFenceLocationInfo object to add to the ArrayList
+     */
     public void add(GeoFenceLocationInfo g) {
         geoFenceLocationInfos.add(g);
         write();
     }
+
+    /**
+     * Determines whether the given location is in the ArrayList or not
+     *
+     * @param location Name of the location to search for in the ArrayList
+     * @return Whether the location is present in the ArrayList
+     */
     public boolean isExist(String location){
         for (int i = 0; i < geoFenceLocationInfos.size(); i++)
             if (geoFenceLocationInfos.get(i).getLocation().equalsIgnoreCase(location)) {
@@ -102,6 +137,11 @@ public class GeoFenceData {
             return false;
     }
 
+    /**
+     * Removes the given location from the ArrayList
+     *
+     * @param location Name of the location to remove from the ArrayList
+     */
     public void delete(String location) {
         for (int i = 0; i < geoFenceLocationInfos.size(); i++)
             if (geoFenceLocationInfos.get(i).getLocation().equalsIgnoreCase(location)) {
@@ -111,6 +151,10 @@ public class GeoFenceData {
         write();
     }
 
+    /**
+     * Updates the ArrayList by first stopping the service, if running, editting geoFenceLocationInfos
+     * and then restarting the service
+     */
     private void write() {
         boolean flag = AppInfo.isServiceRunning(context, ServicePhoneSensor.class.getName());
         if(flag) context.stopService(new Intent(context, ServicePhoneSensor.class));
@@ -133,6 +177,9 @@ public class GeoFenceData {
 
     }
 
+    /**
+     * @return the ArrayList of GeoFenceLocationInfo objects
+     */
     public ArrayList<GeoFenceLocationInfo> getGeoFenceLocationInfos() {
         return geoFenceLocationInfos;
     }
