@@ -49,6 +49,10 @@ import org.md2k.phonesensor.phone.CallBack;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Implementing SensorEventListener allows certain methods in this class to be triggered when a
+ * sensor is triggered or it's data changes.
+ */
 public class Accelerometer extends PhoneSensorDataSource implements SensorEventListener {
     private static final String SENSOR_DELAY_NORMAL = "6";
     private static final String SENSOR_DELAY_UI = "16";
@@ -59,16 +63,31 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     double FILTER_DATA_MIN_TIME;
     private SensorManager mSensorManager;
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     public Accelerometer(Context context) {
         super(context, DataSourceType.ACCELEROMETER);
         frequency = SENSOR_DELAY_UI;
     }
 
+    /**
+     * Changes the frequency field to match the frequency field in the metadata of the new source
+     *
+     * @param dataSource dataSource that should be updated
+     */
     public void updateDataSource(DataSource dataSource) {
         super.updateDataSource(dataSource);
         frequency = dataSource.getMetadata().get(METADATA.FREQUENCY);
     }
 
+    /**
+     * Called when there is a new sensor event. This can be a data change or a timestamp change
+     *
+     * @param event event that triggered the method call
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         long curTime = DateTime.getDateTime();
@@ -88,17 +107,34 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         }
     }
 
+    /**
+     * Called when the accuracy of this sensor changes.
+     *
+     * @param sensor sensor object for this sensor
+     * @param accuracy Accuracy of the sensor reading
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
+    /**
+     * Unregisters the listener for this sensor
+     */
     public void unregister() {
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(this);
         }
     }
 
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then registers this sensor with Android's SensorManager
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
