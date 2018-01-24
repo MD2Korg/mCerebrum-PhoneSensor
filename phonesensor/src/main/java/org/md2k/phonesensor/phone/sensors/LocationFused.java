@@ -69,6 +69,9 @@ import rx.functions.Func1;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+/**
+ *
+ */
 class LocationFused extends PhoneSensorDataSource {
 
     private static final String TAG = LocationFused.class.getSimpleName();
@@ -77,11 +80,21 @@ class LocationFused extends PhoneSensorDataSource {
     private Subscription updatableLocationSubscription;
     private Observable<Location> locationUpdatesObservable;
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     LocationFused(final Context context) {
         super(context, DataSourceType.LOCATION);
         frequency = String.format(Locale.getDefault(), "%.2f",(1.0/(INTERVAL/1000.0)));
     }
 
+    /**
+     * Sends data samples to dataKitAPI as an array.
+     *
+     * @param location Location to be saved
+     */
     public void saveData(Location location) {
         double samples[] = new double[6];
         samples[DataFormat.Location.Latitude] = location.getLatitude();
@@ -128,6 +141,14 @@ class LocationFused extends PhoneSensorDataSource {
     }
 */
 
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then subscribes this sensor to an observer.
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     @Override
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
@@ -152,7 +173,7 @@ class LocationFused extends PhoneSensorDataSource {
     }
 
     /**
-     * Unregisters the listener for this sensor
+     * Unregisters the listener for this sensor and unsubscribes this sensor from its observer
      */
     @Override
     public void unregister() {
@@ -161,13 +182,25 @@ class LocationFused extends PhoneSensorDataSource {
             updatableLocationSubscription.unsubscribe();
     }
 
+    /**
+     * Shows a notification if the GPS is currently disabled and asks the user to enable it.
+     */
     private void showNotification() {
         PugNotification.with(context).load().identifier(12).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
                 .message("Location data can't be recorded. (Please click to turn on GPS)").autoCancel(true).click(ActivityPermission.class).simple().build();
     }
+
+    /**
+     * Removes a notification
+     */
     private void removeNotification() {
         PugNotification.with(context).cancel(12);
     }
+
+    /**
+     * Prepares an observable, updatable location using the Android-ReactiveLocation Library, see
+     * <a href="https://github.com/mcharmas/Android-ReactiveLocation"></a>
+     */
     private void prepareObservable(){
         locationProvider = new ReactiveLocationProvider(context);
         final LocationRequest locationRequest = LocationRequest.create()
@@ -178,20 +211,9 @@ class LocationFused extends PhoneSensorDataSource {
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)
-                                .setAlwaysShow(true)  //Refrence: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .setAlwaysShow(true)  //Reference: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
                                 .build()
                 )
-                /*.doOnNext(new Action1<LocationSettingsResult>() {
-                    @Override
-                    public void call(LocationSettingsResult locationSettingsResult) {
-                        Status status = locationSettingsResult.getStatus();
-                        if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
-                            showNotification();
-                            Toasty.error(context, "GPS is off. Could not continue...", Toast.LENGTH_SHORT).show();
-//                            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
-                        }
-                    }
-                })*/
                 .flatMap(new Func1<LocationSettingsResult, Observable<Location>>() {
                     @Override
                     public Observable<Location> call(LocationSettingsResult locationSettingsResult) {
@@ -211,6 +233,13 @@ class LocationFused extends PhoneSensorDataSource {
 
     }
     private BroadcastReceiver br = new BroadcastReceiver() {
+        /**
+         * Updates <code>locationManager</code> if the location provider changes and asks for GPS to
+         * be turned on if a provider is not enabled.
+         *
+         * @param context
+         * @param intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {

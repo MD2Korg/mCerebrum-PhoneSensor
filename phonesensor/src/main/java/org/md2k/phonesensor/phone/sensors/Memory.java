@@ -46,10 +46,17 @@ import org.md2k.phonesensor.phone.CallBack;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ *
+ */
 public class Memory extends PhoneSensorDataSource {
     private Handler scheduler;
     private final Runnable statusMemory = new Runnable() {
 
+        /**
+         * When a statusMemory thread is created, this <code>run</code> method calls <code>readUsage</code>
+         * and sends the resulting array to dataKitAPI.
+         */
         @Override
         public void run() {
             double[] samples = readUsage();
@@ -64,6 +71,11 @@ public class Memory extends PhoneSensorDataSource {
         }
     };
 
+    /**
+     * Constructor
+     *
+     * @param context
+     */
     public Memory(Context context) {
         super(context, DataSourceType.MEMORY);
         frequency = "1.0";
@@ -71,7 +83,7 @@ public class Memory extends PhoneSensorDataSource {
 
 
     /**
-     * Unregisters the listener for this sensor
+     * Unregisters this sensor by removing the callbacks and setting the Handler to null.
      */
     public void unregister() {
         if (scheduler != null) {
@@ -80,12 +92,25 @@ public class Memory extends PhoneSensorDataSource {
         }
     }
 
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then schedules the statusMemory thread.
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         scheduler = new Handler();
         scheduler.post(statusMemory);
     }
 
+    /**
+     * Reads the total and available memory of the device and stores those values in an array
+     *
+     * @return The array of memory data
+     */
     private double[] readUsage() {
         double[] samples = new double[2];
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
