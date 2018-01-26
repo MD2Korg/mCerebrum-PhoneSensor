@@ -46,9 +46,6 @@ import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.mcerebrum.core.data_format.DataFormat;;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  *
  */
@@ -68,7 +65,7 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
      */
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     private SensorManager mSensorManager;
-    double FILTER_DATA_MIN_TIME;
+    double filterDataMinTime;
     long lastSaved=DateTime.getDateTime();
 
     /**
@@ -102,7 +99,7 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
     @Override
     public void onSensorChanged(SensorEvent event) {
         long curTime = DateTime.getDateTime();
-        if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
+        if ((double)(curTime - lastSaved) > filterDataMinTime) {
             lastSaved = curTime;
             double[] samples = new double[3];
             samples[DataFormat.Compass.X] = event.values[0];
@@ -155,19 +152,19 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         switch (frequency) {
             case SENSOR_DELAY_UI:
-                FILTER_DATA_MIN_TIME = 1000.0 / (16.0 + EPSILON_UI);
+                filterDataMinTime = 1000.0 / (16.0 + EPSILON_UI);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
             case SENSOR_DELAY_GAME:
-                FILTER_DATA_MIN_TIME = 1000.0 / (50.0 + EPSILON_GAME);
+                filterDataMinTime = 1000.0 / (50.0 + EPSILON_GAME);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
                 break;
             case SENSOR_DELAY_FASTEST:
-                FILTER_DATA_MIN_TIME = 1000.0 / (100.0 + EPSILON_FASTEST);
+                filterDataMinTime = 1000.0 / (100.0 + EPSILON_FASTEST);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 break;
             case SENSOR_DELAY_NORMAL:
-                FILTER_DATA_MIN_TIME = 1000.0 / (6.0 + EPSILON_NORMAL);
+                filterDataMinTime = 1000.0 / (6.0 + EPSILON_NORMAL);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

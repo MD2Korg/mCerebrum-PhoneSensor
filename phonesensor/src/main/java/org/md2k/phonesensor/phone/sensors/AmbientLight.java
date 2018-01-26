@@ -92,10 +92,9 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
 
     /**
      * Called when there is a new sensor event. This can be a data change or a timestamp change.
-     * <p>
-     *     If the time since the last data save is larger than the minimum time, the data put into
-     *     an array and sent to dataKitAPI to be saved
-     * </p>
+     *
+     * If the time since the last data save is larger than the minimum time, the data put into
+     * an array and sent to dataKitAPI to be saved
      *
      * @param event event that triggered the method call
      */

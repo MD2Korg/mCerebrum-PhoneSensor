@@ -51,11 +51,26 @@ import java.util.ArrayList;
  */
 public abstract class PhoneSensorDataSource {
 
-    // TODO document epsilons
+    /**
+     * <code>EPSILON_NORMAL</code> is 2.0 by default
+     */
     public static final double EPSILON_NORMAL = 2.0;
+
+    /**
+     * <code>EPSILON_UI</code> is 5.0 by default
+     */
     public static final double EPSILON_UI = 5.0;
+
+    /**
+     * <code>EPSILON_GAME</code> is 10.0 by default
+     */
     public static final double EPSILON_GAME = 10.0;
+
+    /**
+     * <code>EPSILON_FASTEST</code> is 50.0 by default
+     */
     public static final double EPSILON_FASTEST = 50.0;
+    
     private static final String TAG = PhoneSensorDataSource.class.getSimpleName();
     final Context context;
     private final String dataSourceType;
@@ -66,11 +81,10 @@ public abstract class PhoneSensorDataSource {
     private boolean enabled;
 
     /**
-     *
      * Constructor
      *
      * @param context Android context
-     * @param dataSourceType String
+     * @param dataSourceType Type of the data source.
      */
     PhoneSensorDataSource(Context context, String dataSourceType) {
         this.context = context;

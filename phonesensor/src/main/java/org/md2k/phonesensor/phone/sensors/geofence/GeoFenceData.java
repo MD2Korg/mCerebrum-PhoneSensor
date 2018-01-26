@@ -54,7 +54,7 @@ public class GeoFenceData {
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     public GeoFenceData(Context context) {
         this.context = context;
@@ -64,7 +64,7 @@ public class GeoFenceData {
     }
 
     /**
-     * @return
+     * @return The data string of the geofence
      */
     public String getGeoFenceString(){
         return sharedPref.getString("data", null);
@@ -152,7 +152,7 @@ public class GeoFenceData {
     }
 
     /**
-     * Updates the ArrayList by first stopping the service, if running, editting geoFenceLocationInfos
+     * Updates the ArrayList by first stopping the service, if running, editing geoFenceLocationInfos
      * and then restarting the service
      */
     private void write() {

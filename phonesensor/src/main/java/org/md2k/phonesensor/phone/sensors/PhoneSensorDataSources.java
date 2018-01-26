@@ -162,7 +162,9 @@ public class PhoneSensorDataSources {
     }
 
     /**
-     *
+     * Clears the hashmap and iterates through the <code>phoneSensorDataSources</code> ArrayList.
+     * If the sensor is enabled, it is passed to <code>DataSourceBuilder</code>. Intents are added
+     * and then broadcast. Then the sensor is registered with dataKitAPI.
      */
     public void register() {
         hm.clear();

@@ -73,8 +73,9 @@ public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchLi
     }
 
     /**
+     * Changes the frequency field to match the frequency field in the metadata of the new source
      *
-     * @param dataSource
+     * @param dataSource dataSource that should be updated
      */
     public void updateDataSource(DataSource dataSource){
         super.updateDataSource(dataSource);
@@ -82,11 +83,12 @@ public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchLi
     }
 
     /**
-     * onTouch
+     * Puts time data into an array when the device has detected user interaction and sends that
+     * data to dataKitAPI
      *
-     * @param v
-     * @param event
-     * @return
+     * @param v Android view, actionable part of the UI
+     * @param event Android MotionEvent, movement of the input device
+     * @return Returns false if data is not successfully sent back to dataKitAPI
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -113,10 +115,11 @@ public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchLi
     }
 
     /**
-     * register
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then registers this sensor with Android's SensorManager
      *
-     * @param dataSourceBuilder
-     * @param newCallBack
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
      * @throws DataKitException
      */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
@@ -125,8 +128,6 @@ public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchLi
         // set layout width 30 px and height is equal to full screen
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(30, LinearLayout.LayoutParams.MATCH_PARENT);
         touchLayout.setLayoutParams(lp);
-        // set color if you want layout visible on screen
-//  touchLayout.setBackgroundColor(Color.CYAN);
         // set on touch listener
         touchLayout.setOnTouchListener(this);
 

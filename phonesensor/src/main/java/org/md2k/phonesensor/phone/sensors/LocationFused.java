@@ -237,8 +237,8 @@ class LocationFused extends PhoneSensorDataSource {
          * Updates <code>locationManager</code> if the location provider changes and asks for GPS to
          * be turned on if a provider is not enabled.
          *
-         * @param context
-         * @param intent
+         * @param context Android context
+         * @param intent 
          */
         @Override
         public void onReceive(Context context, Intent intent) {

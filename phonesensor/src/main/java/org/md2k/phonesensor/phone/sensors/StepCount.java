@@ -91,10 +91,9 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
 
     /**
      * Called when there is a new sensor event. This can be a data change or a timestamp change.
-     * <p>
-     *     The data is put into
-     *     an array and sent to dataKitAPI to be saved.
-     * </p>
+     *
+     * The data is put into
+     * an array and sent to dataKitAPI to be saved.
      *
      * @param event event that triggered the method call
      */

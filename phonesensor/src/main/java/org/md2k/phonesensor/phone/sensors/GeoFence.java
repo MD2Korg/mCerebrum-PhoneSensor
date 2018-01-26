@@ -105,7 +105,7 @@ class GeoFence extends PhoneSensorDataSource {
     }
 
     /**
-     *
+     * Saves location data to dataKitAPI on an observable interval
      */
     public void saveData() {
         subscriptionMinute = Observable.interval(0, 1, TimeUnit.MINUTES).map(new Func1<Long, Boolean>() {
@@ -143,9 +143,9 @@ class GeoFence extends PhoneSensorDataSource {
     }
 
     /**
+     * Queries dataKitAPI for the last set of data it was sent
      *
-     *
-     * @return
+     * @return The sample string from the first node of the ArrayList
      * @throws DataKitException
      */
     private String getLastListFromDataKit() throws DataKitException {
@@ -154,6 +154,31 @@ class GeoFence extends PhoneSensorDataSource {
         return ((DataTypeString) dataTypes.get(0)).getSample();
     }
 
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then registers this sensor with Android's SensorManager
+     *
+     * Creates a new <code>geoFenceData</code> object and fetches the last list from dataKitAPI.
+     *
+     * If the last list from dataKit and the recent list of locations are null, then the registering
+     * is complete.
+     * If only the recent list is null, then a new data point is inserted into dataKitAPI with the
+     * current timestamp and an empty string.
+     * If the last list from dataKit is null, then a new data point is inserted into dataKitAPI with
+     * current timestamp and the recent list of locations.
+     *
+     * A broadcast receiver is registered with Android when <code>android.location.PROVIDERS_CHANGED</code>
+     * is triggered.
+     *
+     * This <code>geoBroadcastReciever</code> is registered with Android when this sensor is registered
+     * with dataKitAPI.
+     *
+     * Calls <code>addGeofence</code> and <code>saveData</code>
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     @Override
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
@@ -172,7 +197,12 @@ class GeoFence extends PhoneSensorDataSource {
         context.registerReceiver(gbr, new IntentFilter("org.md2k.phonesensor.gbr"));
 
         reactiveLocationProvider = new ReactiveLocationProvider(context);
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        // This conditional currently checks for fine and course location permissions
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -189,6 +219,11 @@ class GeoFence extends PhoneSensorDataSource {
         saveData();
     }
 
+    /**
+     * Creates a new intent to send a broadcast
+     *
+     * @return The pending intent
+     */
     private PendingIntent createNotificationBroadcastPendingIntent() {
         Intent intent = new Intent("org.md2k.phonesensor.gbr"); //- intent to send a broadcast
 
@@ -197,7 +232,10 @@ class GeoFence extends PhoneSensorDataSource {
 
 
     /**
-     *
+     * Creates a geofencing request and a pending intent. <code>reactiveLocationProvider</code> is called
+     * to remove current geofences and create a flatMap. If fine location permission is granted,
+     * then <code>reactiveLocationProvider</code> is called to create a new geofence with the pending
+     * intent and the geofencing request created at the beginning of this method call.
      */
     private void addGeofence() {
         final GeofencingRequest geofencingRequest = createGeofencingRequest();
@@ -208,7 +246,8 @@ class GeoFence extends PhoneSensorDataSource {
                 .flatMap(new Func1<Status, Observable<Status>>() {
                     @Override
                     public Observable<Status> call(Status pendingIntentRemoveGeofenceResult) {
-                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED) {
                             // TODO: Consider calling
                             //    ActivityCompat#requestPermissions
                             // here to request the missing permissions, and then overriding
@@ -257,6 +296,9 @@ class GeoFence extends PhoneSensorDataSource {
             subscriptionMinute.unsubscribe();
     }
 
+    /**
+     * Removes all geofences from <code>reactiveLocationProvider</code>
+     */
     private void clearGeofence() {
         if(reactiveLocationProvider==null) return;
         reactiveLocationProvider.removeGeofences(createNotificationBroadcastPendingIntent()).subscribe(new Action1<Status>() {
@@ -275,11 +317,18 @@ class GeoFence extends PhoneSensorDataSource {
         });
     }
 
+    /**
+     * Uses <code>PugNotification</code> to ask the user to turn on GPS.
+     */
     private void showNotification() {
         PugNotification.with(context).load().identifier(12).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
-                .message("Location data can't be recorded. (Please click to turn on GPS)").autoCancel(true).click(ActivityPermission.class).simple().build();
+                .message("Location data can't be recorded. (Please click to turn on GPS)")
+                .autoCancel(true).click(ActivityPermission.class).simple().build();
     }
 
+    /**
+     * Removes a PugNotification
+     */
     private void removeNotification() {
         PugNotification.with(context).cancel(12);
     }
@@ -299,13 +348,19 @@ class GeoFence extends PhoneSensorDataSource {
         }
     };
 
+    /**
+     * Creates a new ArrayList of geofences from the current list of geofence data.
+     *
+     * @return A geofencing request
+     */
     private GeofencingRequest createGeofencingRequest() {
         ArrayList<Geofence> geofences = new ArrayList<>();
         for (int i = 0; i < geoFenceData.getGeoFenceLocationInfos().size(); i++) {
             currentList.put(geoFenceData.getGeoFenceLocationInfos().get(i).getLocation(), null);
             Geofence geofence = new Geofence.Builder()
                     .setRequestId(geoFenceData.getGeoFenceLocationInfos().get(i).getLocation())
-                    .setCircularRegion(geoFenceData.getGeoFenceLocationInfos().get(i).getLatitude(), geoFenceData.getGeoFenceLocationInfos().get(i).getLongitude(), RADIUS)
+                    .setCircularRegion(geoFenceData.getGeoFenceLocationInfos().get(i).getLatitude(),
+                            geoFenceData.getGeoFenceLocationInfos().get(i).getLongitude(), RADIUS)
                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
                     .build();
@@ -315,6 +370,7 @@ class GeoFence extends PhoneSensorDataSource {
                 GeofencingRequest.INITIAL_TRIGGER_EXIT).build();
     }
 
+    // TODO: Does this need to be deleted??
     void getLastLocation() {
 /*
         ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(context);
@@ -328,12 +384,26 @@ class GeoFence extends PhoneSensorDataSource {
 */
     }
 
+    /**
+     * This class allows for better geofence optimization by using broadcasts to receive geofence
+     * transitions instead of a service.
+     */
     public class GeofenceBroadcastReceiver extends BroadcastReceiver {
+        /**
+         * When <code>GeofenceBroadcastReceiver</code> receives a new broadcast, it determines if the
+         * generating event was an enter or exit transition and generates a list of triggered geofences.
+         * This resulting list is iterated through, data sources are built out of the locations and
+         * sent to dataKitAPI.
+         *
+         * @param context Android context
+         * @param intent Android intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             GeofencingEvent event = GeofencingEvent.fromIntent(intent);
             boolean result;
-            if (event.getGeofenceTransition() == Geofence.GEOFENCE_TRANSITION_ENTER) result = true;
+            if (event.getGeofenceTransition() == Geofence.GEOFENCE_TRANSITION_ENTER)
+                result = true;
             else if (event.getGeofenceTransition() == Geofence.GEOFENCE_TRANSITION_EXIT)
                 result = false;
             else return;

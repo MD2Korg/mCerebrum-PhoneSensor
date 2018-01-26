@@ -61,7 +61,7 @@ public class CPU extends PhoneSensorDataSource {
          * data into an array and sends it to dataKitAPI.
          *
          * This method posts a delayed statusCPU action to the handler. The delay is set
-         * by a constant <code>DELAY_MILLIS</code>
+         * by a constant <code>DELAY_MILLIS</code> which is set to 1000 milliseconds by default.
          */
         @Override
         public void run() {
