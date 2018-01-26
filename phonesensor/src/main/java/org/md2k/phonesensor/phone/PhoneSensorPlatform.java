@@ -35,7 +35,8 @@ import org.md2k.datakitapi.source.platform.PlatformBuilder;
 import org.md2k.datakitapi.source.platform.PlatformType;
 
 /**
- *
+ * This class creates objects that hold information about the device platform, including manufacturer,
+ * model, and operating system build version.
  */
 public class PhoneSensorPlatform {
     private static PhoneSensorPlatform instance=null;
@@ -44,7 +45,7 @@ public class PhoneSensorPlatform {
     /**
      * Constructor
      *
-     * @param context
+     * @param context Android context
      */
     private PhoneSensorPlatform(Context context) {
         this.context = context;
@@ -53,7 +54,7 @@ public class PhoneSensorPlatform {
     /**
      * Creates a new instance if one does not exist
      *
-     * @param context
+     * @param context Android context
      * @return The instance, whether pre-existing or just created.
      */
     public static PhoneSensorPlatform getInstance(Context context){
