@@ -65,19 +65,40 @@ import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 
+/**
+ *
+ */
 public class ActivityMain extends AppCompatActivity {
     HashMap<String, TextView> hashMapData = new HashMap<>();
     boolean isEverythingOk = false;
     Handler mHandler;
     int operation;
 
+    /** Set to 0. */
     public static final int OPERATION_RUN = 0;
+
+    /** Set to 1. */
     public static final int OPERATION_SETTINGS = 1;
+
+    /** Set to 2. */
     public static final int OPERATION_PLOT = 2;
-    public static final int OPERATION_START_BACKGROUND=3;
-    public static final int OPERATION_STOP_BACKGROUND=4;
+
+
+    /** Set to 3. */
+    public static final int OPERATION_START_BACKGROUND = 3;
+
+    /** Set to 4. */
+    public static final int OPERATION_STOP_BACKGROUND = 4;
+
+    /** Set to "operation" */
     public static final String OPERATION = "operation";
 
+    /**
+     * Calls
+     *
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
