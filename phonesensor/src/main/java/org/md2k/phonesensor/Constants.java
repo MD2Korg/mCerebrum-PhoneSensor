@@ -57,6 +57,19 @@ public class Constants {
     };
 
     /**
+     * The DetectedActivities this app monitors are:
+     * <ul>
+     *     <li><code>IN_VEHICLE</code></li>
+     *     <li><code>ON_BICYCLE</code></li>
+     *     <li><code>ON_FOOT</code></li>
+     *     <li><code>RUNNING</code></li>
+     *     <li><code>STILL</code></li>
+     *     <li><code>TILTING</code></li>
+     *     <li><code>UNKNOWN</code></li>
+     *     <li><code>WALKING</code></li>
+     *     <li><code>UNDEFINED</code></li>
+     * </ul>
+     *
      * @param detectedActivityType An integer value associated with a detected activity
      * @return The detected activity type as a string
      */
