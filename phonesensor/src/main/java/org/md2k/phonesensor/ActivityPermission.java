@@ -103,8 +103,17 @@ public class ActivityPermission extends AppCompatActivity {
 
     /**
      * Checks Google play services for the require permissions and enables GPS if successful.
+     * The required permissions are:
+     * <ul>
+     *     <li><code>READ_EXTERNAL_STORAGE</code></li>
+     *     <li><code>WRITE_EXTERNAL_STORAGE</code></li>
+     *     <li><code>ACCESS_FINE_LOCATION</code></li>
+     *     <li><code>ACCESS_COURSE_LOCATION</code></li>
+     *     <li><code>INTERNET</code></li>
+     *     <li><code>ACTIVITY_RECOGNITION</code></li>
+     *     <li><code>SYSTEM_ALERT_WINDOW</code></li>
+     * </ul>
      *
-     * TODO: Consider listing required permissions
      */
     public void checkAllPermission() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
@@ -189,6 +198,9 @@ public class ActivityPermission extends AppCompatActivity {
     /**
      * Creates a location request with high accuracy and an interval of 5000,
      * creates a new <code>ReactiveLocationProvider</code> and subscribes it to a new observer.
+     * <p>
+     * REFERENCE: <a href="http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never" >StackOverflow</a>
+     * </p>
      */
     public void enableGPS() {
         final LocationRequest locationRequest = LocationRequest.create()
@@ -199,28 +211,23 @@ public class ActivityPermission extends AppCompatActivity {
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)
-                                .setAlwaysShow(true)  //Refrence: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .setAlwaysShow(true)  //See REFERENCE in method documentation.
                                 .build()
                 ).subscribe(new Observer<LocationSettingsResult>() {
-                    /**
-                     * Does nothing
-                     */
+
                     @Override
                     public void onCompleted() {
 
                     }
 
-                    /**
-                     * Does nothing
-                     *
-                     * @param e
-                     */
                     @Override
                     public void onError(Throwable e) {
 
                     }
 
-                    /**TODO: Not sure what this does other than check permissions again...
+                    /**
+                     * Checks for location permissions
+                     *
                      * @param locationSettingsResult
                      */
                     @Override
