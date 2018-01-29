@@ -33,8 +33,21 @@ import android.view.MenuItem;
 
 import org.md2k.phonesensor.phone.sensors.geofence.GeoFenceData;
 
+/**
+ * This class handles the geofencing settings activity.
+ */
 public class ActivitySettingsGeofence extends AppCompatActivity {
 
+    /**
+     * Creates the geofence settings activity.
+     *
+     * <p>
+     *     The <code>GeoFenceData</code> is cleared when this activity is created with an intent to clear.
+     * </p>
+     *
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +64,12 @@ public class ActivitySettingsGeofence extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles menu item selection.
+     *
+     * @param item Android MenuItem
+     * @return true when the menu item selection actions are successful.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

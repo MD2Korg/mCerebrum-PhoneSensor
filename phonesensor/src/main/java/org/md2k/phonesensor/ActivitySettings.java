@@ -36,7 +36,7 @@ import org.md2k.mcerebrum.commons.permission.Permission;
 import org.md2k.mcerebrum.commons.permission.PermissionCallback;
 
 /**
- * This method handles the settings activity for this application.
+ * This class handles the settings activity for this application.
  */
 public class ActivitySettings extends AppCompatActivity {
 
