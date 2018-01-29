@@ -161,7 +161,7 @@ public class ActivityPermission extends AppCompatActivity {
      *
      * @param requestCode The code sent with the request, used for request/result verification
      * @param resultCode  The code returned with the result, used for request/result verification
-     * @param data
+     * @param data Android intent
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
