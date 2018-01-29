@@ -54,13 +54,16 @@ import java.util.HashMap;
 import java.util.Random;
 
 /**
- *
+ * This class is for the plotting activity.
  */
 public class ActivityPlot extends RealtimeLineChartActivity {
     String dataSourceType;
 
     /**
-     * @param savedInstanceState
+     * Fetches the data source type for the plot.
+     *
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,10 @@ public class ActivityPlot extends RealtimeLineChartActivity {
         if(dataSourceType==null) finish();
 
     }
+
+    /**
+     * Registers <code>mMessageReceiver</code> when the activity is resumed.
+     */
     @Override
     public void onResume(){
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -76,12 +83,20 @@ public class ActivityPlot extends RealtimeLineChartActivity {
 
         super.onResume();
     }
+
+    /**
+     * Creates a new broadcast receiver that updates the plot when it receives new data.
+     */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             updatePlot(intent);
         }
     };
+
+    /**
+     * Unregisters <code>mMessageReceiver</code> when this activity is paused.
+     */
     @Override
     public void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
@@ -90,9 +105,9 @@ public class ActivityPlot extends RealtimeLineChartActivity {
     }
 
     /**
+     * Updates the plot with data.
      *
-     *
-     * @param intent
+     * @param intent Android intent
      */
     void updatePlot(Intent intent) {
         float[] sample=new float[1];
@@ -121,7 +136,7 @@ public class ActivityPlot extends RealtimeLineChartActivity {
                 sample[i]= (float) samples[i];
             }
         }
-        addEntry(sample, legends,600);
+        addEntry(sample, legends, 600);
     }
 
 }
