@@ -62,11 +62,22 @@ import rx.Observer;
 import rx.Subscription;
 import rx.functions.Action1;
 
+/**
+ * Preferences Fragment for geofence settings
+ */
 public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
     public static final int REQUEST_CHECK_SETTINGS = 1000;
     GeoFenceData geoFenceData;
     Subscription subscription;
     MaterialDialog materialDialog;
+
+    /**
+     * Reads configuration, enables GPS, inflates <code>R.xml.pref_geofence</code> and calls
+     * <code>createPreferencesScreen</code>.
+     *
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,11 +91,21 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
     private Subscription updatableLocationSubscription;
 
 
+    /**
+     * Unsubscribes <code>updatableLocationSubscripton</code>.
+     */
     public void unregister() {
         if (updatableLocationSubscription != null && !updatableLocationSubscription.isUnsubscribed())
             updatableLocationSubscription.unsubscribe();
     }
 
+    /**
+     * Handles user permissions results.
+     *
+     * @param requestCode The code sent with the request, used for request/result verification
+     * @param resultCode  The code returned with the result, used for request/result verification
+     * @param data Android intent
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -108,6 +129,15 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Creates the settings view
+     *
+     * @param inflater Android LayoutInflater
+     * @param container Android ViewGroup
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     * @return The view this method created.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -118,11 +148,26 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
         return v;
     }
 
+    /**
+     * Creates a preference screen.
+     *
+     * <p>
+     *     Calls <code>setConfiguredLocation()</code> and <code>addLocation</code>.
+     * </p>
+     */
     void createPreferenceScreen() {
         setConfiguredLocation();
         addLocation();
     }
 
+    /**
+     * Adds a configured location.
+     *
+     * <p>
+     *     This is used to set a user's current local as home, work, or other. The name of "other"
+     *     can be customized by the user.
+     * </p>
+     */
     void addLocation() {
         Preference p = findPreference("key_add");
         p.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -154,6 +199,9 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
 
     }
 
+    /**
+     * Sets a configured location
+     */
     void setConfiguredLocation() {
         PreferenceCategory pc = (PreferenceCategory) findPreference("key_configured_location");
         pc.removeAll();
@@ -166,6 +214,12 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
             p.setTitle(l);
             p.setSummary("(Latitude: " + la + ", Longitude: " + lo+")");
             p.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                /**
+                 * Allows a user to delete a configured location when they select it.
+                 *
+                 * @param preference Preference in question.
+                 * @return Always returns true.
+                 */
                 @Override
                 public boolean onPreferenceClick(final Preference preference) {
                     Dialog.simple(getActivity(), "Delete Location", "Delete location = " + preference.getKey() + "?", "Yes", "Cancel", new DialogCallback() {
@@ -184,7 +238,17 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
         }
     }
 
-
+    /**
+     * Enables the GPS via location requests.
+     *
+     * <p>
+     * Creates a location request with high accuracy and an interval of 5000,
+     * creates a new <code>ReactiveLocationProvider</code> and subscribes it to a new observer.
+     * </p>
+     * <p>
+     * REFERENCE: <a href="http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never" >StackOverflow</a>
+     * </p>
+     */
     void enableGPS() {
         ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getActivity());
         final LocationRequest locationRequest = LocationRequest.create()
@@ -194,7 +258,7 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)
-                                .setAlwaysShow(true)  //Reference: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .setAlwaysShow(true)  //See REFERENCE in the method description.
                                 .build()
                 );
         updatableLocationSubscription = locationUpdatesObservable.subscribe(new Observer<LocationSettingsResult>() {
@@ -208,6 +272,11 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
 
             }
 
+            /**
+             * Checks for location permissions
+             *
+             * @param locationSettingsResult
+             */
             @Override
             public void onNext(LocationSettingsResult locationSettingsResult) {
                 try {
@@ -234,10 +303,18 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
 
     }
 
+    /**
+     * Adds a geofence centered on the current location to the preferences list.
+     *
+     * @param l Name of location to be added.
+     */
     void addToList(final String l) {
         materialDialog = Dialog.progressIndeterminate(getActivity(), "Searching current location...").show();
-//        ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getActivity());
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -254,6 +331,11 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
                 .setNumUpdates(1)
                 .setInterval(0);
         subscription = locationProvider.getUpdatedLocation(request).subscribe(new Action1<Location>() {
+            /**
+             * Creates a new geofence.
+             *
+             * @param location Location to geofence around.
+             */
             @Override
             public void call(Location location) {
                 GeoFenceLocationInfo g=new GeoFenceLocationInfo(l, location.getLatitude(), location.getLongitude());
@@ -262,19 +344,11 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
                 materialDialog.dismiss();
             }
         });
-/*
-        locationProvider.getLastKnownLocation()
-                .subscribe(new Action1<Location>() {
-                    @Override
-                    public void call(Location location) {
-                        GeoFenceLocationInfo g=new GeoFenceLocationInfo(l, location.getLatitude(), location.getLongitude());
-                        geoFenceData.add(g);
-                        updateLocation();
-
-                    }
-                });
-*/
     }
+
+    /**
+     * Dismisses any remaining dialogs, unsubscribe from any remaining subscriptions.
+     */
     @Override
     public void onDestroy(){
         if(materialDialog!=null && materialDialog.isShowing()) materialDialog.dismiss();
