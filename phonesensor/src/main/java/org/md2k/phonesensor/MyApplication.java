@@ -34,8 +34,15 @@ import com.blankj.utilcode.util.Utils;
 
 import org.md2k.mcerebrum.core.access.MCerebrum;
 
+/**
+ * This class connects this application to the <code>MCerebrum</code> core library.
+ */
 public class MyApplication extends Application {
     static Context context;
+
+    /**
+     * Creates the activity and calls on the <code>MCerebrum</code> library for initialization.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -43,6 +50,10 @@ public class MyApplication extends Application {
         Utils.init(this);
         MCerebrum.init(getApplicationContext(), MyMCerebrumInit.class);
     }
+
+    /**
+     * @return Android context
+     */
     public static Context getContext(){
         return context;
     }
