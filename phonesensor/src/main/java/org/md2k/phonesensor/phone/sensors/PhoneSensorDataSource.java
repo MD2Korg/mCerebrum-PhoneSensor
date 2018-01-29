@@ -46,8 +46,11 @@ import org.md2k.phonesensor.phone.PhoneSensorPlatform;
 import java.util.ArrayList;
 
 /**
+ * This class handles the creation of <code>PhoneSensorDataSource</code> objects.
  *
- *
+ * <p>
+ *     Each sensor makes one of these objects so it can interact with <code>dataKitAPI</code>.
+ * </p>
  */
 public abstract class PhoneSensorDataSource {
 

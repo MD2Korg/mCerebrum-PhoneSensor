@@ -80,7 +80,7 @@ import rx.functions.Func1;
 import static android.content.Context.LOCATION_SERVICE;
 
 /**
- *
+ * This class manages geofences.
  */
 class GeoFence extends PhoneSensorDataSource {
 
@@ -158,15 +158,17 @@ class GeoFence extends PhoneSensorDataSource {
      * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
      * and then registers this sensor with Android's SensorManager
      *
+     * <p>
      * Creates a new <code>geoFenceData</code> object and fetches the last list from dataKitAPI.
-     *
+     *</p><p>
      * If the last list from dataKit and the recent list of locations are null, then the registering
      * is complete.
      * If only the recent list is null, then a new data point is inserted into dataKitAPI with the
      * current timestamp and an empty string.
      * If the last list from dataKit is null, then a new data point is inserted into dataKitAPI with
      * current timestamp and the recent list of locations.
-     *
+     * </p>
+     * <p>
      * A broadcast receiver is registered with Android when <code>android.location.PROVIDERS_CHANGED</code>
      * is triggered.
      *
@@ -174,6 +176,7 @@ class GeoFence extends PhoneSensorDataSource {
      * with dataKitAPI.
      *
      * Calls <code>addGeofence</code> and <code>saveData</code>
+     *</p>
      *
      * @param dataSourceBuilder data source to be registered with dataKitAPI
      * @param newCallBack       CallBack object
@@ -232,10 +235,14 @@ class GeoFence extends PhoneSensorDataSource {
 
 
     /**
-     * Creates a geofencing request and a pending intent. <code>reactiveLocationProvider</code> is called
+     * Creates a geofencing request and a pending intent.
+     *
+     * <p>
+     * <code>reactiveLocationProvider</code> is called
      * to remove current geofences and create a flatMap. If fine location permission is granted,
      * then <code>reactiveLocationProvider</code> is called to create a new geofence with the pending
      * intent and the geofencing request created at the beginning of this method call.
+     * </p>
      */
     private void addGeofence() {
         final GeofencingRequest geofencingRequest = createGeofencingRequest();
@@ -390,10 +397,14 @@ class GeoFence extends PhoneSensorDataSource {
      */
     public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         /**
+         * Triggered by a geofencing event.
+         *
+         * <p>
          * When <code>GeofenceBroadcastReceiver</code> receives a new broadcast, it determines if the
          * generating event was an enter or exit transition and generates a list of triggered geofences.
          * This resulting list is iterated through, data sources are built out of the locations and
          * sent to dataKitAPI.
+         *</p>
          *
          * @param context Android context
          * @param intent Android intent

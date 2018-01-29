@@ -47,7 +47,7 @@ import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.mcerebrum.core.data_format.DataFormat;;
 
 /**
- *
+ * This class handles the compass.
  */
 public class Compass extends PhoneSensorDataSource implements SensorEventListener {
     private static final String SENSOR_DELAY_NORMAL = "6";
@@ -56,12 +56,15 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
     private static final String SENSOR_DELAY_FASTEST = "100";
 
     /** Array of sampling rates for the sensor
-     * <ul>
+     *
+     * <p>
+     *  <ul>
      *     <li><code>SENSOR_DELAY_NORMAL</code> is 6 hertz</li>
      *     <li><code>SENSOR_DELAY_UI</code> is 16 hertz</li>
      *     <li><code>SENSOR_DELAY_GAME</code> is 50 hertz</li>
      *     <li><code>SENSOR_DELAY_FASTEST</code> is 100 hertz</li>
-     * </ul>
+     *  </ul>
+     * </p>
      */
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     private SensorManager mSensorManager;
@@ -139,8 +142,10 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
      * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
      * and then registers this sensor with Android's SensorManager
      *
+     * <p>
      * This method also sets a minimum amount of time between data saves based upon the frequency
      * field of this object.
+     *</p>
      *
      * @param dataSourceBuilder data source to be registered with dataKitAPI
      * @param newCallBack       CallBack object

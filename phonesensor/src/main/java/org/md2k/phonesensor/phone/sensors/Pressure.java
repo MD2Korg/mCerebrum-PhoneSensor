@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * This class handles the pressure sensor.
  */
 public class Pressure extends PhoneSensorDataSource implements SensorEventListener {
     private SensorManager mSensorManager;
@@ -79,8 +79,10 @@ public class Pressure extends PhoneSensorDataSource implements SensorEventListen
     /**
      * Called when there is a new sensor event. This can be a data change or a timestamp change.
      *
+     * <p>
      * If the time since the last data save is larger than the minimum time, the data put into
      * an array and sent to dataKitAPI to be saved
+     * </p>
      *
      * @param event event that triggered the method call
      */

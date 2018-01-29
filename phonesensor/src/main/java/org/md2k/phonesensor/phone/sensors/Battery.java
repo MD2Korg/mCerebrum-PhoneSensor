@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * This class handles the battery sensor.
  */
 public class Battery extends PhoneSensorDataSource {
     private Handler scheduler;

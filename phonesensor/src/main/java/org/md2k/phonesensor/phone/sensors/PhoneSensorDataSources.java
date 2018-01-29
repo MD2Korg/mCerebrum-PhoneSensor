@@ -49,7 +49,7 @@ import java.util.EmptyStackException;
 import java.util.HashMap;
 
 /**
- *
+ * This class handles the ArrayList management for <code>PhoneSensorDataSource</code>
  */
 public class PhoneSensorDataSources {
     private static final String TAG = PhoneSensorDataSources.class.getSimpleName();
@@ -61,7 +61,9 @@ public class PhoneSensorDataSources {
     /**
      * Constructor
      *
+     * <p>
      * Makes a new ArrayList and adds new sensor objects to it.
+     * </p>
      *
      * @param context Android context
      */
@@ -129,7 +131,10 @@ public class PhoneSensorDataSources {
 
     /**
      * Finds the given type of data source by iterating through the ArrayList.
+     *
+     * <p>
      * If an appropriate data source is not found <code>null</code> is returned.
+     * </p>
      *
      * @param type Type of data source to find.
      * @return
@@ -163,8 +168,11 @@ public class PhoneSensorDataSources {
 
     /**
      * Clears the hashmap and iterates through the <code>phoneSensorDataSources</code> ArrayList.
+     *
+     * <p>
      * If the sensor is enabled, it is passed to <code>DataSourceBuilder</code>. Intents are added
      * and then broadcast. Then the sensor is registered with dataKitAPI.
+     * </p>
      */
     public void register() {
         hm.clear();

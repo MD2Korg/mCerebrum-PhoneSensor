@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * This class handles the memory use sensor.
  */
 public class Memory extends PhoneSensorDataSource {
     private Handler scheduler;

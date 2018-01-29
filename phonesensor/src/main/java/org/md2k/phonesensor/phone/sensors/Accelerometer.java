@@ -47,8 +47,7 @@ import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 
 /**
- * Implementing SensorEventListener allows certain methods in this class to be triggered when a
- * sensor is triggered or it's data changes.
+ * This class handles the accelerometer.
  */
 public class Accelerometer extends PhoneSensorDataSource implements SensorEventListener {
 
@@ -58,12 +57,15 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     private static final String SENSOR_DELAY_FASTEST = "100";
 
     /** Array of sampling rates for the sensor
-     * <ul>
+     *
+     * <p>
+     *  <ul>
      *     <li><code>SENSOR_DELAY_NORMAL</code> is 6 hertz</li>
      *     <li><code>SENSOR_DELAY_UI</code> is 16 hertz</li>
      *     <li><code>SENSOR_DELAY_GAME</code> is 50 hertz</li>
      *     <li><code>SENSOR_DELAY_FASTEST</code> is 100 hertz</li>
-     * </ul>
+     *  </ul>
+     * </p>
      */
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     long lastSaved=DateTime.getDateTime();
@@ -93,8 +95,10 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
     /**
      * Called when there is a new sensor event. This can be a data change or a timestamp change.
      *
+     * <p>
      * If the time since the last data save is larger than the minimum time, the data put into
      * an array and sent to dataKitAPI to be saved
+     *</p>
      *
      * @param event event that triggered the method call
      */

@@ -48,7 +48,7 @@ import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.mcerebrum.core.data_format.DataFormat;;
 
 /**
- *
+ * This class handles the ambient light sensor.
  */
 public class AmbientLight extends PhoneSensorDataSource implements SensorEventListener{
 
@@ -58,12 +58,15 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
     private static final String SENSOR_DELAY_FASTEST = "100";
 
     /** Array of sampling rates for the sensor
-     * <ul>
+     *
+     * <p>
+     *  <ul>
      *     <li><code>SENSOR_DELAY_NORMAL</code> is 6 hertz</li>
      *     <li><code>SENSOR_DELAY_UI</code> is 16 hertz</li>
      *     <li><code>SENSOR_DELAY_GAME</code> is 50 hertz</li>
      *     <li><code>SENSOR_DELAY_FASTEST</code> is 100 hertz</li>
-     * </ul>
+     *  </ul>
+     * </p>
      */
     public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
     private SensorManager mSensorManager;
@@ -93,8 +96,10 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
     /**
      * Called when there is a new sensor event. This can be a data change or a timestamp change.
      *
+     * <p>
      * If the time since the last data save is larger than the minimum time, the data put into
      * an array and sent to dataKitAPI to be saved
+     *</p>
      *
      * @param event event that triggered the method call
      */
@@ -118,7 +123,9 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
     /**
      * Called when the accuracy of this sensor changes.
      *
+     * <p>
      * Does nothing for this sensor.
+     *</p>
      *
      * @param sensor Sensor object for this sensor
      * @param accuracy Accuracy of the sensor reading
@@ -141,8 +148,10 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
      * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
      * and then registers this sensor with Android's SensorManager
      *
+     * <p>
      * This method sets a minimum amount of time between data saves based upon the frequency
      * field of this object.
+     *</p>
      *
      * @param dataSourceBuilder data source to be registered with dataKitAPI
      * @param newCallBack       CallBack object

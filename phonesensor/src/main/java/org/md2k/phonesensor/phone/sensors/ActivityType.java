@@ -56,7 +56,7 @@ import rx.Observer;
 import rx.Subscription;
 
 /**
- *
+ * This class handles activity detection.
  */
 class ActivityType extends PhoneSensorDataSource {
     private static final String TAG = ActivityType.class.getSimpleName();

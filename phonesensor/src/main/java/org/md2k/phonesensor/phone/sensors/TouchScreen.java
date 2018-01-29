@@ -54,7 +54,7 @@ import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 
 /**
- *
+ * This class handles the touchscreen interaction sensor.
  */
 public class TouchScreen extends PhoneSensorDataSource implements View.OnTouchListener{
     // window manager

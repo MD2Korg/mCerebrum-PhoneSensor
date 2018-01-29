@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * This class handles the CPU sensor.
  */
 public class CPU extends PhoneSensorDataSource {
     private static final int DELAY_MILLIS = 1000;

@@ -70,7 +70,7 @@ import rx.functions.Func1;
 import static android.content.Context.LOCATION_SERVICE;
 
 /**
- *
+ * This class handles the fused location (WIFI and GPS based) sensor.
  */
 class LocationFused extends PhoneSensorDataSource {
 
@@ -198,8 +198,12 @@ class LocationFused extends PhoneSensorDataSource {
     }
 
     /**
-     * Prepares an observable, updatable location using the Android-ReactiveLocation Library, see
-     * <a href="https://github.com/mcharmas/Android-ReactiveLocation"></a>
+     * Prepares an observable, updatable location using the Android-ReactiveLocation Library
+     *
+     * <p>
+     *     <a href="https://github.com/mcharmas/Android-ReactiveLocation">Android-ReactiveLocation Library</a>
+     *     <a href="http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never">REFERENCE</a>
+     * </p>
      */
     private void prepareObservable(){
         locationProvider = new ReactiveLocationProvider(context);
@@ -211,7 +215,7 @@ class LocationFused extends PhoneSensorDataSource {
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)
-                                .setAlwaysShow(true)  //Reference: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .setAlwaysShow(true)  //See REFERENCE above
                                 .build()
                 )
                 .flatMap(new Func1<LocationSettingsResult, Observable<Location>>() {
