@@ -35,8 +35,17 @@ import android.widget.Toast;
 import org.md2k.mcerebrum.commons.permission.Permission;
 import org.md2k.mcerebrum.commons.permission.PermissionCallback;
 
+/**
+ * This method handles the settings activity for this application.
+ */
 public class ActivitySettings extends AppCompatActivity {
 
+    /**
+     * Creates the settings activity for this application.
+     *
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +58,12 @@ public class ActivitySettings extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles menu item selection.
+     *
+     * @param item Android MenuItem
+     * @return true when the menu item selection actions are successful.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
