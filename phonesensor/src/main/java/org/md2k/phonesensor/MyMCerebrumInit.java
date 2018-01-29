@@ -40,7 +40,15 @@ import org.md2k.mcerebrum.core.access.MCerebrum;
 import org.md2k.mcerebrum.core.access.MCerebrumInfo;
 import org.md2k.phonesensor.plot.ActivityPlotChoice;
 
+/**
+ * This class initializes the <code>MCerebrum</code> libraries for use with this application.
+ */
 public class MyMCerebrumInit extends MCerebrumInfo {
+    /**
+     * Updates variables in the <code>MCerebrum</code> core and common libraries.
+     *
+     * @param context Android context
+     */
     @Override
     public void update(final Context context){
         MCerebrum.setReportActivity(context, ActivityPlotChoice.class);
