@@ -44,7 +44,11 @@ import java.util.ArrayList;
 import es.dmoral.toasty.Toasty;
 
 /**
+ * This class creates a data object for geofences.
  *
+ * <p>
+ *     These objects have a context and shared preferences.
+ * </p>
  */
 public class GeoFenceData {
     private Context context;

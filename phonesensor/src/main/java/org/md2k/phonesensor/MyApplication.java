@@ -52,6 +52,8 @@ public class MyApplication extends Application {
     }
 
     /**
+     * Returns the context.
+     *
      * @return Android context
      */
     public static Context getContext(){

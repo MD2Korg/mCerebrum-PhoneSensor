@@ -83,8 +83,9 @@ public class ActivityPermission extends AppCompatActivity {
         }
         PermissionInfo permissionInfo = new PermissionInfo();
         permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
+
             /**
-             * @param result
+             * @param result The result of the callback.
              */
             @Override
             public void onResult(Boolean result) {
@@ -104,7 +105,9 @@ public class ActivityPermission extends AppCompatActivity {
     /**
      * Checks Google play services for the require permissions and enables GPS if successful.
      * The required permissions are:
-     * <ul>
+     *
+     * <p>
+     *  <ul>
      *     <li><code>READ_EXTERNAL_STORAGE</code></li>
      *     <li><code>WRITE_EXTERNAL_STORAGE</code></li>
      *     <li><code>ACCESS_FINE_LOCATION</code></li>
@@ -112,8 +115,8 @@ public class ActivityPermission extends AppCompatActivity {
      *     <li><code>INTERNET</code></li>
      *     <li><code>ACTIVITY_RECOGNITION</code></li>
      *     <li><code>SYSTEM_ALERT_WINDOW</code></li>
-     * </ul>
-     *
+     *  </ul>
+     * </p>
      */
     public void checkAllPermission() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
@@ -153,11 +156,15 @@ public class ActivityPermission extends AppCompatActivity {
     }
 
     /**
+     * Resolves request codes for permissions.
+     *
+     * <p>
      * If the request code is 9000 (associated with Google play services in <code>checkAllPermissions</code>),
      * <code>Toasty</code> shows a Google play services error, the activity result is set to canceled and
      * <code>finish()</code> is called.
      *
      * If the error code is <code>REQUEST_CHECK_SETTINGS</code>,
+     *</p>
      *
      * @param requestCode The code sent with the request, used for request/result verification
      * @param resultCode  The code returned with the result, used for request/result verification
@@ -196,8 +203,12 @@ public class ActivityPermission extends AppCompatActivity {
     private Subscription updatableLocationSubscription;
 
     /**
+     * Enables the GPS via location requests.
+     *
+     * <p>
      * Creates a location request with high accuracy and an interval of 5000,
      * creates a new <code>ReactiveLocationProvider</code> and subscribes it to a new observer.
+     * </p>
      * <p>
      * REFERENCE: <a href="http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never" >StackOverflow</a>
      * </p>

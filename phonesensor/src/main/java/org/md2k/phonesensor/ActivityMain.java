@@ -68,7 +68,7 @@ import io.fabric.sdk.android.Fabric;
 import static android.app.Activity.RESULT_OK;
 
 /**
- *
+ * <code>ActivityMain</code> is the execution start of the application.
  */
 public class ActivityMain extends AppCompatActivity {
     HashMap<String, TextView> hashMapData = new HashMap<>();

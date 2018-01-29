@@ -28,7 +28,11 @@
 package org.md2k.phonesensor.phone.sensors.geofence;
 
 /**
+ * This class creates a location info object for use in location arrays.
  *
+ * <p>
+ *     This object has a location name, a lattitude, and a longitude.
+ * </p>
  */
 public class GeoFenceLocationInfo {
     private String location;

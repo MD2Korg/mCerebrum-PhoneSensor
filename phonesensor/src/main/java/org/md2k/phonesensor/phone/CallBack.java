@@ -29,6 +29,13 @@ package org.md2k.phonesensor.phone;
 
 import org.md2k.datakitapi.datatype.DataType;
 
+/**
+ * Callback interface for this application.
+ *
+ * <p>
+ *     This callback is used for receiving data in the form of a <code>DataType</code> object.
+ * </p>
+ */
 public interface CallBack {
     void onReceivedData(DataType data);
 }

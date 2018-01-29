@@ -48,14 +48,14 @@ import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSource;
 import org.md2k.phonesensor.phone.sensors.PhoneSensorDataSources;
 
 /**
- * Preferences Fragment for plot
+ * Preferences Fragment for Plot
  */
 public class PrefsFragmentPlot extends PreferenceFragment {
     PhoneSensorDataSources phoneSensorDataSources;
 
     /**
      * Reads configuration, inflates <code>R.xml.pref_plot_choice</code> and calls
-     * <code>createPreferencesFromResource</code>.
+     * <code>createPreferencesScreen</code>.
      *
      * @param savedInstanceState This activity's previous state, is null if this activity has never
      *                           existed.

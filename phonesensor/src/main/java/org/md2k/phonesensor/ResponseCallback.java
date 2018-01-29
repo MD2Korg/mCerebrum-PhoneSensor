@@ -28,7 +28,11 @@
 package org.md2k.phonesensor;
 
 /**
+ * Callback interface
  *
+ * <p>
+ *     This callback is used for reponses from the user, usually when asking for permissions.
+ * </p>
  */
 public interface ResponseCallback {
     public void onResponse(boolean result);

@@ -52,7 +52,7 @@ import br.com.goncalves.pugnotification.notification.PugNotification;
 import es.dmoral.toasty.Toasty;
 
 /**
- *
+ * This class handles the phone sensor service.
  */
 public class ServicePhoneSensor extends Service {
     public static final String INTENT_STOP = "intent_stop";
@@ -119,11 +119,15 @@ public class ServicePhoneSensor extends Service {
     }
 
     /**
-     * Connects <code>phonesensor</code> to <code>dataKitAPI</code> by getting the application context
-     * of <code>dataKitAPI</code> and passing it a new <code>OnConnectionListener</code> object.
+     * Connects <code>phonesensor</code> to <code>dataKitAPI</code>.
+     *
+     * <p>
+     * Gets the application context of <code>dataKitAPI</code> and passing it a new
+     * <code>OnConnectionListener</code> object.
      *
      * If the connection fails, it is logged, Toasty produces an error message,
      * <code>disconnectDataKit</code> is called and the service is stopped.
+     * </p>
      */
     private void connectDataKit() {
         dataKitAPI = DataKitAPI.getInstance(getApplicationContext());
@@ -151,8 +155,12 @@ public class ServicePhoneSensor extends Service {
     }
 
     /**
+     * Disconnects <code>dataKitAPI</code>.
+     *
+     * <p>
      * Unregisters Android's message receiver from <code>LocalBroadcastManager</code>,
      * unregisters any remaining phone sensors and runs <code>dataKitAPI.disconnect</code>.
+     * </p>
      */
     private synchronized void disconnectDataKit() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
