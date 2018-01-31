@@ -51,7 +51,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class handles the ambient temperature sensor.
+ * This class manages the ambient temperature sensor on the device.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 1 hertz.
+ * </p>
  */
 public class AmbientTemperature extends PhoneSensorDataSource implements SensorEventListener {
     private SensorManager mSensorManager;

@@ -75,7 +75,14 @@ import static android.content.Context.LOCATION_SERVICE;
 class LocationFused extends PhoneSensorDataSource {
 
     private static final String TAG = LocationFused.class.getSimpleName();
-    private static final long INTERVAL = 1000L*60;
+    /**
+     * Sampling interval in milliseconds.
+     *
+     * <p>
+     *     Deafault is 60,000 milliseconds (the number of milliseconds in a minute)
+     * </p>
+     */
+    private static final long INTERVAL = 1000L * 60;
     private ReactiveLocationProvider locationProvider;
     private Subscription updatableLocationSubscription;
     private Observable<Location> locationUpdatesObservable;
@@ -111,35 +118,6 @@ class LocationFused extends PhoneSensorDataSource {
             LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
         }
     }
-
-/*
-    private void statusCheck() {
-        final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
-            intent.putExtra("enabled", true);
-            context.sendBroadcast(intent);
-            //TODO: gps off
-*/
-/*
-            AlertDialogs.AlertDialog(context, "Error: GPS is off", "Please turn on GPS\n\n (* select Mode = High Accuracy)", org.md2k.utilities.R.drawable.ic_error_red_50dp, "Turn On", "Cancel", null, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-                    } else {
-                        dialog.cancel();
-                    }
-                }
-            });
-*//*
-
-        }
-    }
-*/
 
     /**
      * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI

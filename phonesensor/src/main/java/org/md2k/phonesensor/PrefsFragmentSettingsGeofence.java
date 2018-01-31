@@ -66,6 +66,8 @@ import rx.functions.Action1;
  * Preferences Fragment for geofence settings
  */
 public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
+
+    /** Request code for checking settings. */
     public static final int REQUEST_CHECK_SETTINGS = 1000;
     GeoFenceData geoFenceData;
     Subscription subscription;
@@ -87,6 +89,13 @@ public class PrefsFragmentSettingsGeofence extends PreferenceFragment {
         createPreferenceScreen();
     }
 
+    /**
+     * Interval for location updates.
+     *
+     * <p>
+     *     Set to 5000 milliseconds.
+     * </p>
+     */
     private static final long INTERVAL = 5000L;
     private Subscription updatableLocationSubscription;
 

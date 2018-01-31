@@ -47,7 +47,11 @@ import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
 
 /**
- * This class handles the accelerometer.
+ * This class manages the accelerometer on the device.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 16 hertz.
+ * </p>
  */
 public class Accelerometer extends PhoneSensorDataSource implements SensorEventListener {
 
@@ -67,7 +71,11 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
      *  </ul>
      * </p>
      */
-    public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
+    public static final String[] frequencyOptions =
+            {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
+
+    /** Gravitational acceleration on Earth. */
+    public static final double GRAVITY = 9.81;
     long lastSaved=DateTime.getDateTime();
     double filterDataMinTime;
     private SensorManager mSensorManager;
@@ -108,9 +116,9 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         if ((double)(curTime - lastSaved) > filterDataMinTime) {
             lastSaved = curTime;
             double[] samples = new double[3];
-            samples[DataFormat.Accelerometer.X] = event.values[0]/9.81;
-            samples[DataFormat.Accelerometer.Y] = event.values[1]/9.81;
-            samples[DataFormat.Accelerometer.Z] = event.values[2]/9.81;
+            samples[DataFormat.Accelerometer.X] = event.values[0] / GRAVITY;
+            samples[DataFormat.Accelerometer.Y] = event.values[1] / GRAVITY;
+            samples[DataFormat.Accelerometer.Z] = event.values[2] / GRAVITY;
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
@@ -155,21 +163,21 @@ public class Accelerometer extends PhoneSensorDataSource implements SensorEventL
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         switch (frequency) {
             case SENSOR_DELAY_UI:
-                filterDataMinTime = 1000.0 / (16.0 + EPSILON_UI);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_UI + EPSILON_UI);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
             case SENSOR_DELAY_GAME:
-                filterDataMinTime = 1000.0 / (50.0 + EPSILON_GAME);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_GAME + EPSILON_GAME);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
 
                 break;
             case SENSOR_DELAY_FASTEST:
-                filterDataMinTime = 1000.0 / (100.0 + EPSILON_FASTEST);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_FASTEST + EPSILON_FASTEST);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
 
                 break;
             case SENSOR_DELAY_NORMAL:
-                filterDataMinTime = 1000.0 / (6.0 + EPSILON_NORMAL);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_NORMAL + EPSILON_NORMAL);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

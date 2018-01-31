@@ -104,6 +104,19 @@ public class PrefsFragmentPlot extends PreferenceFragment {
     /**
      * Sets mSensor equal to the appropriate sensor via sensor manager.
      *
+     * <p>
+     *     Possible data sources are:
+     *     <ul>
+     *          <li>Accelerometer</li>
+     *          <li>Gryoscope</li>
+     *          <li>Ambient Temperature</li>
+     *          <li>Compass</li>
+     *          <li>Ambient Light</li>
+     *          <li>Pressure</li>
+     *          <li>Proximity</li>
+     *          <li>Location</li>
+     *     </ul>
+     * </p>
      * @param dataSourceType The data source type in question.
      * @return Whether the given data source type has an appropriate sensor.
      */

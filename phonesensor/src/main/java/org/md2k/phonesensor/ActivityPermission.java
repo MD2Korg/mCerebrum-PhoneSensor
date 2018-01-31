@@ -63,10 +63,19 @@ import static org.md2k.phonesensor.PrefsFragmentSettings.REQUEST_CHECK_SETTINGS;
  */
 public class ActivityPermission extends AppCompatActivity {
 
+    /** Request code for the Google API <code>getErrorDialog()</code>. */
+    public static final int REQUEST_GOOGLE_API = 9000;
+
+    /** Request code for requesting overlay permissions from the user. */
+    public static final int REQUEST_OVERLAY = 101;
+
     /**
-     * Creates this activity. If the Android version is Marshmallow (6.0) or later, the user is asked
-     * for overlay permissions.
+     * Creates this activity.
      *
+     * <p>
+     *      If the Android version is Marshmallow (6.0) or later, the user is asked
+     *      for overlay permissions.
+     * </p>
      * @param savedInstanceState This activity's previous state, is null if this activity has never
      *                           existed.
      */
@@ -78,7 +87,7 @@ public class ActivityPermission extends AppCompatActivity {
             if (!Settings.canDrawOverlays(this)) {
                 Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                 myIntent.setData(Uri.parse("package:" + getPackageName()));
-                startActivityForResult(myIntent, 101);
+                startActivityForResult(myIntent, REQUEST_OVERLAY);
             }
         }
         PermissionInfo permissionInfo = new PermissionInfo();
@@ -124,7 +133,7 @@ public class ActivityPermission extends AppCompatActivity {
         if (result != ConnectionResult.SUCCESS) {
             if (googleAPI.isUserResolvableError(result)) {
                 googleAPI.getErrorDialog(ActivityPermission.this, result,
-                        9000, new DialogInterface.OnCancelListener() {
+                        REQUEST_GOOGLE_API, new DialogInterface.OnCancelListener() {
                             /**
                              * When the user cancels the dialog, <code>Toasty</code> shows a Google
                              * play services error, the activity result is set to canceled and
@@ -172,7 +181,7 @@ public class ActivityPermission extends AppCompatActivity {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 9000) {
+        if (requestCode == REQUEST_GOOGLE_API) {
             GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
             int result = googleAPI.isGooglePlayServicesAvailable(this);
             if (result != ConnectionResult.SUCCESS) {

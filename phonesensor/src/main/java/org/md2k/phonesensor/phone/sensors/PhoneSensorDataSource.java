@@ -50,6 +50,25 @@ import java.util.ArrayList;
  *
  * <p>
  *     Each sensor makes one of these objects so it can interact with <code>dataKitAPI</code>.
+ *
+ *     The data sources that inherit from this superclass are:
+ *     <ul>
+ *         <li><code>Accelerometer</code></li>
+ *         <li><code>ActivityType</code></li>
+ *         <li><code>AmbientLight</code></li>
+ *         <li><code>AmbientTemperature</code></li>
+ *         <li><code>Battery</code></li>
+ *         <li><code>Compass</code></li>
+ *         <li><code>CPU</code></li>
+ *         <li><code>GeoFence</code></li>
+ *         <li><code>Gyroscope</code></li>
+ *         <li><code>LocationFused</code></li>
+ *         <li><code>Memory</code></li>
+ *         <li><code>Pressure</code></li>
+ *         <li><code>Proximity</code></li>
+ *         <li><code>StepCount</code></li>
+ *         <li><code>TouchScreen</code></li>
+ *     </ul>
  * </p>
  */
 public abstract class PhoneSensorDataSource {

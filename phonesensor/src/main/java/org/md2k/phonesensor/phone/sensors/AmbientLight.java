@@ -48,7 +48,11 @@ import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.mcerebrum.core.data_format.DataFormat;;
 
 /**
- * This class handles the ambient light sensor.
+ * This class manages the ambient light sensor on the device.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 16 hertz.
+ * </p>
  */
 public class AmbientLight extends PhoneSensorDataSource implements SensorEventListener{
 
@@ -97,8 +101,8 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
      * Called when there is a new sensor event. This can be a data change or a timestamp change.
      *
      * <p>
-     * If the time since the last data save is larger than the minimum time, the data put into
-     * an array and sent to dataKitAPI to be saved
+     *      If the time since the last data save is larger than the minimum time, the data put into
+     *      an array and sent to dataKitAPI to be saved
      *</p>
      *
      * @param event event that triggered the method call
@@ -124,8 +128,8 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
      * Called when the accuracy of this sensor changes.
      *
      * <p>
-     * Does nothing for this sensor.
-     *</p>
+     *      Does nothing for this sensor.
+     * </p>
      *
      * @param sensor Sensor object for this sensor
      * @param accuracy Accuracy of the sensor reading
@@ -149,9 +153,9 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
      * and then registers this sensor with Android's SensorManager
      *
      * <p>
-     * This method sets a minimum amount of time between data saves based upon the frequency
-     * field of this object.
-     *</p>
+     *      This method sets a minimum amount of time between data saves based upon the frequency
+     *      field of this object.
+     * </p>
      *
      * @param dataSourceBuilder data source to be registered with dataKitAPI
      * @param newCallBack       CallBack object
@@ -163,19 +167,19 @@ public class AmbientLight extends PhoneSensorDataSource implements SensorEventLi
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         switch (frequency) {
             case SENSOR_DELAY_UI:
-                filterDataMinTime = 1000.0 / (16.0 + EPSILON_UI);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_UI + EPSILON_UI);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
             case SENSOR_DELAY_GAME:
-                filterDataMinTime = 1000.0 / (50.0 + EPSILON_GAME);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_GAME + EPSILON_GAME);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
                 break;
             case SENSOR_DELAY_FASTEST:
-                filterDataMinTime = 1000.0 / (100.0 + EPSILON_FASTEST);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_FASTEST + EPSILON_FASTEST);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 break;
             case SENSOR_DELAY_NORMAL:
-                filterDataMinTime = 1000.0 / (6.0 + EPSILON_NORMAL);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_NORMAL + EPSILON_NORMAL);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

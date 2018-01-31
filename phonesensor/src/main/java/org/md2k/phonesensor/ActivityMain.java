@@ -71,6 +71,9 @@ import static android.app.Activity.RESULT_OK;
  * <code>ActivityMain</code> is the execution start of the application.
  */
 public class ActivityMain extends AppCompatActivity {
+
+    /** Request code for checking for all required permissions */
+    public static final int REQUEST_ALL_PERMISSIONS = 1111;
     HashMap<String, TextView> hashMapData = new HashMap<>();
     boolean isEverythingOk = false;
     Handler mHandler;
@@ -406,27 +409,23 @@ public class ActivityMain extends AppCompatActivity {
     /**
      * Creates a new <code>Intent</code> to check <code>ActivityPermission()</code> for the proper
      * permissions.
-     *
-     * <p>
-     *     The <code>resultCode</code> for this check is 1111.
-     * </p>
      */
     void checkRequirement() {
         Intent intent = new Intent(this, ActivityPermission.class);
-        startActivityForResult(intent, 1111);
+        startActivityForResult(intent, REQUEST_ALL_PERMISSIONS);
     }
 
 
     /**
      * Handles callback results for <code>checkRequirement()</code>.
      *
-     * @param requestCode The code sent with the request. It should be 1111 for <code>checkRequirement()</code>
+     * @param requestCode The code sent with the request.
      * @param resultCode The code returned with the result, used for request/result verification
      * @param data Android intent
      */
 @Override
 public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == 1111) {
+    if (requestCode == REQUEST_ALL_PERMISSIONS) {
         if(resultCode!=RESULT_OK){
             finish();
         }else{

@@ -124,6 +124,22 @@ class ActivityType extends PhoneSensorDataSource {
 
 
     /**
+     * Returns the integer value for the appropriate activity type
+     *
+     *<p>
+     *     The activity types are:
+     *     <ul>
+     *         <li><code>IN_VEHICLE</code></li>
+     *         <li><code>ON_BICYCLE</code></li>
+     *         <li><code>ON_FOOT</code></li>
+     *         <li><code>RUNNING</code></li>
+     *         <li><code>STILL</code></li>
+     *         <li><code>TILTING</code></li>
+     *         <li><code>UNKNOWN</code></li>
+     *         <li><code>WALKING</code></li>
+     *         <li><code>UNDEFINED</code></li>
+     *     </ul>
+     *</p>
      * @param type Integer value for the desired activity type
      * @return The integer value for the desired activity type
      */
@@ -149,7 +165,7 @@ class ActivityType extends PhoneSensorDataSource {
     }
 
     /**
-     * Puts data about mostProbableActivity into an array and pushes it out to dataKitAPI
+     * Puts data about <code>mostProbableActivity</code> into an array and pushes it out to dataKitAPI
      *
      * @param mostProbableActivity Most likely activity based on possible DetectedActivity objects
      */

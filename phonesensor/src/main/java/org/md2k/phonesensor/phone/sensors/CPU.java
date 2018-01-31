@@ -48,9 +48,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class handles the CPU sensor.
+ * This class creates a CPU sensor which gathers data about CPU usage from <code>/proc/stat</code>.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 1 hertz.
+ * </p>
  */
 public class CPU extends PhoneSensorDataSource {
+
+    /**
+     * Sample rate in milliseconds
+     *
+     * <p>
+     *     Default is 1000 milliseconds.
+     * </p>
+     */
     private static final int DELAY_MILLIS = 1000;
     private Handler scheduler;
     private long[] curValues = new long[2];

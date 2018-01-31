@@ -51,7 +51,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class handles the pressure sensor.
+ * This class manages the pressure sensor on the device.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 6 hertz.
+ * </p>
  */
 public class Pressure extends PhoneSensorDataSource implements SensorEventListener {
     private SensorManager mSensorManager;

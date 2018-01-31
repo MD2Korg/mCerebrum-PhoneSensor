@@ -49,9 +49,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class handles the battery sensor.
+ * This class creates a battery sensor which gathers battery temperature, voltage,
+ * and charge percentage data.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 1 hertz.
+ * </p>
  */
 public class Battery extends PhoneSensorDataSource {
+    /**
+     * Sample rate in milliseconds
+     *
+     * <p>
+     *     Default is 1000 milliseconds.
+     * </p>
+     */
+    public static final int SAMPLE_MILLIS = 1000;
     private Handler scheduler;
     private final Runnable batteryStatus = new Runnable() {
 
@@ -80,7 +93,7 @@ public class Battery extends PhoneSensorDataSource {
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
                 callBack.onReceivedData(dataTypeDoubleArray);
-                scheduler.postDelayed(batteryStatus, 1000);
+                scheduler.postDelayed(batteryStatus, SAMPLE_MILLIS);
             } catch (DataKitException e) {
                 LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
             }

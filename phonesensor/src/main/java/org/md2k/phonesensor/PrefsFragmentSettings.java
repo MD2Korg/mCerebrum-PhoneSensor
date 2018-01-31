@@ -79,6 +79,8 @@ import rx.Subscription;
  * Preferences Fragment for this application's settings.
  */
 public class PrefsFragmentSettings extends PreferenceFragment {
+
+    /** Request code for checking settings. */
     public static final int REQUEST_CHECK_SETTINGS = 1000;
     PhoneSensorDataSources phoneSensorDataSources;
     ArrayList<DataSource> defaultConfig;
@@ -117,6 +119,13 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         createPreferenceScreen();
     }
 
+    /**
+     * Interval for location updates.
+     *
+     * <p>
+     *     Set to 5000 milliseconds.
+     * </p>
+     */
     private static final long INTERVAL = 5000L;
     private Subscription updatableLocationSubscription;
 
@@ -124,7 +133,7 @@ public class PrefsFragmentSettings extends PreferenceFragment {
      * Enables the GPS via location requests.
      *
      * <p>
-     * Creates a location request with high accuracy and an interval of 5000,
+     * Creates a location request with high accuracy and a specified interval,
      * creates a new <code>ReactiveLocationProvider</code> and subscribes it to a new observer.
      * </p>
      * <p>

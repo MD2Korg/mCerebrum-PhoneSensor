@@ -35,10 +35,24 @@ import com.google.android.gms.location.DetectedActivity;
  * This class provides a list of constants for monitored activies
  */
 public class Constants {
+
+    /**
+     * Filename of the metadata file.
+     *
+     * <p>
+     *     <code>"meta_data.json"</code>
+     * </p>
+     */
     public static final String FILENAME_ASSET_METADATA = "meta_data.json";
     private Constants() {
     }
 
+    /**
+     * Name of the package.
+     * <p>
+     *     <code>"org.md2k.phonesensor"</code>
+     * </p>
+     */
     public static final String PACKAGE_NAME = "org.md2k.phonesensor";
 
 

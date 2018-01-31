@@ -47,7 +47,11 @@ import org.md2k.phonesensor.phone.CallBack;
 import org.md2k.mcerebrum.core.data_format.DataFormat;
 
 /**
- * This class handles the compass.
+ * This class manages the compass on the device.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 16 hertz.
+ * </p>
  */
 public class Compass extends PhoneSensorDataSource implements SensorEventListener {
     private static final String SENSOR_DELAY_NORMAL = "6";
@@ -157,19 +161,19 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
         Sensor mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         switch (frequency) {
             case SENSOR_DELAY_UI:
-                filterDataMinTime = 1000.0 / (16.0 + EPSILON_UI);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_UI + EPSILON_UI);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
                 break;
             case SENSOR_DELAY_GAME:
-                filterDataMinTime = 1000.0 / (50.0 + EPSILON_GAME);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_GAME + EPSILON_GAME);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
                 break;
             case SENSOR_DELAY_FASTEST:
-                filterDataMinTime = 1000.0 / (100.0 + EPSILON_FASTEST);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_FASTEST + EPSILON_FASTEST);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
                 break;
             case SENSOR_DELAY_NORMAL:
-                filterDataMinTime = 1000.0 / (6.0 + EPSILON_NORMAL);
+                filterDataMinTime = 1000.0 / (SENSOR_DELAY_NORMAL + EPSILON_NORMAL);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
                 break;
         }

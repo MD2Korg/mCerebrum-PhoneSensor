@@ -84,6 +84,13 @@ import static android.content.Context.LOCATION_SERVICE;
  */
 class GeoFence extends PhoneSensorDataSource {
 
+    /**
+     * Geofence radius in meters
+     *
+     * <p>
+     *     Default is 100 meters.
+     * </p>
+     */
     private static final float RADIUS = 100;
     private GeoFenceData geoFenceData;
     private ReactiveLocationProvider reactiveLocationProvider;
@@ -275,7 +282,6 @@ class GeoFence extends PhoneSensorDataSource {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-//                        toast("Error adding geofence.");
                         Log.d("abc", "Error adding geofence.", throwable);
                     }
                 });
@@ -311,15 +317,10 @@ class GeoFence extends PhoneSensorDataSource {
         reactiveLocationProvider.removeGeofences(createNotificationBroadcastPendingIntent()).subscribe(new Action1<Status>() {
             @Override
             public void call(Status status) {
-//                toast("Geofences removed");
             }
         }, new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-/*
-                toast("Error removing geofences");
-                Log.d(TAG, "Error removing geofences", throwable);
-*/
             }
         });
     }

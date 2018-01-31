@@ -47,9 +47,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class handles the memory use sensor.
+ * This class creates a memory sensor which gathers memory use data.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 1 hertz.
+ * </p>
  */
 public class Memory extends PhoneSensorDataSource {
+
+    /**
+     * Sample rate in milliseconds
+     *
+     * <p>
+     *     Default is 1000 milliseconds.
+     * </p>
+     */
+    public static final int SAMPLE_MILLIS = 1000;
     private Handler scheduler;
     private final Runnable statusMemory = new Runnable() {
 
@@ -64,7 +77,7 @@ public class Memory extends PhoneSensorDataSource {
             try {
                 dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
                 callBack.onReceivedData(dataTypeDoubleArray);
-                scheduler.postDelayed(statusMemory, 1000);
+                scheduler.postDelayed(statusMemory, SAMPLE_MILLIS);
             } catch (DataKitException e) {
                 LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
             }
