@@ -44,7 +44,7 @@ import org.md2k.datakitapi.source.datasource.DataSourceType;
 import org.md2k.datakitapi.time.DateTime;
 import org.md2k.phonesensor.ServicePhoneSensor;
 import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.mcerebrum.core.data_format.DataFormat;;
+import org.md2k.mcerebrum.core.data_format.DataFormat;
 
 /**
  * This class handles the gyroscope.
