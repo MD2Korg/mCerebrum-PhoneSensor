@@ -406,6 +406,10 @@ public class ActivityMain extends AppCompatActivity {
     /**
      * Creates a new <code>Intent</code> to check <code>ActivityPermission()</code> for the proper
      * permissions.
+     *
+     * <p>
+     *     The <code>resultCode</code> for this check is 1111.
+     * </p>
      */
     void checkRequirement() {
         Intent intent = new Intent(this, ActivityPermission.class);
@@ -416,7 +420,7 @@ public class ActivityMain extends AppCompatActivity {
     /**
      * Handles callback results for <code>checkRequirement()</code>.
      *
-     * @param requestCode The code sent with the request, used for request/result verification
+     * @param requestCode The code sent with the request. It should be 1111 for <code>checkRequirement()</code>
      * @param resultCode The code returned with the result, used for request/result verification
      * @param data Android intent
      */
@@ -446,7 +450,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
      */
     void readIntent() {
         if(getIntent().getExtras()!= null)
-        operation = getIntent().getExtras().getInt(OPERATION, 0);
+            operation = getIntent().getExtras().getInt(OPERATION, 0);
         else operation = 0;
     }
 
