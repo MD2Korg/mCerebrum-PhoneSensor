@@ -79,10 +79,20 @@ class LocationFused extends PhoneSensorDataSource {
      * Sampling interval in milliseconds.
      *
      * <p>
-     *     Deafault is 60,000 milliseconds (the number of milliseconds in a minute)
+     *     Default is 60,000 milliseconds (the number of milliseconds in a minute).
      * </p>
      */
     private static final long INTERVAL = 1000L * 60;
+
+    /**
+     * Notification id for <code>PugNotification</code>.
+     *
+     * <p>
+     *     Arbitrarily set to 12 by default.
+     * </p>
+     */
+    public static final int PUG_NOTI_ID = 12;
+
     private ReactiveLocationProvider locationProvider;
     private Subscription updatableLocationSubscription;
     private Observable<Location> locationUpdatesObservable;
@@ -164,7 +174,7 @@ class LocationFused extends PhoneSensorDataSource {
      * Shows a notification if the GPS is currently disabled and asks the user to enable it.
      */
     private void showNotification() {
-        PugNotification.with(context).load().identifier(12).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
+        PugNotification.with(context).load().identifier(PUG_NOTI_ID).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
                 .message("Location data can't be recorded. (Please click to turn on GPS)").autoCancel(true).click(ActivityPermission.class).simple().build();
     }
 
@@ -172,7 +182,7 @@ class LocationFused extends PhoneSensorDataSource {
      * Removes a notification
      */
     private void removeNotification() {
-        PugNotification.with(context).cancel(12);
+        PugNotification.with(context).cancel(PUG_NOTI_ID);
     }
 
     /**

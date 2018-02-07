@@ -92,6 +92,15 @@ class GeoFence extends PhoneSensorDataSource {
      * </p>
      */
     private static final float RADIUS = 100;
+
+    /**
+     * Notification id for <code>PugNotification</code>.
+     *
+     * <p>
+     *     Arbitrarily set to 12 by default.
+     * </p>
+     */
+    public static final int PUG_NOTI_ID = 12;
     private GeoFenceData geoFenceData;
     private ReactiveLocationProvider reactiveLocationProvider;
     private Subscription lastKnownLocationSubscription;
@@ -235,7 +244,7 @@ class GeoFence extends PhoneSensorDataSource {
      * @return The pending intent
      */
     private PendingIntent createNotificationBroadcastPendingIntent() {
-        Intent intent = new Intent("org.md2k.phonesensor.gbr"); //- intent to send a broadcast
+        Intent intent = new Intent("org.md2k.phonesensor.gbr"); // intent to send a broadcast
 
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -329,7 +338,7 @@ class GeoFence extends PhoneSensorDataSource {
      * Uses <code>PugNotification</code> to ask the user to turn on GPS.
      */
     private void showNotification() {
-        PugNotification.with(context).load().identifier(12).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
+        PugNotification.with(context).load().identifier(PUG_NOTI_ID).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
                 .message("Location data can't be recorded. (Please click to turn on GPS)")
                 .autoCancel(true).click(ActivityPermission.class).simple().build();
     }
@@ -338,7 +347,7 @@ class GeoFence extends PhoneSensorDataSource {
      * Removes a PugNotification
      */
     private void removeNotification() {
-        PugNotification.with(context).cancel(12);
+        PugNotification.with(context).cancel(PUG_NOTI_ID);
     }
 
     private BroadcastReceiver br = new BroadcastReceiver() {
