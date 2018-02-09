@@ -55,6 +55,7 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
     private static final String SENSOR_DELAY_UI = "16";
     private static final String SENSOR_DELAY_GAME = "50";
     private static final String SENSOR_DELAY_FASTEST = "100";
+    private static final String TAG = StepCount.class.getSimpleName();
 
     /** Array of sampling rates for the sensor
      *
@@ -112,7 +113,7 @@ public class StepCount extends PhoneSensorDataSource implements SensorEventListe
             curSteps = curTotalSteps- prevTotalStep;
             prevTotalStep =curTotalSteps;
         }
-        Log.d("abc", "total steps = "+ curTotalSteps+ "  steps=" + curSteps);
+        Log.d(TAG, "total steps = "+ curTotalSteps+ "  steps=" + curSteps);
         long curTime = DateTime.getDateTime();
         double[] samples = new double[]{curSteps};
         DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(curTime, samples);

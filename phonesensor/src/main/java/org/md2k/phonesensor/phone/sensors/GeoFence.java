@@ -107,6 +107,7 @@ class GeoFence extends PhoneSensorDataSource {
     private Subscription subscriptionMinute;
     private HashMap<String, DataSourceClient> currentList;
     private GeofenceBroadcastReceiver gbr;
+    private static final String TAG = GeoFence.class.getSimpleName();
 
     /**
      * Constructor
@@ -131,7 +132,7 @@ class GeoFence extends PhoneSensorDataSource {
                     if (entry.getValue() != null) {
                         DataSourceClient dataSourceClient = entry.getValue();
                         try {
-                            Log.d("abc", "location=" + entry.getKey() + " stays 1 minute");
+                            Log.d(TAG, "location=" + entry.getKey() + " stays 1 minute");
                             dataKitAPI.setSummary(dataSourceClient, new DataTypeIntArray(DateTime.getDateTime(), new int[]{60000}));
                         } catch (DataKitException e) {
                             e.printStackTrace();
@@ -286,12 +287,12 @@ class GeoFence extends PhoneSensorDataSource {
                 .subscribe(new Action1<Status>() {
                     @Override
                     public void call(Status addGeofenceResult) {
-                        Log.d("abc", "Geofence added, success: " + addGeofenceResult.isSuccess());
+                        Log.d(TAG, "Geofence added, success: " + addGeofenceResult.isSuccess());
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Log.d("abc", "Error adding geofence.", throwable);
+                        Log.d(TAG, "Error adding geofence.", throwable);
                     }
                 });
     }
@@ -436,16 +437,16 @@ class GeoFence extends PhoneSensorDataSource {
                     DataSourceClient dataSourceClient = dataKitAPI.register(dataSourceBuilder);
                     if (!result) {
                         dataKitAPI.insert(dataSourceClient, new DataTypeString(DateTime.getDateTime(), "Exit"));
-                        Log.d("abc", "location=" + location + " status=EXIT");
+                        Log.d(TAG, "location=" + location + " status=EXIT");
                         currentList.put(location, null);
                     } else {
                         dataKitAPI.insert(dataSourceClient, new DataTypeString(DateTime.getDateTime(), "Enter"));
-                        Log.d("abc", "location=" + location + " status=ENTER");
+                        Log.d(TAG, "location=" + location + " status=ENTER");
                         currentList.put(location, dataSourceClient);
 
                     }
                 } catch (DataKitException ignored) {
-                    Log.w("abc", "error 1");
+                    Log.w(TAG, "error 1");
                 }
             }
         }
