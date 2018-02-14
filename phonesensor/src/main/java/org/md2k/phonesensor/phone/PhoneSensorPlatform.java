@@ -1,15 +1,6 @@
-package org.md2k.phonesensor.phone;
-
-import android.content.Context;
-import android.os.Build;
-import org.md2k.datakitapi.source.METADATA;
-import org.md2k.datakitapi.source.platform.Platform;
-import org.md2k.datakitapi.source.platform.PlatformBuilder;
-import org.md2k.datakitapi.source.platform.PlatformType;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,37 +25,75 @@ import org.md2k.datakitapi.source.platform.PlatformType;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor.phone;
+
+import android.content.Context;
+import android.os.Build;
+import org.md2k.datakitapi.source.METADATA;
+import org.md2k.datakitapi.source.platform.Platform;
+import org.md2k.datakitapi.source.platform.PlatformBuilder;
+import org.md2k.datakitapi.source.platform.PlatformType;
+
+/**
+ * This class creates objects that hold information about the device platform, including manufacturer,
+ * model, and operating system build version.
+ */
 public class PhoneSensorPlatform {
     private static PhoneSensorPlatform instance=null;
     Context context;
 
+    /**
+     * Constructor
+     *
+     * @param context Android context
+     */
     private PhoneSensorPlatform(Context context) {
         this.context = context;
     }
 
+    /**
+     * Creates a new instance if one does not exist
+     *
+     * @param context Android context
+     * @return The instance, whether pre-existing or just created.
+     */
     public static PhoneSensorPlatform getInstance(Context context){
         if(instance==null)
             instance=new PhoneSensorPlatform(context);
         return instance;
-
     }
 
+    /**
+     * @return Always returns null.
+     */
     public String getId() {
         return null;
     }
 
+    /**
+     * @return Build version
+     */
     public String getOS(){
         return Build.VERSION.RELEASE;
     }
 
+    /**
+     * @return The <code>PlatformType</code> as indicated by <code>dataKitAPI</code>
+     */
     public String getType(){
         return PlatformType.PHONE;
     }
 
+    /**
+     * @return Manufacturer of the device
+     */
     public String getManufacturer(){
         return Build.MANUFACTURER;
     }
 
+    /**
+     * @return Model name of the device
+     */
     public String getName(){
         return android.os.Build.MODEL;
     }

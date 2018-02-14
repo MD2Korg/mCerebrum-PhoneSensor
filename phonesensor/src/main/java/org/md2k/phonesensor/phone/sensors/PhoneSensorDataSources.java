@@ -1,29 +1,6 @@
-package org.md2k.phonesensor.phone.sensors;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Parcelable;
-import android.os.PowerManager;
-import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
-
-import org.md2k.datakitapi.datatype.DataType;
-import org.md2k.datakitapi.exception.DataKitException;
-import org.md2k.datakitapi.source.datasource.DataSource;
-import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
-import org.md2k.datakitapi.time.DateTime;
-import org.md2k.phonesensor.Configuration;
-import org.md2k.phonesensor.phone.CallBack;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,13 +25,48 @@ import java.util.HashMap;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor.phone.sensors;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
+import android.os.PowerManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
+
+import org.md2k.datakitapi.datatype.DataType;
+import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
+import org.md2k.datakitapi.time.DateTime;
+import org.md2k.phonesensor.Configuration;
+import org.md2k.phonesensor.phone.CallBack;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+
+/**
+ * This class handles the ArrayList management for <code>PhoneSensorDataSource</code>
+ */
 public class PhoneSensorDataSources {
     private static final String TAG = PhoneSensorDataSources.class.getSimpleName();
     protected Context context;
     ArrayList<PhoneSensorDataSource> phoneSensorDataSources;
     HashMap<String, Integer> hm = new HashMap<>();
     long starttimestamp = 0;
-//    PowerManager.WakeLock wl;
+
+    /**
+     * Constructor
+     *
+     * <p>
+     * Makes a new ArrayList and adds new sensor objects to it.
+     * </p>
+     *
+     * @param context Android context
+     */
     public PhoneSensorDataSources(Context context) {
         this.context = context;
         phoneSensorDataSources = new ArrayList<>();
@@ -73,19 +85,24 @@ public class PhoneSensorDataSources {
         phoneSensorDataSources.add(new StepCount(context));
         phoneSensorDataSources.add(new GeoFence(context));
         phoneSensorDataSources.add(new TouchScreen(context));
-//        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-//        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
         try {
             readDataSourceFromFile();
         } catch (FileNotFoundException e) {
-//            Toast.makeText(context, "PhoneSensor Configuration file is not available.", Toast.LENGTH_LONG).show();
         }
     }
 
+    /**
+     * @return The data source ArrayList.
+     */
     public ArrayList<PhoneSensorDataSource> getPhoneSensorDataSources() {
         return phoneSensorDataSources;
     }
 
+    /**
+     * Reads the configuration file to get an ArrayList of data sources.
+     *
+     * @throws FileNotFoundException This exception is thrown to the constructor method.
+     */
     private void readDataSourceFromFile() throws FileNotFoundException {
         ArrayList<DataSource> dataSources = Configuration.read(context);
         assert dataSources != null;
@@ -96,6 +113,12 @@ public class PhoneSensorDataSources {
         }
     }
 
+    /**
+     * Counts the number of enabled data sources by iterating through the ArrayList and checking the
+     * isEnabled method.
+     *
+     * @return The number of enabled sensors.
+     */
     public int countEnabled() {
         int count = 0;
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
@@ -106,6 +129,16 @@ public class PhoneSensorDataSources {
         return count;
     }
 
+    /**
+     * Finds the given type of data source by iterating through the ArrayList.
+     *
+     * <p>
+     * If an appropriate data source is not found <code>null</code> is returned.
+     * </p>
+     *
+     * @param type Type of data source to find.
+     * @return
+     */
     public PhoneSensorDataSource find(String type) {
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
             if (phoneSensorDataSources.get(i).getDataSourceType().equals(type))
@@ -114,6 +147,12 @@ public class PhoneSensorDataSources {
         return null;
     }
 
+    /**
+     * Iterates through the ArrayList of data sources, creates a <code>dataSourceBuilder</code> object,
+     * builds it, adds it to a new ArrayList that is then passed to <code>Configuration.write</code>.
+     *
+     * @throws IOException
+     */
     public void writeDataSourceToFile() throws IOException {
         ArrayList<DataSource> dataSources = new ArrayList<>();
         if (phoneSensorDataSources == null) throw new NullPointerException();
@@ -127,8 +166,15 @@ public class PhoneSensorDataSources {
         Configuration.write(context, dataSources);
     }
 
+    /**
+     * Clears the hashmap and iterates through the <code>phoneSensorDataSources</code> ArrayList.
+     *
+     * <p>
+     * If the sensor is enabled, it is passed to <code>DataSourceBuilder</code>. Intents are added
+     * and then broadcast. Then the sensor is registered with dataKitAPI.
+     * </p>
+     */
     public void register() {
-//        wl.acquire();
         hm.clear();
         starttimestamp = DateTime.getDateTime();
         for (int i = 0; i < phoneSensorDataSources.size(); i++) {
@@ -143,6 +189,9 @@ public class PhoneSensorDataSources {
 
             try {
                 phoneSensorDataSources.get(i).register(dataSourceBuilder, new CallBack() {
+                    /**
+                     * @param data
+                     */
                     @Override
                     public void onReceivedData(DataType data) {
                         String dataSourceType = phoneSensorDataSources.get(finalI).getDataSourceType();
@@ -167,12 +216,10 @@ public class PhoneSensorDataSources {
             }
         }
     }
-
+    /**
+     * Unregisters the listener for all sensors and clears the HashMap
+     */
     public void unregister() {
-/*
-        if (wl != null && wl.isHeld())
-            wl.release();
-*/
         if (phoneSensorDataSources != null) {
             for (int i = 0; i < phoneSensorDataSources.size(); i++) {
                 if (!phoneSensorDataSources.get(i).isEnabled()) continue;
@@ -180,6 +227,5 @@ public class PhoneSensorDataSources {
             }
         }
         hm.clear();
-
     }
 }

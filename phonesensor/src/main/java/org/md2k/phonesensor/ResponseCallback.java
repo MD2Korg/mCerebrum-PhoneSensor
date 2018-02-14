@@ -1,7 +1,6 @@
-package org.md2k.phonesensor;
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +25,15 @@ package org.md2k.phonesensor;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor;
+
+/**
+ * Callback interface
+ *
+ * <p>
+ *     This callback is used for reponses from the user, usually when asking for permissions.
+ * </p>
+ */
 public interface ResponseCallback {
     public void onResponse(boolean result);
 }

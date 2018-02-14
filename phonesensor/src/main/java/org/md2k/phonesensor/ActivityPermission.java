@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.md2k.phonesensor;
 
 import android.app.Activity;
@@ -31,20 +58,44 @@ import rx.Subscription;
 
 import static org.md2k.phonesensor.PrefsFragmentSettings.REQUEST_CHECK_SETTINGS;
 
+/**
+ * This class handles the permission requests for the activity.
+ */
 public class ActivityPermission extends AppCompatActivity {
 
+    /** Request code for the Google API <code>getErrorDialog()</code>. */
+    public static final int REQUEST_GOOGLE_API = 9000;
+
+    /** Request code for requesting overlay permissions from the user. */
+    public static final int REQUEST_OVERLAY = 101;
+
+    /**
+     * Creates this activity.
+     *
+     * <p>
+     *      If the Android version is Marshmallow (6.0) or later, the user is asked
+     *      for overlay permissions.
+     * </p>
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
                 Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                 myIntent.setData(Uri.parse("package:" + getPackageName()));
-                startActivityForResult(myIntent, 101);
+                startActivityForResult(myIntent, REQUEST_OVERLAY);
             }
         }
         PermissionInfo permissionInfo = new PermissionInfo();
         permissionInfo.getPermissions(this, new ResultCallback<Boolean>() {
+
+            /**
+             * @param result The result of the callback.
+             */
             @Override
             public void onResult(Boolean result) {
                 if (!result) {
@@ -60,13 +111,40 @@ public class ActivityPermission extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks Google play services for the require permissions and enables GPS if successful.
+     * The required permissions are:
+     *
+     * <p>
+     *  <ul>
+     *     <li><code>READ_EXTERNAL_STORAGE</code></li>
+     *     <li><code>WRITE_EXTERNAL_STORAGE</code></li>
+     *     <li><code>ACCESS_FINE_LOCATION</code></li>
+     *     <li><code>ACCESS_COURSE_LOCATION</code></li>
+     *     <li><code>INTERNET</code></li>
+     *     <li><code>ACTIVITY_RECOGNITION</code></li>
+     *     <li><code>SYSTEM_ALERT_WINDOW</code></li>
+     *  </ul>
+     * </p>
+     */
     public void checkAllPermission() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int result = googleAPI.isGooglePlayServicesAvailable(getBaseContext());
         if (result != ConnectionResult.SUCCESS) {
             if (googleAPI.isUserResolvableError(result)) {
                 googleAPI.getErrorDialog(ActivityPermission.this, result,
-                        9000, new DialogInterface.OnCancelListener() {
+                        REQUEST_GOOGLE_API, new DialogInterface.OnCancelListener() {
+                            /**
+                             * When the user cancels the dialog, <code>Toasty</code> shows a Google
+                             * play services error, the activity result is set to canceled and
+                             * <code>finish()</code> is called.
+                             *
+                             * This is only called when the connection to Google play services is
+                             * unsuccessful, the error is user resolvable, and the user decides to
+                             * cancel the service.
+                             *
+                             * @param dialog The dialog that is displayed to the user.
+                             */
                             @Override
                             public void onCancel(DialogInterface dialog) {
                                 Toasty.error(getApplicationContext(), "Google play service is disabled/not updated", Toast.LENGTH_SHORT).show();
@@ -86,9 +164,24 @@ public class ActivityPermission extends AppCompatActivity {
         }
     }
 
+    /**
+     * Resolves request codes for permissions.
+     *
+     * <p>
+     * If the request code is 9000 (associated with Google play services in <code>checkAllPermissions</code>),
+     * <code>Toasty</code> shows a Google play services error, the activity result is set to canceled and
+     * <code>finish()</code> is called.
+     *
+     * If the error code is <code>REQUEST_CHECK_SETTINGS</code>,
+     *</p>
+     *
+     * @param requestCode The code sent with the request, used for request/result verification
+     * @param resultCode  The code returned with the result, used for request/result verification
+     * @param data Android intent
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 9000) {
+        if (requestCode == REQUEST_GOOGLE_API) {
             GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
             int result = googleAPI.isGooglePlayServicesAvailable(this);
             if (result != ConnectionResult.SUCCESS) {
@@ -118,6 +211,17 @@ public class ActivityPermission extends AppCompatActivity {
 
     private Subscription updatableLocationSubscription;
 
+    /**
+     * Enables the GPS via location requests.
+     *
+     * <p>
+     * Creates a location request with high accuracy and an interval of 5000,
+     * creates a new <code>ReactiveLocationProvider</code> and subscribes it to a new observer.
+     * </p>
+     * <p>
+     * REFERENCE: <a href="http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never" >StackOverflow</a>
+     * </p>
+     */
     public void enableGPS() {
         final LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -127,9 +231,10 @@ public class ActivityPermission extends AppCompatActivity {
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)
-                                .setAlwaysShow(true)  //Refrence: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .setAlwaysShow(true)  //See REFERENCE in method documentation.
                                 .build()
                 ).subscribe(new Observer<LocationSettingsResult>() {
+
                     @Override
                     public void onCompleted() {
 
@@ -140,6 +245,11 @@ public class ActivityPermission extends AppCompatActivity {
 
                     }
 
+                    /**
+                     * Checks for location permissions
+                     *
+                     * @param locationSettingsResult
+                     */
                     @Override
                     public void onNext(LocationSettingsResult locationSettingsResult) {
                         try {
@@ -164,6 +274,10 @@ public class ActivityPermission extends AppCompatActivity {
                 });
     }
 
+    /**
+     * When the activity gets destroyed <code>updatableLocationSubscription</code> is unsubscribed
+     * and <code>super.onDestroy()</code> is called.
+     */
     @Override
     public void onDestroy() {
         if (updatableLocationSubscription != null && !updatableLocationSubscription.isUnsubscribed())

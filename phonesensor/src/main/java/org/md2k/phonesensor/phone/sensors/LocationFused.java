@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.md2k.phonesensor.phone.sensors;
 
 import android.Manifest;
@@ -42,47 +69,49 @@ import rx.functions.Func1;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-;
-
 /**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
- * All rights reserved.
- * <p/>
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * <p/>
- * * Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
- * <p/>
- * * Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- * <p/>
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * This class handles the fused location (WIFI and GPS based) sensor.
  */
 class LocationFused extends PhoneSensorDataSource {
 
     private static final String TAG = LocationFused.class.getSimpleName();
-    private static final long INTERVAL = 1000L*60;
+    /**
+     * Sampling interval in milliseconds.
+     *
+     * <p>
+     *     Default is 60,000 milliseconds (the number of milliseconds in a minute).
+     * </p>
+     */
+    private static final long INTERVAL = 1000L * 60;
+
+    /**
+     * Notification id for <code>PugNotification</code>.
+     *
+     * <p>
+     *     Arbitrarily set to 12 by default.
+     * </p>
+     */
+    public static final int PUG_NOTI_ID = 12;
+
     private ReactiveLocationProvider locationProvider;
     private Subscription updatableLocationSubscription;
     private Observable<Location> locationUpdatesObservable;
 
+    /**
+     * Constructor
+     *
+     * @param context Android context
+     */
     LocationFused(final Context context) {
         super(context, DataSourceType.LOCATION);
         frequency = String.format(Locale.getDefault(), "%.2f",(1.0/(INTERVAL/1000.0)));
     }
 
+    /**
+     * Sends data samples to dataKitAPI as an array.
+     *
+     * @param location Location to be saved
+     */
     public void saveData(Location location) {
         double samples[] = new double[6];
         samples[DataFormat.Location.Latitude] = location.getLatitude();
@@ -100,35 +129,14 @@ class LocationFused extends PhoneSensorDataSource {
         }
     }
 
-/*
-    private void statusCheck() {
-        final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
-            intent.putExtra("enabled", true);
-            context.sendBroadcast(intent);
-            //TODO: gps off
-*/
-/*
-            AlertDialogs.AlertDialog(context, "Error: GPS is off", "Please turn on GPS\n\n (* select Mode = High Accuracy)", org.md2k.utilities.R.drawable.ic_error_red_50dp, "Turn On", "Cancel", null, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-                    } else {
-                        dialog.cancel();
-                    }
-                }
-            });
-*//*
-
-        }
-    }
-*/
-
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then subscribes this sensor to an observer.
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     @Override
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
@@ -152,6 +160,9 @@ class LocationFused extends PhoneSensorDataSource {
         });
     }
 
+    /**
+     * Unregisters the listener for this sensor and unsubscribes this sensor from its observer
+     */
     @Override
     public void unregister() {
         try {context.unregisterReceiver(br);}catch (Exception ignored){}
@@ -159,13 +170,29 @@ class LocationFused extends PhoneSensorDataSource {
             updatableLocationSubscription.unsubscribe();
     }
 
+    /**
+     * Shows a notification if the GPS is currently disabled and asks the user to enable it.
+     */
     private void showNotification() {
-        PugNotification.with(context).load().identifier(12).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
+        PugNotification.with(context).load().identifier(PUG_NOTI_ID).title("Turn on GPS").smallIcon(R.mipmap.ic_launcher)
                 .message("Location data can't be recorded. (Please click to turn on GPS)").autoCancel(true).click(ActivityPermission.class).simple().build();
     }
+
+    /**
+     * Removes a notification
+     */
     private void removeNotification() {
-        PugNotification.with(context).cancel(12);
+        PugNotification.with(context).cancel(PUG_NOTI_ID);
     }
+
+    /**
+     * Prepares an observable, updatable location using the Android-ReactiveLocation Library
+     *
+     * <p>
+     *     <a href="https://github.com/mcharmas/Android-ReactiveLocation">Android-ReactiveLocation Library</a>
+     *     <a href="http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never">REFERENCE</a>
+     * </p>
+     */
     private void prepareObservable(){
         locationProvider = new ReactiveLocationProvider(context);
         final LocationRequest locationRequest = LocationRequest.create()
@@ -176,20 +203,9 @@ class LocationFused extends PhoneSensorDataSource {
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)
-                                .setAlwaysShow(true)  //Refrence: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .setAlwaysShow(true)  //See REFERENCE above
                                 .build()
                 )
-                /*.doOnNext(new Action1<LocationSettingsResult>() {
-                    @Override
-                    public void call(LocationSettingsResult locationSettingsResult) {
-                        Status status = locationSettingsResult.getStatus();
-                        if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
-                            showNotification();
-                            Toasty.error(context, "GPS is off. Could not continue...", Toast.LENGTH_SHORT).show();
-//                            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ServicePhoneSensor.INTENT_STOP));
-                        }
-                    }
-                })*/
                 .flatMap(new Func1<LocationSettingsResult, Observable<Location>>() {
                     @Override
                     public Observable<Location> call(LocationSettingsResult locationSettingsResult) {
@@ -209,6 +225,13 @@ class LocationFused extends PhoneSensorDataSource {
 
     }
     private BroadcastReceiver br = new BroadcastReceiver() {
+        /**
+         * Updates <code>locationManager</code> if the location provider changes and asks for GPS to
+         * be turned on if a provider is not enabled.
+         *
+         * @param context Android context
+         * @param intent 
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {

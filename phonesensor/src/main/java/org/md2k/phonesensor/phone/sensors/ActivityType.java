@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.md2k.phonesensor.phone.sensors;
 
 import android.content.Context;
@@ -29,41 +56,32 @@ import rx.Observer;
 import rx.Subscription;
 
 /**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
- * All rights reserved.
- * <p/>
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * <p/>
- * * Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
- * <p/>
- * * Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- * <p/>
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * This class handles activity detection.
  */
 class ActivityType extends PhoneSensorDataSource {
     private static final String TAG = ActivityType.class.getSimpleName();
     private ReactiveLocationProvider locationProvider;
     private Subscription subscription;
 
+    /**
+     * Constructor
+     *
+     * @param context Android context
+     */
     ActivityType(Context context) {
         super(context, DataSourceType.ACTIVITY_TYPE);
         locationProvider = new ReactiveLocationProvider(context);
         frequency = "1.0";
     }
+
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then registers this sensor with Android's SensorManager
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     @Override
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         try {
@@ -91,6 +109,9 @@ class ActivityType extends PhoneSensorDataSource {
         }
     }
 
+    /**
+     * Unregisters the listener for this sensor
+     */
     @Override
     public void unregister() {
         try {
@@ -102,6 +123,26 @@ class ActivityType extends PhoneSensorDataSource {
     }
 
 
+    /**
+     * Returns the integer value for the appropriate activity type
+     *
+     *<p>
+     *     The activity types are:
+     *     <ul>
+     *         <li><code>IN_VEHICLE</code></li>
+     *         <li><code>ON_BICYCLE</code></li>
+     *         <li><code>ON_FOOT</code></li>
+     *         <li><code>RUNNING</code></li>
+     *         <li><code>STILL</code></li>
+     *         <li><code>TILTING</code></li>
+     *         <li><code>UNKNOWN</code></li>
+     *         <li><code>WALKING</code></li>
+     *         <li><code>UNDEFINED</code></li>
+     *     </ul>
+     *</p>
+     * @param type Integer value for the desired activity type
+     * @return The integer value for the desired activity type
+     */
     private int getActivityType(int type) {
         switch (type) {
             case DetectedActivity.STILL:
@@ -122,6 +163,12 @@ class ActivityType extends PhoneSensorDataSource {
                 return ResultType.ActivityType.UNKNOWN;
         }
     }
+
+    /**
+     * Puts data about <code>mostProbableActivity</code> into an array and pushes it out to dataKitAPI
+     *
+     * @param mostProbableActivity Most likely activity based on possible DetectedActivity objects
+     */
     private void saveData(DetectedActivity mostProbableActivity){
         double samples[] = new double[2];
         samples[DataFormat.ActivityType.Confidence] = mostProbableActivity.getConfidence();

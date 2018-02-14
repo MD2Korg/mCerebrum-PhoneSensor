@@ -1,16 +1,6 @@
-package org.md2k.phonesensor;
-
-import android.app.Application;
-import android.content.Context;
-
-import com.blankj.utilcode.util.Utils;
-
-import org.md2k.mcerebrum.core.access.MCerebrum;
-
-
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,8 +25,24 @@ import org.md2k.mcerebrum.core.access.MCerebrum;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor;
+
+import android.app.Application;
+import android.content.Context;
+
+import com.blankj.utilcode.util.Utils;
+
+import org.md2k.mcerebrum.core.access.MCerebrum;
+
+/**
+ * This class connects this application to the <code>MCerebrum</code> core library.
+ */
 public class MyApplication extends Application {
     static Context context;
+
+    /**
+     * Creates the activity and calls on the <code>MCerebrum</code> library for initialization.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -44,6 +50,12 @@ public class MyApplication extends Application {
         Utils.init(this);
         MCerebrum.init(getApplicationContext(), MyMCerebrumInit.class);
     }
+
+    /**
+     * Returns the context.
+     *
+     * @return Android context
+     */
     public static Context getContext(){
         return context;
     }

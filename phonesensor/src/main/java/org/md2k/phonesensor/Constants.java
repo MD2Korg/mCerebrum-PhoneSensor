@@ -1,7 +1,6 @@
-package org.md2k.phonesensor;
 /*
- * Copyright (c) 2016, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,15 +25,34 @@ package org.md2k.phonesensor;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor;
+
 import android.content.Context;
 
 import com.google.android.gms.location.DetectedActivity;
 
+/**
+ * This class provides a list of constants for monitored activies
+ */
 public class Constants {
+
+    /**
+     * Filename of the metadata file.
+     *
+     * <p>
+     *     <code>"meta_data.json"</code>
+     * </p>
+     */
     public static final String FILENAME_ASSET_METADATA = "meta_data.json";
     private Constants() {
     }
 
+    /**
+     * Name of the package.
+     * <p>
+     *     <code>"org.md2k.phonesensor"</code>
+     * </p>
+     */
     public static final String PACKAGE_NAME = "org.md2k.phonesensor";
 
 
@@ -52,6 +70,23 @@ public class Constants {
             DetectedActivity.UNKNOWN
     };
 
+    /**
+     * The DetectedActivities this app monitors are:
+     * <ul>
+     *     <li><code>IN_VEHICLE</code></li>
+     *     <li><code>ON_BICYCLE</code></li>
+     *     <li><code>ON_FOOT</code></li>
+     *     <li><code>RUNNING</code></li>
+     *     <li><code>STILL</code></li>
+     *     <li><code>TILTING</code></li>
+     *     <li><code>UNKNOWN</code></li>
+     *     <li><code>WALKING</code></li>
+     *     <li><code>UNDEFINED</code></li>
+     * </ul>
+     *
+     * @param detectedActivityType An integer value associated with a detected activity
+     * @return The detected activity type as a string
+     */
     public static String getActivityString(int detectedActivityType) {
         switch(detectedActivityType) {
             case DetectedActivity.IN_VEHICLE:
