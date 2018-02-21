@@ -70,7 +70,7 @@ public class Battery extends PhoneSensorDataSource {
             samples[DataFormat.Battery.Temperature] = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
             DataTypeDoubleArray dataTypeDoubleArray = new DataTypeDoubleArray(DateTime.getDateTime(), samples);
             try {
-                dataKitAPI.insertHighFrequency(dataSourceClient, dataTypeDoubleArray);
+                dataKitAPI.insert(dataSourceClient, dataTypeDoubleArray);
                 callBack.onReceivedData(dataTypeDoubleArray);
                 scheduler.postDelayed(batteryStatus, 1000);
             } catch (DataKitException e) {

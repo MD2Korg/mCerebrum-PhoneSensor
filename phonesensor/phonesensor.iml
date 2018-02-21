@@ -22,7 +22,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
     <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/debug" />
     <exclude-output />
@@ -97,84 +97,64 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="fontawesome-typeface-4.7.0.1" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="runner-0.5" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="hamcrest-library-1.3" level="project" />
-    <orderEntry type="library" exported="" name="androidbootstrap-2.3.1" level="project" />
-    <orderEntry type="library" exported="" name="transition-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="pugnotification-1.8.1" level="project" />
-    <orderEntry type="library" exported="" name="materialize-1.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-places-10.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-maps-10.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-location-10.0.1" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="multidex-instrumentation-1.0.1" level="project" />
-    <orderEntry type="library" exported="" name="crashlytics-2.6.1" level="project" />
-    <orderEntry type="library" exported="" name="fabric-1.3.12" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="exposed-instrumentation-api-publish-0.5" level="project" />
-    <orderEntry type="library" exported="" name="materialdrawer-5.9.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-basement-10.0.1" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="support-media-compat-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="answers-1.3.8" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="support-vector-drawable-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="support-compat-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="iconics-core-2.9.1" level="project" />
-    <orderEntry type="library" exported="" name="constraint-layout-1.0.2" level="project" />
-    <orderEntry type="library" exported="" name="fancybuttons-1.8.4" level="project" />
-    <orderEntry type="library" exported="" name="play-services-tasks-10.0.1" level="project" />
-    <orderEntry type="library" exported="" name="design-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-base-10.0.1" level="project" />
-    <orderEntry type="library" exported="" name="support-core-ui-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="cardview-v7-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="core-0.9.4.5" level="project" />
-    <orderEntry type="library" exported="" name="support-v13-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="library-1.4.1" level="project" />
-    <orderEntry type="library" exported="" name="crashlytics-core-2.3.10" level="project" />
-    <orderEntry type="library" exported="" name="material-about-library-2.2.1" level="project" />
-    <orderEntry type="library" exported="" name="google-material-typeface-3.0.1.1.original" level="project" />
-    <orderEntry type="library" exported="" name="support-core-utils-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="support-fragment-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="library-2.1.4" level="project" />
-    <orderEntry type="library" exported="" name="utilcode-1.8.1" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="rules-0.5" level="project" />
-    <orderEntry type="library" exported="" name="constraint-layout-solver-1.0.2" level="project" />
-    <orderEntry type="library" exported="" name="android-reactive-location-0.10" level="project" />
-    <orderEntry type="library" exported="" name="rxjava-1.3.0" level="project" />
-    <orderEntry type="library" exported="" name="rxandroid-1.2.1" level="project" />
-    <orderEntry type="library" exported="" name="beta-1.2.1" level="project" />
-    <orderEntry type="library" exported="" name="Toasty-1.2.5" level="project" />
-    <orderEntry type="library" exported="" name="multidex-1.0.1" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />
-    <orderEntry type="library" exported="" name="material-design-iconic-typeface-2.2.0.3" level="project" />
-    <orderEntry type="library" exported="" name="fastadapter-2.5.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
-    <orderEntry type="library" exported="" name="recyclerview-v7-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="rxpermissions-0.9.4" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="animated-vector-drawable-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:multidex-1.0.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="com.android.support.test:exposed-instrumentation-api-publish-0.5" level="project" />
+    <orderEntry type="library" exported="" name="com.google.android.gms:play-services-base-10.0.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-v13-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.google.android.gms:play-services-location-10.0.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:cardview-v7-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-core-ui-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="io.reactivex:rxandroid-1.2.1" level="project" />
+    <orderEntry type="library" exported="" name="com.crashlytics.sdk.android:beta-1.2.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-compat-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="io.fabric.sdk.android:fabric-1.3.12" level="project" />
+    <orderEntry type="library" exported="" name="com.github.medyo:fancybuttons-1.8.4" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support.constraint:constraint-layout-solver:1.0.2@jar" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-core-utils-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support.constraint:constraint-layout-1.0.2" level="project" />
+    <orderEntry type="library" exported="" name="me.zhanghai.android.materialprogressbar:library-1.4.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-v4-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.tbruyelle.rxpermissions:rxpermissions-0.9.4" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-media-compat-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.afollestad.material-dialogs:core-0.9.4.5" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="org.hamcrest:hamcrest-core:1.3@jar" level="project" />
+    <orderEntry type="library" exported="" name="com.blankj:utilcode-1.8.1" level="project" />
+    <orderEntry type="library" exported="" name="com.google.android.gms:play-services-tasks-10.0.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="com.android.support.test:rules-0.5" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:transition-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:design-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.github.daniel-stoneuk:material-about-library-2.2.1" level="project" />
+    <orderEntry type="library" exported="" name="io.reactivex:rxjava:1.3.0@jar" level="project" />
+    <orderEntry type="library" exported="" name="pl.charmas.android:android-reactive-location-0.10" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-vector-drawable-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:recyclerview-v7-25.3.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="junit:junit:4.12@jar" level="project" />
+    <orderEntry type="library" exported="" name="com.github.halysongoncalves:pugnotification-1.8.1" level="project" />
+    <orderEntry type="library" exported="" name="com.google.android.gms:play-services-places-10.0.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="com.android.support:multidex-instrumentation-1.0.1" level="project" />
+    <orderEntry type="library" exported="" name="com.mikepenz:google-material-typeface-3.0.1.1.original" level="project" />
+    <orderEntry type="library" exported="" name="com.beardedhen:androidbootstrap-2.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.mikepenz:materialize-1.0.1" level="project" />
+    <orderEntry type="library" exported="" name="com.rengwuxian.materialedittext:library-2.1.4" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-fragment-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.mikepenz:iconics-core-2.9.1" level="project" />
+    <orderEntry type="library" exported="" name="com.crashlytics.sdk.android:crashlytics-core-2.3.10" level="project" />
+    <orderEntry type="library" exported="" name="com.google.android.gms:play-services-basement-10.0.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:animated-vector-drawable-25.3.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="org.hamcrest:hamcrest-library:1.3@jar" level="project" />
+    <orderEntry type="library" exported="" name="com.mikepenz:fastadapter-2.5.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="com.android.support.test:runner-0.5" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:appcompat-v7-25.3.1" level="project" />
+    <orderEntry type="library" exported="" name="com.mikepenz:materialdrawer-5.9.0" level="project" />
+    <orderEntry type="library" exported="" name="com.mikepenz:material-design-iconic-typeface-2.2.0.3" level="project" />
+    <orderEntry type="library" exported="" name="com.crashlytics.sdk.android:crashlytics-2.6.1" level="project" />
+    <orderEntry type="library" exported="" name="com.mikepenz:fontawesome-typeface-4.7.0.1" level="project" />
+    <orderEntry type="library" exported="" name="com.github.GrenderG:Toasty-1.2.5" level="project" />
+    <orderEntry type="library" exported="" name="com.crashlytics.sdk.android:answers-1.3.8" level="project" />
+    <orderEntry type="library" exported="" name="com.google.android.gms:play-services-maps-10.0.1" level="project" />
+    <orderEntry type="library" exported="" name="com.android.support:support-annotations:25.3.1@jar" level="project" />
     <orderEntry type="module" module-name="commons" exported="" />
     <orderEntry type="module" module-name="core" exported="" />
     <orderEntry type="module" module-name="datakitapi" exported="" />
-    <orderEntry type="library" exported="" scope="TEST" name="espresso-idling-resource-2.2.2" level="project" />
-    <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
-    <orderEntry type="library" exported="" name="YouTubeAndroidPlayerApi" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="javax.annotation-api-1.2" level="project" />
-    <orderEntry type="library" exported="" name="MPAndroidChart-v3.0.2" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="javawriter-2.1.1" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.8.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="hamcrest-integration-1.3" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="jsr305-2.0.1" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="espresso-core-2.2.2" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="javax.inject-1" level="project" />
-    <orderEntry type="library" exported="" name="okio-1.8.0" level="project" />
-    <orderEntry type="library" exported="" name="retrofit-2.1.0" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.7" level="project" />
-    <orderEntry type="library" exported="" name="adapter-rxjava-2.1.0" level="project" />
-    <orderEntry type="library" exported="" name="converter-gson-2.1.0" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-3.3.0" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.3.1" level="project" />
-    <orderEntry type="library" exported="" name="logansquare-1.3.7" level="project" />
-    <orderEntry type="library" exported="" name="jackson-core-2.5.1" level="project" />
   </component>
 </module>
