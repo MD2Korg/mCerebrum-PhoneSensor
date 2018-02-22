@@ -89,7 +89,7 @@ public class ServicePhoneSensor extends Service {
         Log.w(TAG, "time=" + DateTime.convertTimeStampToDateTime(DateTime.getDateTime()) + ",timestamp=" + DateTime.getDateTime() + ",service_start");
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter(INTENT_STOP));
         if (!readSettings()) {
-            Toasty.error(this, "Error: not configured yet", Toast.LENGTH_SHORT).show();
+//            Toasty.error(this, "Error: not configured yet", Toast.LENGTH_SHORT).show();
             stopSelf();
         } else connectDataKit();
     }
