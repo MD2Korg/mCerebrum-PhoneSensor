@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.md2k.phonesensor;
 
 import android.content.BroadcastReceiver;
@@ -38,46 +65,45 @@ import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
- * All rights reserved.
- * <p>
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * <p>
- * * Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
- * <p>
- * * Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- * <p>
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+import static android.app.Activity.RESULT_OK;
 
+/**
+ * <code>ActivityMain</code> is the execution start of the application.
+ */
 public class ActivityMain extends AppCompatActivity {
+
+    /** Request code for checking for all required permissions */
+    public static final int REQUEST_ALL_PERMISSIONS = 1111;
     HashMap<String, TextView> hashMapData = new HashMap<>();
     boolean isEverythingOk = false;
     Handler mHandler;
     int operation;
 
+    /** Used to signify that this activity should start normally. <p>Set to 0.</p> */
     public static final int OPERATION_RUN = 0;
+
+    /** Used to signify this activity should start the settings view. <p>Set to 1.</p> */
     public static final int OPERATION_SETTINGS = 1;
+
+    /** Used to signify this activity should start the plot view. <p>Set to 2.</p> */
     public static final int OPERATION_PLOT = 2;
-    public static final int OPERATION_START_BACKGROUND=3;
-    public static final int OPERATION_STOP_BACKGROUND=4;
+
+    /** Used to signify this activity should start in the background. <p>Set to 3.</p> */
+    public static final int OPERATION_START_BACKGROUND = 3;
+
+    /** Used to signify this activity should stop in the background. <p>Set to 4.</p> */
+    public static final int OPERATION_STOP_BACKGROUND = 4;
+
+    /** Set to "operation" */
     public static final String OPERATION = "operation";
 
+    /**
+     * Calls <code>super</code>, <code>loadCrashlytics()</code>, <code>readIntent()</code>,
+     * <code>initializeVariable()</code>, and <code>checkRequirement()</code> on this activity's creation.
+     *
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +113,19 @@ public class ActivityMain extends AppCompatActivity {
         checkRequirement();
     }
 
+    /**
+     * This method starts this activity in the given mode. It defaults to <code>OPERATION_RUN</code>.
+     * <p>
+     *     Available modes are:
+     *     <ul>
+     *         <li><code>OPERATION_RUN</code> - starts the UI</li>
+     *         <li><code>OPERATION_START_BACKGROUND</code> - starts the service in the background</li>
+     *         <li><code>OPERATION_STOP_BACKGROUND</code> - stops the service running in the background</li>
+     *         <li><code>OPERATION_PLOT</code> - starts the plot activity</li>
+     *         <li><code>OPERATION_SETTINGS</code> - starts the settings activity</li>
+     *     </ul>
+     * </p>
+     */
     void load() {
         isEverythingOk = true;
         Intent intent;
@@ -116,23 +155,39 @@ public class ActivityMain extends AppCompatActivity {
                 finish();
                 break;
             default:
-//                Toasty.error(getApplicationContext(), "Invalid argument. Operation = " + operation, Toast.LENGTH_SHORT).show();
                 initializeUI();
         }
     }
 
+    /**
+     * Creates the options menu.
+     *
+     * <p>
+     *     Inflate the menu; this adds items to the action bar if it is present.
+     * </p>
+     *
+     * @param menu Android Menu object
+     * @return Always returns true.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_settings, menu);
         return true;
     }
 
+    /**
+     * Handles the selection of items on the action bar.
+     *
+     * <p>
+     *     Handle action bar item clicks here. The action bar will automatically handle clicks on
+     *     the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
+     * </p>
+     *
+     * @param item Android MenuItem object
+     * @return TODO: onOptionsItemSelected is a callback method
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         Intent intent;
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
@@ -156,6 +211,11 @@ public class ActivityMain extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Creates a <code>TableRow</code> widget using default settings.
+     *
+     * @return the <code>TableRow</code> widget
+     */
     TableRow createDefaultRow() {
         TableRow row = new TableRow(this);
         TextView tvSensor = new TextView(this);
@@ -181,6 +241,9 @@ public class ActivityMain extends AppCompatActivity {
         return row;
     }
 
+    /**
+     *  Creates a table widget that displays the phone sensor data sources.
+     */
     void prepareTable() {
         try {
             ArrayList<PhoneSensorDataSource> phoneSensorDataSources = new PhoneSensorDataSources(getApplicationContext()).getPhoneSensorDataSources();
@@ -223,6 +286,11 @@ public class ActivityMain extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates the table widget with refreshed data from the sensors.
+     *
+     * @param intent Android intent
+     */
     void updateTable(Intent intent) {
         String sampleStr = "";
         String dataSourceType = ((DataSource) intent.getParcelableExtra("datasource")).getType();
@@ -256,6 +324,10 @@ public class ActivityMain extends AppCompatActivity {
         hashMapData.get(dataSourceType + "_sample").setText(sampleStr);
     }
 
+    /**
+     * Registers receivers, prepares a new table widget and adds the relevant <code>runnable</code>
+     * methods to the message queue upon resuming the activity.
+     */
     @Override
     public void onResume() {
         try {
@@ -271,6 +343,10 @@ public class ActivityMain extends AppCompatActivity {
         super.onResume();
     }
 
+    /**
+     * Removes <code>runnable</code> callbacks and unregisters <code>mMessageReciver</code> when the
+     * activity is paused.
+     */
     @Override
     public void onPause() {
         try {
@@ -284,6 +360,9 @@ public class ActivityMain extends AppCompatActivity {
         super.onPause();
     }
 
+    /**
+     * Creates a new <code>Runnable()</code> object. This object creates a start button when run.
+     */
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -302,6 +381,10 @@ public class ActivityMain extends AppCompatActivity {
             }
         }
     };
+
+    /**
+     * TODO: What is this looking for a response from??
+     */
     ResponseCallback status = new ResponseCallback() {
         @Override
         public void onResponse(boolean result) {
@@ -312,6 +395,9 @@ public class ActivityMain extends AppCompatActivity {
             }
         }
     };
+    /**
+     * Creates a new broadcast receiver that updates the table widget when it receives new data.
+     */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -320,61 +406,26 @@ public class ActivityMain extends AppCompatActivity {
     };
 
 
+    /**
+     * Creates a new <code>Intent</code> to check <code>ActivityPermission()</code> for the proper
+     * permissions.
+     */
     void checkRequirement() {
         Intent intent = new Intent(this, ActivityPermission.class);
-        startActivityForResult(intent, 1111);
-/*
-        Permission.requestPermission(this, new PermissionCallback() {
-            @Override
-            public void OnResponse(boolean isGranted) {
-                if (!isGranted) {
-                    Toasty.error(getApplicationContext(), "!PERMISSION DENIED !!! Could not continue...", Toast.LENGTH_SHORT).show();
-                    status.onResponse(false);
-                } else {
-                    GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-                    int result = googleAPI.isGooglePlayServicesAvailable(ActivityMain.this);
-                    if (result != ConnectionResult.SUCCESS) {
-                        if (googleAPI.isUserResolvableError(result)) {
-                            googleAPI.getErrorDialog(ActivityMain.this, result,
-                                    9000, new DialogInterface.OnCancelListener() {
-                                        @Override
-                                        public void onCancel(DialogInterface dialog) {
-                                            Toasty.error(getApplicationContext(), "Google play service is disabled/not updated", Toast.LENGTH_SHORT).show();
-                                            status.onResponse(false);
-                                        }
-                                    }).show();
-                        } else {
-                            Toasty.error(getApplicationContext(), "Google play service is DISABLED/NOT UPDATED", Toast.LENGTH_SHORT).show();
-                            status.onResponse(false);
-                        }
-                    } else {
-                        status.onResponse(true);
-                    }
-                }
-
-            }
-        });
-*/
+        startActivityForResult(intent, REQUEST_ALL_PERMISSIONS);
     }
 
-/*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 9000) {
-            GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-            int result = googleAPI.isGooglePlayServicesAvailable(ActivityMain.this);
-            if (result != ConnectionResult.SUCCESS) {
-                Toasty.error(getApplicationContext(), "Google play service is disabled/not updated", Toast.LENGTH_SHORT).show();
-                status.onResponse(false);
-            } else {
-                status.onResponse(true);
-            }
-        }
-    }
-*/
+
+    /**
+     * Handles callback results for <code>checkRequirement()</code>.
+     *
+     * @param requestCode The code sent with the request.
+     * @param resultCode The code returned with the result, used for request/result verification
+     * @param data Android intent
+     */
 @Override
 public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == 1111) {
+    if (requestCode == REQUEST_ALL_PERMISSIONS) {
         if(resultCode!=RESULT_OK){
             finish();
         }else{
@@ -383,6 +434,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 }
 
+    /**
+     * Creates a new <code>Crashlytics</code> object.
+     */
     void loadCrashlytics() {
         Crashlytics crashlyticsKit = new Crashlytics.Builder()
                 .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
@@ -390,23 +444,37 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Fabric.with(this, crashlyticsKit, new Crashlytics());
     }
 
+    /**
+     * Sets the operation mode based on whether the intent has extras.
+     */
     void readIntent() {
-        if(getIntent().getExtras()!=null)
-        operation = getIntent().getExtras().getInt(OPERATION, 0);
-        else operation=0;
+        if(getIntent().getExtras()!= null)
+            operation = getIntent().getExtras().getInt(OPERATION, 0);
+        else operation = 0;
     }
 
+    /**
+     * Sets <code>isEverythingOk</code> to false and registers a new <code>Handler</code>.
+     */
     void initializeVariable() {
         isEverythingOk = false;
         mHandler = new Handler();
     }
 
+    /**
+     * Starts the UI
+     */
     void initializeUI() {
         setContentView(R.layout.activity_main);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final Button buttonService = (Button) findViewById(R.id.button_app_status);
         buttonService.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Toggles the phone sensor service.
+             *
+             * @param v Active view
+             */
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ServicePhoneSensor.class);

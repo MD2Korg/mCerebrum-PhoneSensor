@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.md2k.phonesensor;
 
 import android.app.Activity;
@@ -49,36 +76,22 @@ import rx.Observer;
 import rx.Subscription;
 
 /**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
- * All rights reserved.
- * <p/>
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * <p/>
- * * Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
- * <p/>
- * * Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- * <p/>
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Preferences Fragment for this application's settings.
  */
 public class PrefsFragmentSettings extends PreferenceFragment {
+
+    /** Request code for checking settings. */
     public static final int REQUEST_CHECK_SETTINGS = 1000;
     PhoneSensorDataSources phoneSensorDataSources;
     ArrayList<DataSource> defaultConfig;
     Preference.OnPreferenceChangeListener onPreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
+        /**
+         * Updates the value of the preference.
+         *
+         * @param preference The preference that was changed.
+         * @param newValue The new value for the preference.
+         * @return Always returns false.
+         */
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             boolean value = (Boolean) newValue;
@@ -92,6 +105,10 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         }
     };
 
+    /**
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,9 +119,27 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         createPreferenceScreen();
     }
 
+    /**
+     * Interval for location updates.
+     *
+     * <p>
+     *     Set to 5000 milliseconds.
+     * </p>
+     */
     private static final long INTERVAL = 5000L;
     private Subscription updatableLocationSubscription;
 
+    /**
+     * Enables the GPS via location requests.
+     *
+     * <p>
+     * Creates a location request with high accuracy and a specified interval,
+     * creates a new <code>ReactiveLocationProvider</code> and subscribes it to a new observer.
+     * </p>
+     * <p>
+     * REFERENCE: <a href="http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never" >StackOverflow</a>
+     * </p>
+     */
     void enableGPS() {
         ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getActivity());
         final LocationRequest locationRequest = LocationRequest.create()
@@ -114,7 +149,7 @@ public class PrefsFragmentSettings extends PreferenceFragment {
                 .checkLocationSettings(
                         new LocationSettingsRequest.Builder()
                                 .addLocationRequest(locationRequest)
-                                .setAlwaysShow(true)  //Reference: http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never
+                                .setAlwaysShow(true)  //See REFERENCE in the method description.
                                 .build()
                 );
         updatableLocationSubscription = locationUpdatesObservable.subscribe(new Observer<LocationSettingsResult>() {
@@ -128,6 +163,11 @@ public class PrefsFragmentSettings extends PreferenceFragment {
 
             }
 
+            /**
+             * Checks for location permissions
+             *
+             * @param locationSettingsResult
+             */
             @Override
             public void onNext(LocationSettingsResult locationSettingsResult) {
                 try {
@@ -154,13 +194,19 @@ public class PrefsFragmentSettings extends PreferenceFragment {
 
     }
 
+
+    /**
+     * Unsubscribes <code>updatableLocationSubscripton</code>.
+     */
     public void unregister() {
         if (updatableLocationSubscription != null && !updatableLocationSubscription.isUnsubscribed())
             updatableLocationSubscription.unsubscribe();
     }
 
 
-
+    /**
+     * Reads the default configuration file.
+     */
     void readDefaultConfiguration() {
         try {
             defaultConfig = Configuration.readDefault(getActivity());
@@ -169,6 +215,13 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         }
     }
 
+    /**
+     * Handles user permissions results.
+     *
+     * @param requestCode The code sent with the request, used for request/result verification
+     * @param resultCode  The code returned with the result, used for request/result verification
+     * @param data Android intent
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -192,6 +245,15 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Creates the settings view
+     *
+     * @param inflater Android LayoutInflater
+     * @param container Android ViewGroup
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     * @return The view this method created.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -202,6 +264,9 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         return v;
     }
 
+    /**
+     * Updates the default configuration based each data source.
+     */
     void updateDefaultConfig() {
         for (int i = 0; i < phoneSensorDataSources.getPhoneSensorDataSources().size(); i++) {
             phoneSensorDataSources.getPhoneSensorDataSources().get(i).setEnabled(false);
@@ -215,6 +280,14 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         }
     }
 
+    /**
+     * Sets the default settings
+     *
+     * <p>
+     *     If <code>defaultConfig</code> is null, then the preference is set to "not available".
+     *     Otherwise the default is enabled, but not checked.
+     * </p>
+     */
     void setDefaultSettings() {
         final CheckBoxPreference checkBoxPreference = (CheckBoxPreference) findPreference("key_default_settings");
         if (defaultConfig == null) {
@@ -225,6 +298,17 @@ public class PrefsFragmentSettings extends PreferenceFragment {
             checkBoxPreference.setEnabled(true);
             checkBoxPreference.setChecked(false);
             checkBoxPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                /**
+                 * Enables a selected preference unless it is checked.
+                 *
+                 * <p>
+                 *     If a preference is checked, then it is disabled, the default configuration is
+                 *     updated and saved, and the preferences screen is updated.
+                 * </p>
+                 *
+                 * @param preference The preference in question.
+                 * @return Always returns false.
+                 */
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     boolean checked = ((CheckBoxPreference) preference).isChecked();
@@ -245,16 +329,29 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         }
     }
 
+    /**
+     * Calls <code>setDefaultSettings()</code>, <code>addPreferenceScreenSensors()</code>, and
+     * <code>updatePreferenceScreen()</code>.
+     */
     void createPreferenceScreen() {
         setDefaultSettings();
         addPreferenceScreenSensors();
         updatePreferenceScreen();
     }
 
+    /**
+     * Creates a new <code>phoneSensorDataSources</code> object which reads the configuration files.
+     */
     void readConfiguration() {
         phoneSensorDataSources = new PhoneSensorDataSources(getActivity());
     }
 
+    /**
+     * Sets mSensor equal to the appropriate sensor via sensor manager.
+     *
+     * @param dataSourceType The data source type in question.
+     * @return Whether the given data source type has an appropriate sensor.
+     */
     boolean isSensorSupported(String dataSourceType) {
         SensorManager mSensorManager;
         Sensor mSensor;
@@ -290,6 +387,12 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         return mSensor != null;
     }
 
+    /**
+     * Creates a toggleable preference option for the appropriate data source type.
+     *
+     * @param dataSourceType The data source type in question.
+     * @return The created <code>SwitchPreference</code> object.
+     */
     private SwitchPreference createSwitchPreference(String dataSourceType) {
         SwitchPreference switchPreference = new SwitchPreference(getActivity());
         switchPreference.setKey(dataSourceType);
@@ -307,7 +410,6 @@ public class PrefsFragmentSettings extends PreferenceFragment {
                 switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Gyroscope.frequencyOptions));
                 break;
             case (DataSourceType.AMBIENT_TEMPERATURE):
-//                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(AmbientTemperature.frequencyOptions));
                 break;
             case (DataSourceType.COMPASS):
                 switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Compass.frequencyOptions));
@@ -316,19 +418,31 @@ public class PrefsFragmentSettings extends PreferenceFragment {
                 switchPreference.setOnPreferenceClickListener(alertDialogFrequency(AmbientLight.frequencyOptions));
                 break;
             case (DataSourceType.PRESSURE):
-//                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Pressure.frequencyOptions));
                 break;
             case (DataSourceType.PROXIMITY):
-//                switchPreference.setOnPreferenceClickListener(alertDialogFrequency(Proximity.frequencyOptions));
                 break;
         }
         return switchPreference;
     }
 
+    /**
+     * Creates a preference click listener for choosing the frequency of data collection for a given
+     * sensor.
+     *
+     * @param frequencies String array of frequency values.
+     * @return The preference click listener
+     */
     private Preference.OnPreferenceClickListener alertDialogFrequency(final String[] frequencies) {
         for (int i = 0; i < frequencies.length; i++)
             frequencies[i] = frequencies[i] + " Hz";
         return new Preference.OnPreferenceClickListener() {
+
+            /**
+             * Gives a switch preference for selecting frequency when a preference is selected.
+             *
+             * @param preference The preference in question.
+             * @return Always returns false.
+             */
             @Override
             public boolean onPreferenceClick(final Preference preference) {
                 SwitchPreference switchPreference = (SwitchPreference) preference;
@@ -345,6 +459,12 @@ public class PrefsFragmentSettings extends PreferenceFragment {
                     }
                     try {
                         Dialog.singleChoice(getActivity(), "Select Frequency", frequencies, curSelected, new DialogCallback() {
+                            /**
+                             * Sets the frequency at the value passed, saves the configuration and
+                             * updates the preference screen.
+                             *
+                             * @param value Frequency to set the sensor to
+                             */
                             @Override
                             public void onSelected(String value) {
                                 String freq[] = value.split(" ");
@@ -354,18 +474,6 @@ public class PrefsFragmentSettings extends PreferenceFragment {
 
                             }
                         }).show();
-/*
-                        AlertDialogs.AlertDialogSingleChoice(getActivity(), "Select Frequency", frequencies, curSelected, "Select", "Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which >= 0) {
-                                    String freq[] = frequencies[which].split(" ");
-                                    phoneSensorDataSources.find(preference.getKey()).setFrequency(freq[0]);
-                                    updatePreferenceScreen();
-                                }
-                            }
-                        });
-*/
                     } catch (Exception ignored) {
 
                     }
@@ -375,6 +483,15 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         };
     }
 
+    /**
+     * Adds sensor's switch preferences to the preference screen.
+     *
+     * <p>
+     * Removes all data source type preferences before iterating through the
+     * <code>phoneSensorDataSources</code> ArrayList, creating a preference for each data source and
+     * adding it to the category.
+     * </p>
+     */
     protected void addPreferenceScreenSensors() {
         String dataSourceType;
         PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("dataSourceType");
@@ -386,6 +503,9 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         }
     }
 
+    /**
+     * Updates the preference screen
+     */
     void updatePreferenceScreen() {
         PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("dataSourceType");
         PhoneSensorDataSource phoneSensorDataSource;
@@ -405,42 +525,9 @@ public class PrefsFragmentSettings extends PreferenceFragment {
         }
     }
 
-/*
-    private void setSaveButton() {
-        final Button button = (Button) getActivity().findViewById(R.id.button_1);
-        button.setText("Save");
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (Apps.isServiceRunning(getActivity(), ServicePhoneSensor.class.getName())) {
-                    AlertDialogs.AlertDialog(getActivity(), "Save and Restart?", "Save configuration file and restart PhoneSensor App?", R.drawable.ic_info_teal_48dp, "Yes", "Cancel", null, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    Intent intent = new Intent(getActivity(), ServicePhoneSensor.class);
-                                    getActivity().stopService(intent);
-                                    saveConfigurationFile();
-                                    intent = new Intent(getActivity(), ServicePhoneSensor.class);
-                                    getActivity().startService(intent);
-                                    getActivity().finish();
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    Toast.makeText(getActivity(), "Configuration file is not saved.", Toast.LENGTH_LONG).show();
-                                    getActivity().finish();
-                                    break;
-                            }
-                        }
-                    });
-                } else {
-                    saveConfigurationFile();
-                    getActivity().finish();
-                }
-            }
-        });
-    }
-
-*/
+    /**
+     * Saves the configuration file
+     */
     void saveConfigurationFile() {
         try {
             boolean flag = AppInfo.isServiceRunning(getActivity(), ServicePhoneSensor.class.getName());
@@ -449,7 +536,6 @@ public class PrefsFragmentSettings extends PreferenceFragment {
             phoneSensorDataSources.writeDataSourceToFile();
             if(flag) getActivity().startService(new Intent(getActivity(), ServicePhoneSensor.class));
 
-//            Toast.makeText(getActivity(), "Configuration file is saved.", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             Toast.makeText(getActivity(), "!!!Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();

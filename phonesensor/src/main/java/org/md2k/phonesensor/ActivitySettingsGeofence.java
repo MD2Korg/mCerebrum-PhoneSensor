@@ -1,26 +1,18 @@
-package org.md2k.phonesensor;
-
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
-
-import org.md2k.phonesensor.phone.sensors.geofence.GeoFenceData;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
- * <p>
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * <p>
+ *
  * * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- * <p>
+ *
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * <p>
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -33,8 +25,29 @@ import org.md2k.phonesensor.phone.sensors.geofence.GeoFenceData;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.md2k.phonesensor;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
+
+import org.md2k.phonesensor.phone.sensors.geofence.GeoFenceData;
+
+/**
+ * This class handles the geofencing settings activity.
+ */
 public class ActivitySettingsGeofence extends AppCompatActivity {
 
+    /**
+     * Creates the geofence settings activity.
+     *
+     * <p>
+     *     The <code>GeoFenceData</code> is cleared when this activity is created with an intent to clear.
+     * </p>
+     *
+     * @param savedInstanceState This activity's previous state, is null if this activity has never
+     *                           existed.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +64,12 @@ public class ActivitySettingsGeofence extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles menu item selection.
+     *
+     * @param item Android MenuItem
+     * @return true when the menu item selection actions are successful.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
