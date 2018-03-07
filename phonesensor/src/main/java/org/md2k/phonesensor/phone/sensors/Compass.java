@@ -1,30 +1,6 @@
-package org.md2k.phonesensor.phone.sensors;
-
-import android.content.Context;
-import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.support.v4.content.LocalBroadcastManager;
-
-import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
-import org.md2k.datakitapi.exception.DataKitException;
-import org.md2k.datakitapi.source.METADATA;
-import org.md2k.datakitapi.source.datasource.DataSource;
-import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
-import org.md2k.datakitapi.source.datasource.DataSourceType;
-import org.md2k.datakitapi.time.DateTime;
-import org.md2k.phonesensor.ServicePhoneSensor;
-import org.md2k.phonesensor.phone.CallBack;
-import org.md2k.mcerebrum.core.data_format.DataFormat;;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +24,35 @@ import java.util.HashMap;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+package org.md2k.phonesensor.phone.sensors;
+
+import android.content.Context;
+import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.support.v4.content.LocalBroadcastManager;
+
+import org.md2k.datakitapi.datatype.DataTypeDoubleArray;
+import org.md2k.datakitapi.exception.DataKitException;
+import org.md2k.datakitapi.source.METADATA;
+import org.md2k.datakitapi.source.datasource.DataSource;
+import org.md2k.datakitapi.source.datasource.DataSourceBuilder;
+import org.md2k.datakitapi.source.datasource.DataSourceType;
+import org.md2k.datakitapi.time.DateTime;
+import org.md2k.phonesensor.ServicePhoneSensor;
+import org.md2k.phonesensor.phone.CallBack;
+import org.md2k.mcerebrum.core.data_format.DataFormat;
+
+/**
+ * This class manages the compass on the device.
+ *
+ * <p>
+ *     The default sampling rate for this sensor is 16 hertz.
+ * </p>
+ */
 public class Compass extends PhoneSensorDataSource implements SensorEventListener {
     private static final String SENSOR_DELAY_NORMAL = "6";
     private static final String SENSOR_DELAY_UI = "16";
@@ -59,25 +64,56 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
     private static final double SENSOR_DELAY_GAME_DOUBLE = Double.valueOf(SENSOR_DELAY_GAME);
     private static final double SENSOR_DELAY_FASTEST_DOUBLE = Double.valueOf(SENSOR_DELAY_FASTEST);
 
-    public static final String[] frequencyOptions = {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
+    /** Array of sampling rates for the sensor
+     *
+     * <p>
+     *  <ul>
+     *     <li><code>SENSOR_DELAY_NORMAL</code> is 6 hertz</li>
+     *     <li><code>SENSOR_DELAY_UI</code> is 16 hertz</li>
+     *     <li><code>SENSOR_DELAY_GAME</code> is 50 hertz</li>
+     *     <li><code>SENSOR_DELAY_FASTEST</code> is 100 hertz</li>
+     *  </ul>
+     * </p>
+     */
+    public static final String[] frequencyOptions = 
+            {SENSOR_DELAY_NORMAL, SENSOR_DELAY_UI, SENSOR_DELAY_GAME, SENSOR_DELAY_FASTEST};
+  
     private SensorManager mSensorManager;
-    double FILTER_DATA_MIN_TIME;
+    double filterDataMinTime;
     long lastSaved=DateTime.getDateTime();
 
+    /**
+     * Constructor
+     *
+     * @param context Android context
+     */
     public Compass(Context context) {
         super(context, DataSourceType.COMPASS);
         frequency = SENSOR_DELAY_UI;
     }
 
+    /**
+     * Changes the frequency field to match the frequency field in the metadata of the new source
+     *
+     * @param dataSource dataSource that should be updated
+     */
     public void updateDataSource(DataSource dataSource) {
         super.updateDataSource(dataSource);
         frequency = dataSource.getMetadata().get(METADATA.FREQUENCY);
     }
 
+    /**
+     * Called when there is a new sensor event. This can be a data change or a timestamp change.
+     *
+     * If the time since the last data save is larger than the minimum time, the data put into
+     * an array and sent to dataKitAPI to be saved
+     *
+     * @param event event that triggered the method call
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         long curTime = DateTime.getDateTime();
-        if ((double)(curTime - lastSaved) > FILTER_DATA_MIN_TIME) {
+        if ((double)(curTime - lastSaved) > filterDataMinTime) {
             lastSaved = curTime;
             double[] samples = new double[3];
             samples[DataFormat.Compass.X] = event.values[0];
@@ -93,17 +129,39 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
         }
     }
 
+    /**
+     * Called when the accuracy of this sensor changes.
+     *
+     * @param sensor sensor object for this sensor
+     * @param accuracy Accuracy of the sensor reading
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
+    /**
+     * Unregisters the listener for this sensor
+     */
     public void unregister() {
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(this);
         }
     }
 
+    /**
+     * Calls <code>PhoneSensorDataSource.register</code> to register this sensor with dataKitAPI
+     * and then registers this sensor with Android's SensorManager
+     *
+     * <p>
+     * This method also sets a minimum amount of time between data saves based upon the frequency
+     * field of this object.
+     *</p>
+     *
+     * @param dataSourceBuilder data source to be registered with dataKitAPI
+     * @param newCallBack       CallBack object
+     * @throws DataKitException
+     */
     public void register(DataSourceBuilder dataSourceBuilder, CallBack newCallBack) throws DataKitException {
         super.register(dataSourceBuilder, newCallBack);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -116,12 +174,10 @@ public class Compass extends PhoneSensorDataSource implements SensorEventListene
             case SENSOR_DELAY_GAME:
                 filterDataMinTime = 1000.0 / (SENSOR_DELAY_GAME_DOUBLE + EPSILON_GAME);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
-
                 break;
             case SENSOR_DELAY_FASTEST:
                 filterDataMinTime = 1000.0 / (SENSOR_DELAY_FASTEST_DOUBLE + EPSILON_FASTEST);
                 mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
-
                 break;
             case SENSOR_DELAY_NORMAL:
                 filterDataMinTime = 1000.0 / (SENSOR_DELAY_NORMAL_DOUBLE + EPSILON_NORMAL);

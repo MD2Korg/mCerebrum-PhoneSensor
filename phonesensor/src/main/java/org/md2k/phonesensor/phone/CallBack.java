@@ -1,10 +1,6 @@
-package org.md2k.phonesensor.phone;
-
-import org.md2k.datakitapi.datatype.DataType;
-
-/**
- * Copyright (c) 2015, The University of Memphis, MD2K Center
- * - Syed Monowar Hossain <monowar.hossain@gmail.com>
+/*
+ * Copyright (c) 2018, The University of Memphis, MD2K Center of Excellence
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +23,18 @@ import org.md2k.datakitapi.datatype.DataType;
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package org.md2k.phonesensor.phone;
+
+import org.md2k.datakitapi.datatype.DataType;
+
+/**
+ * Callback interface for this application.
+ *
+ * <p>
+ *     This callback is used for receiving data in the form of a <code>DataType</code> object.
+ * </p>
  */
 public interface CallBack {
     void onReceivedData(DataType data);
