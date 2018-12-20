@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.22.0'
+        classpath 'io.fabric.tools:gradle:1.26.1'
     }
 }
 apply plugin: 'com.android.application'
@@ -95,9 +95,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    output.outputFile = new File(output.outputFile.parent, output.outputFile.name.replace("-release", "${variant.versionName}"))
+            applicationVariants.each { variant ->
+                variant.outputs.all { output ->
+                    outputFileName = new File(output.outputFile.parent, outputFileName.name.replace("-release", "${variant.versionName}"))
                 }
             }
         }
