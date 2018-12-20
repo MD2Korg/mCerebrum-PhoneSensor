@@ -32,10 +32,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Log;
 
-import org.md2k.mcerebrum.commons.permission.PermissionInfo;
-import org.md2k.mcerebrum.commons.permission.ResultCallback;
 import org.md2k.mcerebrum.core.access.MCerebrum;
 import org.md2k.mcerebrum.core.access.MCerebrumInfo;
 import org.md2k.phonesensor.plot.ActivityPlotChoice;

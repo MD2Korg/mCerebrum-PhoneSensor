@@ -27,6 +27,7 @@
 
 package org.md2k.phonesensor;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -55,6 +56,20 @@ public class ActivitySettings extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        Intent intent = new Intent(this, ActivityPermission.class);
+        startActivityForResult(intent, 1111);
+
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1111) {
+            if(resultCode!=RESULT_OK){
+                finish();
+            }else{
+                getFragmentManager().beginTransaction().replace(R.id.layout_preference_fragment,
+                        new PrefsFragmentSettings()).commit();
+            }
         }
     }
 
